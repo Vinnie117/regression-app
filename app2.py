@@ -85,8 +85,9 @@ def update_scatterplot(data):
 #     return 'The total sum equals'
 @app.callback(
     Output(component_id = 'sum-state', component_property = 'children'),
-    Input(component_id = 'table', component_property = 'data'))
-def update_scatterplot(data):
+    State(component_id = 'table', component_property = 'data'),
+    Input(component_id = 'submit-button-state', component_property = 'n_clicks'))
+def update_sum(data, n_clicks):
     x = [d['x'] for d in data]
     y = [d['y'] for d in data]
 
