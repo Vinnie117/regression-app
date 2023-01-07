@@ -5,13 +5,13 @@ import plotly.graph_objects as go
 app = Dash()
 
 data = [
-        {'x': 0, 'y': 0},
-        {'x': 1, 'y': 1},
-        {'x': 2, 'y': 2},
-        {'x': 3, 'y': 3},
-        {'x': 4, 'y': 4},
-        {'x': 2, 'y': 5},
-        {'x': 3, 'y': 4}
+        {'x': 0, 'y': 0, 'z': 7},
+        {'x': 1, 'y': 1, 'z': 2},
+        {'x': 2, 'y': 2, 'z': 0},
+        {'x': 3, 'y': 3, 'z': 4},
+        {'x': 4, 'y': 4, 'z': 5},
+        {'x': 2, 'y': 5, 'z': 9},
+        {'x': 3, 'y': 4, 'z': 6}
 ]
 
 app.layout = html.Div([
@@ -36,6 +36,13 @@ app.layout = html.Div([
                 'type': 'numeric',
                 'format': Format(nully='N/A'),
                 'on_change': {'action': 'coerce', 'failure': 'default'}
+            },
+            {
+                'name': 'z', 
+                'id': 'z', 
+                'type': 'numeric',
+                'format': Format(nully='N/A'),
+                'on_change': {'action': 'coerce', 'failure': 'default'}
             }
             ],
         data=data,
@@ -45,13 +52,10 @@ app.layout = html.Div([
     ),
 
     # a submit button
-    html.Button('Submit', id='submit-val', n_clicks=0),
+    html.Button(id='submit-button-state', children='Submit', type='button'),
 
     # create the scatter plot
-    dcc.Graph(id='scatterplot', style={'width': '100%', 'height': '100%'} ),
-
-    # another submit button
-    html.Button(id='submit-button-state', children='Submit2', type='button'),
+    dcc.Graph(id='scatterplot', style={'width': '100%', 'height': '100%'} ),  
 
      # create the div that will display the sum of all numbers in the table
     html.Div(id='sum-state')
@@ -72,29 +76,22 @@ def update_scatterplot(data):
 
     return figure
 
-# # callback to calculate the sum
-# @app.callback(
-#     Output(component_id = 'sum-state', component_property = 'children'),
-#     Input(component_id = 'submit-button-state', component_property = 'n_clicks'),
-#     State('table', 'data'))
-# def update_sum(data):
-#     # calculate the sum of all numbers in the table
-#     print(data)
-#     # total = sum([row['x'] + row['y'] for row in data])
-
-#     return 'The total sum equals'
+# callback for logic with data - here to calculate the sum of all values
 @app.callback(
     Output(component_id = 'sum-state', component_property = 'children'),
     State(component_id = 'table', component_property = 'data'),
     Input(component_id = 'submit-button-state', component_property = 'n_clicks'))
 def update_sum(data, n_clicks):
+
+    # data is a list of dicts: [{'x': 0, 'y': 0, 'z': 7}, {'x': 1, 'y': 1, 'z': 2}, ....]
     x = [d['x'] for d in data]
     y = [d['y'] for d in data]
+    z = [d['z'] for d in data]
 
-    total = sum(x) + sum(y)
+    total = sum(x) + sum(y) + sum(z)
     print('The total sum is: ', total)
 
-    return total
+    return f'The total sum is: {total}'
 
 
 if __name__ == '__main__':
