@@ -53,8 +53,8 @@ app.layout = html.Div([
                         'type': 'numeric',
                         'format': Format(nully='N/A'),
                         'on_change': {'action': 'coerce', 'failure': 'default'},
-                        'deletable': False,
-                        'renamable': False
+                        'deletable': True,
+                        'renamable': True
                     }
                     ],
                 data=data,
@@ -71,7 +71,7 @@ app.layout = html.Div([
                 style={'margin-top': '20px'}  # space between the button and the table below
                 ), 
 
-            html.P('Target'),
+            html.P('Target variable'),
 
             dcc.RadioItems(
                 id = 'target',
@@ -133,9 +133,12 @@ def update_scatterplot(data):
 
 # dynamically adjust list of radio items depending on given predictors
 @app.callback(
-    Input('table', 'columns'),
-    Output('target', 'options'))
+    Output('target', 'options'),
+    Input('table', 'columns'))
 def update_radio_items(columns):
+    print([d['name'] for d in columns])
+    c = [d['name'] for d in columns]
+    return c
 
 
 
