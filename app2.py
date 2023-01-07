@@ -15,51 +15,79 @@ data = [
 ]
 
 app.layout = html.Div([
-    
+        
     # a header for the webpage
     html.H1('My Dash App'),
 
-    # create the data table
-    dash_table.DataTable(
-        id='table',
-        columns=[
-            {
-                'name': 'x', 
-                'id': 'x', 
-                'type': 'numeric',
-                'format': Format(nully='N/A'),
-                'on_change': {'action': 'coerce', 'failure': 'default'}
-            }, 
-            {
-                'name': 'y', 
-                'id': 'y', 
-                'type': 'numeric',
-                'format': Format(nully='N/A'),
-                'on_change': {'action': 'coerce', 'failure': 'default'}
-            },
-            {
-                'name': 'z', 
-                'id': 'z', 
-                'type': 'numeric',
-                'format': Format(nully='N/A'),
-                'on_change': {'action': 'coerce', 'failure': 'default'}
-            }
-            ],
-        data=data,
-        editable=True,
-        fill_width=False,
-        style_cell={'width': '10%'}
-    ),
-
     # a submit button
-    html.Button(id='submit-button-state', children='Submit', type='button'),
+    #html.Button(id='submit-button-state', children='Submit', type='button'),
 
-    # create the scatter plot
-    dcc.Graph(id='scatterplot', style={'width': '100%', 'height': '100%'} ),  
 
+    html.Div(children = [
+
+        # create the data table
+        html.Div([
+
+            html.Button(id='submit-button-state', children='Submit', type='button'), 
+            dash_table.DataTable(
+                id='table',
+                columns=[
+                    {
+                        'name': 'x', 
+                        'id': 'x', 
+                        'type': 'numeric',
+                        'format': Format(nully='N/A'),
+                        'on_change': {'action': 'coerce', 'failure': 'default'}
+                    }, 
+                    {
+                        'name': 'y', 
+                        'id': 'y', 
+                        'type': 'numeric',
+                        'format': Format(nully='N/A'),
+                        'on_change': {'action': 'coerce', 'failure': 'default'}
+                    },
+                    {
+                        'name': 'z', 
+                        'id': 'z', 
+                        'type': 'numeric',
+                        'format': Format(nully='N/A'),
+                        'on_change': {'action': 'coerce', 'failure': 'default'}
+                    }
+                    ],
+                data=data,
+                editable=True,
+                fill_width=False,
+                style_cell={'width': '10%'}
+                )
+            
+        ], style={
+            'display': 'inline-block',  # display elements (children) side by side
+            'width': '19%',  # percentage of screen width taken by div
+            'border': '1px solid black',  # border (for debugging)
+            
+            }
+        ),
+
+        # create the scatter plot
+        html.Div([
+            dcc.Graph(id='scatterplot', style={'width': '100%', 'height': '100%'})
+        ], style={
+            'display': 'inline-block', 
+            'width': '49%', 
+            'border': '1px solid black',
+            }
+        )
+    ], style={'display': 'flex', 'align-items': 'center'}),  # vertically align the children
+    
      # create the div that will display the sum of all numbers in the table
     html.Div(id='sum-state')
-    ])
+])
+
+# Child divs müssen beide inline-blocks haben
+
+###########################################################################################
+
+
 
 # callback to update the scatter plot when the table data changes
 @app.callback(
