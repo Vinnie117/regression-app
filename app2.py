@@ -25,6 +25,7 @@ app.layout = html.Div([
 
     html.Div(children = [
 
+        # left column
         html.Div([
 
             # create the data table
@@ -71,14 +72,25 @@ app.layout = html.Div([
                 style={'margin-top': '20px'}  # space between the button and the table below
                 ), 
 
+
             html.P('Target variable'),
 
             dcc.RadioItems(
                 id = 'target',
-                options=['Variable X', 'Variable Y', 'Variable Z'],
-                value = 'Variable Y',
+                options=[],  # will be filled by callback
+                value = 'y',
+                labelStyle={'display': 'block', 'margin-top': '20px'} # display gives a vertical list of radio items, margin top increases spacing between items
+            ), 
+            
+            html.P('Predictor variables'),
+
+            dcc.RadioItems(
+                id = 'predictors',
+                options=['a', 'b', 'c'],  # will be filled by callback
+                value = 'c',
                 labelStyle={'display': 'block', 'margin-top': '20px'} # display gives a vertical list of radio items, margin top increases spacing between items
             )
+        
         ], style={
             'display': 'inline-block',  # display elements (children) side by side
             'width': '25%',  # percentage of screen width taken by div
@@ -86,13 +98,15 @@ app.layout = html.Div([
             }
         ),
 
-        # create the scatter plot
+        # middle column
         html.Div([
+
+            # create the scatter plot
             dcc.Graph(id='scatterplot', style={'width': '100%', 'height': '100%'})
         ], style={
             'display': 'inline-block', 
             'width': '49%', 
-            'border': '1px dashed black',
+            'border': '1px dashed black'
             }
         ),
 
@@ -104,7 +118,7 @@ app.layout = html.Div([
             'width': '20%', 
             'border': '1px dashed black',
             })
-    ], style={'display': 'flex', 'align-items': 'center'}),  # vertically align the children
+    ], style={'display': 'flex', 'align-items': 'top'}),  # vertically align the children
     
 
 ])
@@ -127,6 +141,7 @@ def update_scatterplot(data):
 
     # create the scatter plot
     figure = go.Figure(data=[go.Scatter(x=x, y=y, mode='markers')])
+    figure.update_layout(margin=dict(l=20, r=20, t=20, b=20))
 
     return figure
 
@@ -136,10 +151,8 @@ def update_scatterplot(data):
     Output('target', 'options'),
     Input('table', 'columns'))
 def update_radio_items(columns):
-    print([d['name'] for d in columns])
-    c = [d['name'] for d in columns]
-    return c
-
+    column_names = [i['name'] for i in columns]
+    return column_names
 
 
 # callback for logic with data - here to calculate the sum of all values
