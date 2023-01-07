@@ -37,21 +37,25 @@ app.layout = html.Div([
                         'id': 'x', 
                         'type': 'numeric',
                         'format': Format(nully='N/A'),
-                        'on_change': {'action': 'coerce', 'failure': 'default'}
+                        'on_change': {'action': 'coerce', 'failure': 'default'},
+                        'renamable': True
                     }, 
                     {
                         'name': 'y', 
                         'id': 'y', 
                         'type': 'numeric',
                         'format': Format(nully='N/A'),
-                        'on_change': {'action': 'coerce', 'failure': 'default'}
+                        'on_change': {'action': 'coerce', 'failure': 'default'},
+                        'renamable': True
                     },
                     {
                         'name': 'z', 
                         'id': 'z', 
                         'type': 'numeric',
                         'format': Format(nully='N/A'),
-                        'on_change': {'action': 'coerce', 'failure': 'default'}
+                        'on_change': {'action': 'coerce', 'failure': 'default'},
+                        'deletable': True,
+                        'renamable': True
                     }
                     ],
                 data=data,
