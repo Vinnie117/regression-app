@@ -25,10 +25,9 @@ app.layout = html.Div([
 
     html.Div(children = [
 
-        # create the data table
         html.Div([
 
-            html.Button(id='submit-button-state', children='Submit', type='button'), 
+            # create the data table
             dash_table.DataTable(
                 id='table',
                 columns=[
@@ -38,7 +37,7 @@ app.layout = html.Div([
                         'type': 'numeric',
                         'format': Format(nully='N/A'),
                         'on_change': {'action': 'coerce', 'failure': 'default'},
-                        'renamable': True
+                        'renamable': False
                     }, 
                     {
                         'name': 'y', 
@@ -46,7 +45,7 @@ app.layout = html.Div([
                         'type': 'numeric',
                         'format': Format(nully='N/A'),
                         'on_change': {'action': 'coerce', 'failure': 'default'},
-                        'renamable': True
+                        'renamable': False
                     },
                     {
                         'name': 'z', 
@@ -54,21 +53,36 @@ app.layout = html.Div([
                         'type': 'numeric',
                         'format': Format(nully='N/A'),
                         'on_change': {'action': 'coerce', 'failure': 'default'},
-                        'deletable': True,
-                        'renamable': True
+                        'deletable': False,
+                        'renamable': False
                     }
                     ],
                 data=data,
                 editable=True,
                 fill_width=False,
-                style_cell={'width': '10%'}
-                )
+                virtualization=True,  # make datatable scrollable
+                style_cell={'width': '100px'}  # width of columns
+                ),
             
+            html.Button(
+                id='submit-button-state', 
+                children='Submit', 
+                type='button', 
+                style={'margin-top': '20px'}  # space between the button and the table below
+                ), 
+
+            html.P('Target'),
+
+            dcc.RadioItems(
+                id = 'target',
+                options=['Variable X', 'Variable Y', 'Variable Z'],
+                value = 'Variable Y',
+                labelStyle={'display': 'block', 'margin-top': '20px'} # display gives a vertical list of radio items, margin top increases spacing between items
+            )
         ], style={
             'display': 'inline-block',  # display elements (children) side by side
-            'width': '19%',  # percentage of screen width taken by div
-            'border': '1px solid black',  # border (for debugging)
-            
+            'width': '25%',  # percentage of screen width taken by div
+            'border': '1px dashed black',  # border (for debugging)          
             }
         ),
 
@@ -78,13 +92,21 @@ app.layout = html.Div([
         ], style={
             'display': 'inline-block', 
             'width': '49%', 
-            'border': '1px solid black',
+            'border': '1px dashed black',
             }
-        )
+        ),
+
+        # create the div that will display the sum of all numbers in the table
+        html.Div(
+            id='sum-state',
+            style={
+            'display': 'inline-block', 
+            'width': '20%', 
+            'border': '1px dashed black',
+            })
     ], style={'display': 'flex', 'align-items': 'center'}),  # vertically align the children
     
-     # create the div that will display the sum of all numbers in the table
-    html.Div(id='sum-state')
+
 ])
 
 # Child divs müssen beide inline-blocks haben
@@ -107,6 +129,15 @@ def update_scatterplot(data):
     figure = go.Figure(data=[go.Scatter(x=x, y=y, mode='markers')])
 
     return figure
+
+
+# dynamically adjust list of radio items depending on given predictors
+@app.callback(
+    Input('table', 'columns'),
+    Output('target', 'options'))
+def update_radio_items(columns):
+
+
 
 # callback for logic with data - here to calculate the sum of all values
 @app.callback(
