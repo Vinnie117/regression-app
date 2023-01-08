@@ -217,10 +217,10 @@ def update_sum(data, target_var, predictor_vars, n_clicks,): # order of argument
     df = pd.DataFrame(data)
 
     # print(df)
-    # print(target_var)
-    # print(predictor_vars)
+    print(target_var)
+    print(predictor_vars)
 
-    lm = sm.OLS(data = df, endog=df[target_var], exog=df[[predictor_vars]])
+    lm = sm.OLS(data = df, endog=df[target_var], exog=df[predictor_vars])
     lm_results = lm.fit()
 
     # lm_results_regression = lm_results.summary().tables[0]
