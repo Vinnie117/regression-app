@@ -97,13 +97,12 @@ app.layout = html.Div([
             
                     html.P('Predictor variables'),
 
-                    dcc.RadioItems(
+                    dcc.Checklist(
                         id = 'predictors',
                         options=[],  # will be filled by callback
-                        value = '',
                         labelStyle={
                             'display': 'block', 
-                            'margin-top': '20px',
+                            'margin-top': '20px'
                             
                         } # display gives a vertical list of radio items, margin top increases spacing between items
                     )
@@ -147,7 +146,7 @@ app.layout = html.Div([
 
 ])
 
-# Child divs müssen beide inline-blocks haben
+
 
 ###########################################################################################
 
