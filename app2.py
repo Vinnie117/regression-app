@@ -72,25 +72,49 @@ app.layout = html.Div([
                 style={'margin-top': '20px'}  # space between the button and the table below
                 ), 
 
+            html.Div(children = [
 
-            html.P('Target variable'),
+                html.Div([
 
-            dcc.RadioItems(
-                id = 'target',
-                options=[],  # will be filled by callback
-                value = 'y',
-                labelStyle={'display': 'block', 'margin-top': '20px'} # display gives a vertical list of radio items, margin top increases spacing between items
-            ), 
+                    html.P('Target variable'),
+
+                    dcc.RadioItems(
+                    id = 'target',
+                    options=[],  # will be filled by callback
+                    value = '',
+                    labelStyle={
+                        'display': 'block', 
+                        'margin-top': '20px'
+                    } # display gives a vertical list of radio items, margin top increases spacing between items
+                    )
+                ], style={
+                    'display': 'inline-block',
+                    'border': '1px dashed black'
+                    }
+                ), 
+
+                html.Div([
             
-            html.P('Predictor variables'),
+                    html.P('Predictor variables'),
 
-            dcc.RadioItems(
-                id = 'predictors',
-                options=['a', 'b', 'c'],  # will be filled by callback
-                value = 'c',
-                labelStyle={'display': 'block', 'margin-top': '20px'} # display gives a vertical list of radio items, margin top increases spacing between items
-            )
-        
+                    dcc.RadioItems(
+                        id = 'predictors',
+                        options=['a', 'b', 'c'],  # will be filled by callback
+                        value = 'c',
+                        labelStyle={
+                            'display': 'block', 
+                            'margin-top': '20px',
+                            
+                        } # display gives a vertical list of radio items, margin top increases spacing between items
+                    )
+                ], style={
+                    'display': 'inline-block',
+                    'border': '1px dashed black',
+                    'margin-top': '20px',
+                    'margin-left': '20px'
+                    }
+                )
+            ])
         ], style={
             'display': 'inline-block',  # display elements (children) side by side
             'width': '25%',  # percentage of screen width taken by div
