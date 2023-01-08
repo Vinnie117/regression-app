@@ -1,6 +1,9 @@
 from dash import Dash, dcc, html, dash_table, Output, Input, State
 from dash.dash_table.Format import Format
 import plotly.graph_objects as go
+import statsmodels.api as sm
+import pandas as pd
+
 
 app = Dash()
 
@@ -140,7 +143,9 @@ app.layout = html.Div([
             'display': 'inline-block', 
             'width': '20%', 
             'border': '1px dashed black',
-            })
+            }
+        ),
+
     ], style={'display': 'flex', 'align-items': 'top'}),  # vertically align the children
     
 
@@ -201,7 +206,26 @@ def update_sum(data, n_clicks):
     total = sum(x) + sum(y) + sum(z)
     print('The total sum is: ', total)
 
-    return f'The total sum is: {total}'
+    result = 'The total sum is:\n{total}'.format(total = total) 
+
+    #### regression
+    print(data)
+    df = pd.DataFrame(data)
+    print(df)
+
+    lm = sm.OLS(data = df, endog=df['y'], exog=df['x'])
+    lm_results = lm.fit()
+
+    # lm_results_regression = lm_results.summary().tables[0]
+    lm_results_parameters = lm_results.summary().tables[1]
+    # lm_results_distribution = lm_results.summary().tables[2]
+    df_results_parameters = pd.DataFrame(lm_results_parameters)
+
+    # print(df_results_parameters)
+    # print(test.iloc[0,1]) # coef
+    coef = str(df_results_parameters.iloc[1,1]) # coef value
+    
+    return result + '\nRegression coef is: {}'.format(coef)
 
 
 if __name__ == '__main__':
