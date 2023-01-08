@@ -195,8 +195,12 @@ def update_radio_items(columns):
 @app.callback(
     Output(component_id = 'sum-state', component_property = 'children'),
     State(component_id = 'table', component_property = 'data'),
-    Input(component_id = 'submit-button-state', component_property = 'n_clicks'))
-def update_sum(data, n_clicks):
+    State(component_id = 'target', component_property = 'value'),
+    State(component_id = 'predictors', component_property = 'value'),
+    Input(component_id = 'submit-button-state', component_property = 'n_clicks'),
+    prevent_initial_call=True
+    )
+def update_sum(data, target_var, predictor_vars, n_clicks,): # order of arguments in order of classes after 'Output'
 
     # data is a list of dicts: [{'x': 0, 'y': 0, 'z': 7}, {'x': 1, 'y': 1, 'z': 2}, ....]
     x = [d['x'] for d in data]
@@ -204,16 +208,19 @@ def update_sum(data, n_clicks):
     z = [d['z'] for d in data]
 
     total = sum(x) + sum(y) + sum(z)
-    print('The total sum is: ', total)
+    #print('The total sum is: ', total)
 
     result = 'The total sum is:\n{total}'.format(total = total) 
 
     #### regression
-    print(data)
+    #print(data)
     df = pd.DataFrame(data)
-    print(df)
 
-    lm = sm.OLS(data = df, endog=df['y'], exog=df['x'])
+    # print(df)
+    # print(target_var)
+    # print(predictor_vars)
+
+    lm = sm.OLS(data = df, endog=df[target_var], exog=df[[predictor_vars]])
     lm_results = lm.fit()
 
     # lm_results_regression = lm_results.summary().tables[0]
@@ -221,11 +228,11 @@ def update_sum(data, n_clicks):
     # lm_results_distribution = lm_results.summary().tables[2]
     df_results_parameters = pd.DataFrame(lm_results_parameters)
 
-    # print(df_results_parameters)
+    print(df_results_parameters)
     # print(test.iloc[0,1]) # coef
     coef = str(df_results_parameters.iloc[1,1]) # coef value
-    
-    return result + '\nRegression coef is: {}'.format(coef)
+
+    return result + 'Regression coef is: {}'.format(coef) 
 
 
 if __name__ == '__main__':
