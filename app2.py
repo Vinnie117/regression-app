@@ -99,8 +99,8 @@ app.layout = html.Div([
 
                     dcc.RadioItems(
                         id = 'predictors',
-                        options=['a', 'b', 'c'],  # will be filled by callback
-                        value = 'c',
+                        options=[],  # will be filled by callback
+                        value = '',
                         labelStyle={
                             'display': 'block', 
                             'margin-top': '20px',
@@ -170,9 +170,17 @@ def update_scatterplot(data):
     return figure
 
 
-# dynamically adjust list of radio items depending on given predictors
+# dynamically adjust list of radio items for target given table vars
 @app.callback(
     Output('target', 'options'),
+    Input('table', 'columns'))
+def update_radio_items(columns):
+    column_names = [i['name'] for i in columns]
+    return column_names
+
+# dynamically adjust list of radio items for predictors given table vars
+@app.callback(
+    Output('predictors', 'options'),
     Input('table', 'columns'))
 def update_radio_items(columns):
     column_names = [i['name'] for i in columns]
