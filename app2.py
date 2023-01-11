@@ -29,43 +29,6 @@ app.layout = html.Div([
 
         # left column
         html.Div([
-
-            # create the data table
-            dash_table.DataTable(
-                id='table',
-                columns=[
-                    {
-                        'name': 'x', 
-                        'id': 'x', 
-                        'type': 'numeric',
-                        'format': Format(nully='N/A'),
-                        'on_change': {'action': 'coerce', 'failure': 'default'},
-                        'renamable': False
-                    }, 
-                    {
-                        'name': 'y', 
-                        'id': 'y', 
-                        'type': 'numeric',
-                        'format': Format(nully='N/A'),
-                        'on_change': {'action': 'coerce', 'failure': 'default'},
-                        'renamable': False
-                    },
-                    {
-                        'name': 'z', 
-                        'id': 'z', 
-                        'type': 'numeric',
-                        'format': Format(nully='N/A'),
-                        'on_change': {'action': 'coerce', 'failure': 'default'},
-                        'deletable': True,
-                        'renamable': True
-                    }
-                    ],
-                data=data,
-                editable=True,
-                fill_width=False,
-                virtualization=True,  # make datatable scrollable
-                style_cell={'width': '100px'}  # width of columns
-                ),
             
             html.Button(
                 id='submit-button-state', 
@@ -118,19 +81,66 @@ app.layout = html.Div([
             ])
         ], style={
             'display': 'inline-block',  # display elements (children) side by side
-            'width': '25%',  # percentage of screen width taken by div
+            'width': '15%',  # percentage of screen width taken by div
             'border': '1px dashed black',  # border (for debugging)          
             }
         ),
 
         # middle column
-        html.Div([
+        html.Div(children = [
+
+            html.Div(
+
+                dash_table.DataTable(
+                    id='table',
+                    columns=[
+                        {
+                            'name': 'x', 
+                            'id': 'x', 
+                            'type': 'numeric',
+                            'format': Format(nully='N/A'),
+                            'on_change': {'action': 'coerce', 'failure': 'default'},
+                            'renamable': False
+                        }, 
+                        {
+                            'name': 'y', 
+                            'id': 'y', 
+                            'type': 'numeric',
+                            'format': Format(nully='N/A'),
+                            'on_change': {'action': 'coerce', 'failure': 'default'},
+                            'renamable': False
+                        },
+                        {
+                            'name': 'z', 
+                            'id': 'z', 
+                            'type': 'numeric',
+                            'format': Format(nully='N/A'),
+                            'on_change': {'action': 'coerce', 'failure': 'default'},
+                            'deletable': True,
+                            'renamable': True
+                        }
+                        ],
+                    data=data,
+                    editable=True,
+                    fill_width=False,
+                    virtualization=True,  # make datatable scrollable
+                    style_cell={'width': '100px'} # width of columns
+                    
+                ), style={
+                    'text-align': 'center', 
+                    'width': '50%', 
+                    'margin-left': 'auto', 
+                    'margin-right': 'auto'
+                }
+            ),
+            # create the data table
+
 
             # create the scatter plot
-            dcc.Graph(id='scatterplot', style={'width': '100%', 'height': '100%'})
+            dcc.Graph(id='scatterplot')
         ], style={
             'display': 'inline-block', 
-            'width': '49%', 
+            'width': '55%', 
             'border': '1px dashed black'
             }
         ),
@@ -142,7 +152,7 @@ app.layout = html.Div([
             children = [],
             style={
             
-            'width': '20%', 
+            'width': '25%', 
             'border': '1px dashed black',
             }
         )
@@ -237,11 +247,10 @@ def calculate_regression(data, target_var, predictor_vars, children, n_clicks, _
 
 
     #### appending / removing divs to results html
-
     input_id = callback_context.triggered[0]["prop_id"].split(".")[0]
     print(input_id)
 
-    # Dieser If Block wird getriggert, wenn man auf X zum löschen klickt
+    # if block is triggered by clicking on X
     if "index" in input_id:
         delete_chart = json.loads(input_id)["index"]
         children = [
@@ -250,7 +259,7 @@ def calculate_regression(data, target_var, predictor_vars, children, n_clicks, _
             if "'index': " + str(delete_chart) not in str(chart)
         ]
 
-    # Ansonsten werden neue Regressionsergebnisse hinzugefügt
+    # otherwise, new experiment results can be appended
     else:
         new_element = html.Div(
             children=[
