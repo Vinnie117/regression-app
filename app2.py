@@ -198,18 +198,6 @@ def update_radio_items(columns):
     )
 def calculate_regression(data, target_var, predictor_vars, n_clicks,): # order of arguments in order of classes after 'Output'
 
-    # # data is a list of dicts: [{'x': 0, 'y': 0, 'z': 7}, {'x': 1, 'y': 1, 'z': 2}, ....]
-    # x = [d['x'] for d in data]
-    # y = [d['y'] for d in data]
-    # z = [d['z'] for d in data]
-
-    # total = sum(x) + sum(y) # + sum(z)
-    # #print('The total sum is: ', total)
-
-    # result = 'The total sum is:\n{total}'.format(total = total) 
-
-    #### regression
-    #print(data)
     df = pd.DataFrame(data)
 
     # print(df)
@@ -226,13 +214,10 @@ def calculate_regression(data, target_var, predictor_vars, n_clicks,): # order o
 
     print(df_results_parameters)
 
+    #### Extracting the results from df
     list_coefs = df_results_parameters['coef'].tolist()
 
-    result = 'Experiment {number}: Regression '.format(
-        number = n_clicks
-    )
-    #result2 = 'Result: {}'.format({a : b for a,b in zip(predictor_vars, list_coefs)}) 
-
+    result = 'Experiment {number}: Regression '.format(number = n_clicks)
     list_results = []
     for var, coef in zip(predictor_vars, list_coefs):
         list_results.append('coef of {var} is {coef}'. format(var=var, coef=coef))
