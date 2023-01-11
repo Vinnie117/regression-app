@@ -1,8 +1,11 @@
-from dash import Dash, dcc, html, dash_table, Output, Input, State
+from dash import Dash, dcc, html, dash_table, callback_context
+from dash.dependencies import Input, Output, State, ALL
 from dash.dash_table.Format import Format
 import plotly.graph_objects as go
 import statsmodels.api as sm
 import pandas as pd
+import json
+
 
 
 app = Dash()
@@ -132,15 +135,17 @@ app.layout = html.Div([
             }
         ),
 
+        # right column
         # create the div that will display the regression results
         html.Div(
             id='results',
+            children = [],
             style={
-            'display': 'inline-block', 
+            
             'width': '20%', 
             'border': '1px dashed black',
             }
-        ),
+        )
 
     ], style={'display': 'flex', 'align-items': 'top'}),  # vertically align the children
     
@@ -193,10 +198,14 @@ def update_radio_items(columns):
     State(component_id = 'table', component_property = 'data'),
     State(component_id = 'target', component_property = 'value'),
     State(component_id = 'predictors', component_property = 'value'),
-    Input(component_id = 'submit-button-state', component_property = 'n_clicks'),
+    State(component_id='results', component_property='children'),
+    [
+        Input(component_id = 'submit-button-state', component_property = 'n_clicks'),
+        Input({"type": "dynamic-delete", "index": ALL}, "n_clicks")       
+    ],
     prevent_initial_call=True
     )
-def calculate_regression(data, target_var, predictor_vars, n_clicks,): # order of arguments in order of classes after 'Output'
+def calculate_regression(data, target_var, predictor_vars, children, n_clicks, _): # order of arguments in order of classes after 'Output'
 
     df = pd.DataFrame(data)
 
@@ -222,11 +231,45 @@ def calculate_regression(data, target_var, predictor_vars, n_clicks,): # order o
     for var, coef in zip(predictor_vars, list_coefs):
         list_results.append('coef of {var} is {coef}'. format(var=var, coef=coef))
     
-    print(list_results)
+    # print(list_results)
 
-    string_results = ', '.join(list_results)
+    results_string = result + ', '.join(list_results)
 
-    return result + string_results
+
+    #### appending / removing divs to results html
+
+    input_id = callback_context.triggered[0]["prop_id"].split(".")[0]
+    print(input_id)
+
+    # Dieser If Block wird getriggert, wenn man auf X zum löschen klickt
+    if "index" in input_id:
+        delete_chart = json.loads(input_id)["index"]
+        children = [
+            chart
+            for chart in children
+            if "'index': " + str(delete_chart) not in str(chart)
+        ]
+
+    # Ansonsten werden neue Regressionsergebnisse hinzugefügt
+    else:
+        new_element = html.Div(
+            children=[
+                html.Button(
+                    "X",
+                    id={"type": "dynamic-delete", "index": n_clicks},
+                    n_clicks=0,
+                    style={"display": "block"},
+                ),
+                html.Div(
+                    results_string,
+                    id = {"type": "dynamic-output", "index": n_clicks}
+                )
+            ]
+        )
+        children.append(new_element)
+
+
+    return children
 
 
 if __name__ == '__main__':
