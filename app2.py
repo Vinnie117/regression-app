@@ -22,10 +22,6 @@ app.layout = html.Div([
     # a header for the webpage
     html.H1('My Dash App'),
 
-    # a submit button
-    #html.Button(id='submit-button-state', children='Submit', type='button'),
-
-
     html.Div(children = [
 
         # left column
@@ -136,9 +132,9 @@ app.layout = html.Div([
             }
         ),
 
-        # create the div that will display the sum of all numbers in the table
+        # create the div that will display the regression results
         html.Div(
-            id='sum-state',
+            id='results',
             style={
             'display': 'inline-block', 
             'width': '20%', 
@@ -193,46 +189,59 @@ def update_radio_items(columns):
 
 # callback for logic with data - here to calculate the sum of all values
 @app.callback(
-    Output(component_id = 'sum-state', component_property = 'children'),
+    Output(component_id = 'results', component_property = 'children'),
     State(component_id = 'table', component_property = 'data'),
     State(component_id = 'target', component_property = 'value'),
     State(component_id = 'predictors', component_property = 'value'),
     Input(component_id = 'submit-button-state', component_property = 'n_clicks'),
     prevent_initial_call=True
     )
-def update_sum(data, target_var, predictor_vars, n_clicks,): # order of arguments in order of classes after 'Output'
+def calculate_regression(data, target_var, predictor_vars, n_clicks,): # order of arguments in order of classes after 'Output'
 
-    # data is a list of dicts: [{'x': 0, 'y': 0, 'z': 7}, {'x': 1, 'y': 1, 'z': 2}, ....]
-    x = [d['x'] for d in data]
-    y = [d['y'] for d in data]
-    z = [d['z'] for d in data]
+    # # data is a list of dicts: [{'x': 0, 'y': 0, 'z': 7}, {'x': 1, 'y': 1, 'z': 2}, ....]
+    # x = [d['x'] for d in data]
+    # y = [d['y'] for d in data]
+    # z = [d['z'] for d in data]
 
-    total = sum(x) + sum(y) + sum(z)
-    #print('The total sum is: ', total)
+    # total = sum(x) + sum(y) # + sum(z)
+    # #print('The total sum is: ', total)
 
-    result = 'The total sum is:\n{total}'.format(total = total) 
+    # result = 'The total sum is:\n{total}'.format(total = total) 
 
     #### regression
     #print(data)
     df = pd.DataFrame(data)
 
     # print(df)
-    print(target_var)
-    print(predictor_vars)
+    # print(target_var)
+    # print(predictor_vars)
 
     lm = sm.OLS(data = df, endog=df[target_var], exog=df[predictor_vars])
     lm_results = lm.fit()
 
-    # lm_results_regression = lm_results.summary().tables[0]
-    lm_results_parameters = lm_results.summary().tables[1]
-    # lm_results_distribution = lm_results.summary().tables[2]
-    df_results_parameters = pd.DataFrame(lm_results_parameters)
+    # df_results_regression = lm_results.summary().tables[0].as_html()
+    # df_results_distribution = lm_results.summary().tables[2].as_html()
+    df_results_parameters = lm_results.summary().tables[1].as_html()
+    df_results_parameters = pd.read_html(df_results_parameters, header=0, index_col=0)[0]
 
     print(df_results_parameters)
-    # print(test.iloc[0,1]) # coef
-    coef = str(df_results_parameters.iloc[1,1]) # coef value
 
-    return result + 'Regression coef is: {}'.format(coef) 
+    list_coefs = df_results_parameters['coef'].tolist()
+
+    result = 'Experiment {number}: Regression '.format(
+        number = n_clicks
+    )
+    #result2 = 'Result: {}'.format({a : b for a,b in zip(predictor_vars, list_coefs)}) 
+
+    list_results = []
+    for var, coef in zip(predictor_vars, list_coefs):
+        list_results.append('coef of {var} is {coef}'. format(var=var, coef=coef))
+    
+    print(list_results)
+
+    string_results = ', '.join(list_results)
+
+    return result + string_results
 
 
 if __name__ == '__main__':
