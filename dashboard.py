@@ -5,22 +5,13 @@ import plotly.graph_objects as go
 import statsmodels.api as sm
 import pandas as pd
 import json
+from components.data_table import data_table
 
 
 
-app = Dash()
+dash_app = Dash()
 
-data = [
-        {'x': 0, 'y': 0, 'z': 7},
-        {'x': 1, 'y': 1, 'z': 2},
-        {'x': 2, 'y': 2, 'z': 0},
-        {'x': 3, 'y': 3, 'z': 4},
-        {'x': 4, 'y': 4, 'z': 5},
-        {'x': 2, 'y': 5, 'z': 9},
-        {'x': 3, 'y': 4, 'z': 6}
-]
-
-app.layout = html.Div([
+dash_app.layout = html.Div([
         
     # a header for the webpage
     html.H1('My Dash App'),
@@ -91,6 +82,7 @@ app.layout = html.Div([
 
             html.Div(
 
+                # create the data table
                 dash_table.DataTable(
                     id='table',
                     columns=[
@@ -120,7 +112,7 @@ app.layout = html.Div([
                             'renamable': True
                         }
                         ],
-                    data=data,
+                    data=data_table,
                     editable=True,
                     fill_width=False,
                     virtualization=True,  # make datatable scrollable
@@ -130,11 +122,10 @@ app.layout = html.Div([
                     'text-align': 'center', 
                     'width': '50%', 
                     'margin-left': 'auto', 
-                    'margin-right': 'auto'
+                    'margin-right': 'auto',
+                    'border': '1px solid black'
                 }
             ),
-            # create the data table
-
 
             # create the scatter plot
             dcc.Graph(id='scatterplot')
@@ -169,7 +160,7 @@ app.layout = html.Div([
 
 
 # callback to update the scatter plot when the table data changes
-@app.callback(
+@dash_app.callback(
     Output(component_id = 'scatterplot', component_property = 'figure'),
     Input(component_id = 'table', component_property = 'data'))
 def update_scatterplot(data):
@@ -186,7 +177,7 @@ def update_scatterplot(data):
 
 
 # dynamically adjust list of radio items for target given table vars
-@app.callback(
+@dash_app.callback(
     Output('target', 'options'),
     Input('table', 'columns'))
 def update_radio_items(columns):
@@ -194,7 +185,7 @@ def update_radio_items(columns):
     return column_names
 
 # dynamically adjust list of radio items for predictors given table vars
-@app.callback(
+@dash_app.callback(
     Output('predictors', 'options'),
     Input('table', 'columns'))
 def update_radio_items(columns):
@@ -203,7 +194,7 @@ def update_radio_items(columns):
 
 
 # callback for logic with data - here to calculate the sum of all values
-@app.callback(
+@dash_app.callback(
     Output(component_id = 'results', component_property = 'children'),
     State(component_id = 'table', component_property = 'data'),
     State(component_id = 'target', component_property = 'value'),
@@ -282,8 +273,7 @@ def calculate_regression(data, target_var, predictor_vars, children, n_clicks, _
 
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
-
+    dash_app.run_server(debug=True)
 
 
 
