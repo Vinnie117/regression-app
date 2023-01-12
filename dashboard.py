@@ -193,8 +193,8 @@ dash_app.layout = html.Div([
 ###########################################################################################
 
 def create_plot(df, x, y):
-
-    plot = px.scatter(df, x=x, y=y)
+    
+    plot = px.scatter(df, x=x, y=y, trendline='ols')
     plot.update_layout(margin=dict(l=20, r=20, t=20, b=20))
 
     return plot
@@ -220,7 +220,7 @@ def update_scatterplot(data, x_axis, y_axis):
     return fig
 
 
-# dynamically adjust list of radio items for target given table vars
+# dynamically adjust list of radio items, dropdown menu for target given table vars
 @dash_app.callback(
     Output('target', 'options'),
     Output('yaxis-column', 'options'),
@@ -229,7 +229,7 @@ def update_radio_items(columns):
     column_names = [i['name'] for i in columns]
     return column_names, column_names
 
-# dynamically adjust list of radio items for predictors given table vars
+# dynamically adjust list of radio items, dropdown menu for predictors given table vars
 @dash_app.callback(
     Output('predictors', 'options'),
     Output('xaxis-column', 'options'),
@@ -260,32 +260,39 @@ def calculate_regression(data, target_var, predictor_vars, children, n_clicks, _
     # print(target_var)
     # print(predictor_vars)
 
-    lm = sm.OLS(data = df, endog=df[target_var], exog=df[predictor_vars])
+    X = sm.add_constant(df[predictor_vars])  # intercept must be added manually
+
+    lm = sm.OLS(data = df, endog=df[target_var], exog=X)
     lm_results = lm.fit()
 
     # df_results_regression = lm_results.summary().tables[0].as_html()
+    # df_results_regression = pd.read_html(df_results_regression, header=0, index_col=0)[0]
+    # print(df_results_regression)
     # df_results_distribution = lm_results.summary().tables[2].as_html()
+
     df_results_parameters = lm_results.summary().tables[1].as_html()
     df_results_parameters = pd.read_html(df_results_parameters, header=0, index_col=0)[0]
-
     print(df_results_parameters)
 
+    
     #### Extracting the results from df
     list_coefs = df_results_parameters['coef'].tolist()
-
     result = 'Experiment {number}: Regression '.format(number = n_clicks)
+
+    predictor_vars.insert(0, 'const')
+        
     list_results = []
     for var, coef in zip(predictor_vars, list_coefs):
         list_results.append('coef of {var} is {coef}'. format(var=var, coef=coef))
     
-    # print(list_results)
+    print(list_results)
 
     results_string = result + ', '.join(list_results)
 
 
     #### appending / removing divs to results html
     input_id = callback_context.triggered[0]["prop_id"].split(".")[0]
-    print(input_id)
+    # print(input_id)
 
     # if block is triggered by clicking on X
     if "index" in input_id:
