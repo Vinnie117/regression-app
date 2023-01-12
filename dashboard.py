@@ -130,7 +130,7 @@ dash_app.layout = html.Div([
                     
                 ), style={
                     'text-align': 'center', 
-                    'width': '50%', 
+                    'width': '75%', 
                     'margin-left': 'auto', 
                     'margin-right': 'auto',
                     'border': '1px solid black'
@@ -145,6 +145,7 @@ dash_app.layout = html.Div([
                     dcc.Dropdown(
                         options = list(pd.DataFrame(data_table)),
                         value='x',
+                        placeholder="X-Achse",
                         id='xaxis-column'
                     )
                 ], style={'width': '48%', 'display': 'inline-block'}),
@@ -153,6 +154,7 @@ dash_app.layout = html.Div([
                     dcc.Dropdown(
                         options = list(pd.DataFrame(data_table)),
                         value = 'y',
+                        placeholder="Y-Achse",
                         id='yaxis-column'
                     )
                 ], style={'width': '48%', 'display': 'inline-block'}),
@@ -211,10 +213,6 @@ def update_scatterplot(data, x_axis, y_axis):
     y = [d['y'] for d in data]
 
     print("X is: ", x, '\n', "Y is: ", y)
-
-    # # create the scatter plot
-    # fig = go.Figure(data=[go.Scatter(x=x, y=y, mode='markers')])
-    # fig.update_layout(margin=dict(l=20, r=20, t=20, b=20))
 
     data = pd.DataFrame(data)
     fig =create_plot(data, x_axis, y_axis)
