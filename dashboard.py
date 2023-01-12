@@ -2,6 +2,7 @@ from dash import Dash, dcc, html, dash_table, callback_context
 from dash.dependencies import Input, Output, State, ALL
 from dash.dash_table.Format import Format
 import plotly.graph_objects as go
+import plotly.express as px
 import statsmodels.api as sm
 import pandas as pd
 import json
@@ -142,16 +143,16 @@ dash_app.layout = html.Div([
                 html.Div([
 
                     dcc.Dropdown(
-                        list(pd.DataFrame(data_table)),
-                        'x',
+                        options = list(pd.DataFrame(data_table)),
+                        value='x',
                         id='xaxis-column'
                     )
                 ], style={'width': '48%', 'display': 'inline-block'}),
 
                 html.Div([
                     dcc.Dropdown(
-                        list(pd.DataFrame(data_table)),
-                        'y',
+                        options = list(pd.DataFrame(data_table)),
+                        value = 'y',
                         id='yaxis-column'
                     )
                 ], style={'width': '48%', 'display': 'inline-block'}),
@@ -187,27 +188,38 @@ dash_app.layout = html.Div([
 ])
 
 
+###########################################################################################
+
+def create_plot(df, x, y):
+
+    plot = px.scatter(df, x=x, y=y)
+    plot.update_layout(margin=dict(l=20, r=20, t=20, b=20))
+
+    return plot
 
 ###########################################################################################
 
-# callback to select plot data
 
-
-# callback to update the scatter plot when the table data changes
+# callback to update the scatter plot given changes
 @dash_app.callback(
     Output(component_id = 'scatterplot', component_property = 'figure'),
-    Input(component_id = 'table', component_property = 'data'))
-def update_scatterplot(data):
+    Input(component_id = 'table', component_property = 'data'),
+    Input(component_id = 'xaxis-column', component_property = 'value'),
+    Input(component_id = 'yaxis-column', component_property = 'value'))
+def update_scatterplot(data, x_axis, y_axis):
     x = [d['x'] for d in data]
     y = [d['y'] for d in data]
 
     print("X is: ", x, '\n', "Y is: ", y)
 
-    # create the scatter plot
-    figure = go.Figure(data=[go.Scatter(x=x, y=y, mode='markers')])
-    figure.update_layout(margin=dict(l=20, r=20, t=20, b=20))
+    # # create the scatter plot
+    # fig = go.Figure(data=[go.Scatter(x=x, y=y, mode='markers')])
+    # fig.update_layout(margin=dict(l=20, r=20, t=20, b=20))
 
-    return figure
+    data = pd.DataFrame(data)
+    fig =create_plot(data, x_axis, y_axis)
+
+    return fig
 
 
 # dynamically adjust list of radio items for target given table vars
