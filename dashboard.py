@@ -152,7 +152,7 @@ dash_app.layout = html.Div([
 
                 html.Div([
                     dcc.Dropdown(
-                        options = list(pd.DataFrame(data_table)),
+                        options = [],
                         value = 'y',
                         placeholder="Y-Achse",
                         id='yaxis-column'
@@ -223,18 +223,20 @@ def update_scatterplot(data, x_axis, y_axis):
 # dynamically adjust list of radio items for target given table vars
 @dash_app.callback(
     Output('target', 'options'),
+    Output('yaxis-column', 'options'),
     Input('table', 'columns'))
 def update_radio_items(columns):
     column_names = [i['name'] for i in columns]
-    return column_names
+    return column_names, column_names
 
 # dynamically adjust list of radio items for predictors given table vars
 @dash_app.callback(
     Output('predictors', 'options'),
+    Output('xaxis-column', 'options'),
     Input('table', 'columns'))
 def update_radio_items(columns):
     column_names = [i['name'] for i in columns]
-    return column_names
+    return column_names, column_names
 
 
 # callback for logic with data - here to calculate the sum of all values
