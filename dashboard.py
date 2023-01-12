@@ -80,9 +80,9 @@ dash_app.layout = html.Div([
         # middle column
         html.Div(children = [
 
+            # create the data table
             html.Div(
 
-                # create the data table
                 dash_table.DataTable(
                     id='table',
                     columns=[
@@ -110,7 +110,16 @@ dash_app.layout = html.Div([
                             'on_change': {'action': 'coerce', 'failure': 'default'},
                             'deletable': True,
                             'renamable': True
-                        }
+                        },
+                        {
+                             'name': 'a', 
+                            'id': 'a', 
+                            'type': 'numeric',
+                            'format': Format(nully='N/A'),
+                            'on_change': {'action': 'coerce', 'failure': 'default'},
+                            'deletable': True,
+                            'renamable': True
+                        }                       
                         ],
                     data=data_table,
                     editable=True,
@@ -127,10 +136,34 @@ dash_app.layout = html.Div([
                 }
             ),
 
-            # create the scatter plot
-            dcc.Graph(id='scatterplot')
+            # visualization
+            html.Div(children = [
+
+                html.Div([
+
+                    dcc.Dropdown(
+                        list(pd.DataFrame(data_table)),
+                        'x',
+                        id='xaxis-column'
+                    )
+                ], style={'width': '48%', 'display': 'inline-block'}),
+
+                html.Div([
+                    dcc.Dropdown(
+                        list(pd.DataFrame(data_table)),
+                        'y',
+                        id='yaxis-column'
+                    )
+                ], style={'width': '48%', 'display': 'inline-block'}),
+            
+                # create the scatter plot
+                dcc.Graph(id='scatterplot')
+            ], style={
+                'margin-top': '50px'
+            }
+        )
+
         ], style={
-            'display': 'inline-block', 
             'width': '55%', 
             'border': '1px dashed black'
             }
@@ -157,6 +190,7 @@ dash_app.layout = html.Div([
 
 ###########################################################################################
 
+# callback to select plot data
 
 
 # callback to update the scatter plot when the table data changes
