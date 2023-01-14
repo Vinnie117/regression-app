@@ -1,7 +1,6 @@
 from dash import Dash, dcc, html, dash_table, callback_context
 from dash.dependencies import Input, Output, State, ALL
 from dash.dash_table.Format import Format
-import plotly.graph_objects as go
 import plotly.express as px
 import statsmodels.api as sm
 import pandas as pd
@@ -29,48 +28,40 @@ dash_app.layout = html.Div([
                 style={'margin-top': '20px'}  # space between the button and the table below
                 ), 
 
-            html.Div(children = [
+            html.Div([
 
-                html.Div([
+                html.P('Target variable'),
 
-                    html.P('Target variable'),
-
-                    dcc.RadioItems(
+                dcc.Dropdown(
                     id = 'target',
-                    options=[],  # will be filled by callback
+                    options=[],
                     value = '',
-                    labelStyle={
-                        'display': 'block', 
-                        'margin-top': '20px'
-                    } # display gives a vertical list of radio items, margin top increases spacing between items
-                    )
-                ], style={
-                    'display': 'inline-block',
-                    'border': '1px dashed black'
-                    }
-                ), 
+                ),
 
-                html.Div([
-            
-                    html.P('Predictor variables'),
 
-                    dcc.Checklist(
-                        id = 'predictors',
-                        options=[],  # will be filled by callback
-                        labelStyle={
-                            'display': 'block', 
-                            'margin-top': '20px'
-                            
-                        } # display gives a vertical list of radio items, margin top increases spacing between items
-                    )
-                ], style={
-                    'display': 'inline-block',
-                    'border': '1px dashed black',
-                    'margin-top': '20px',
-                    'margin-left': '20px'
-                    }
+            ], style={
+                #'display': 'inline-block',
+                'margin-top': '30px',
+                'border': '1px dashed black'
+                }
+            ),
+
+            html.Div([
+        
+                html.P('Predictor variables'),
+
+                dcc.Dropdown(
+                    id = 'predictors',
+                    options=[],
+                    value = '',
                 )
-            ])
+            ], style={
+                #'display': 'inline-block',
+                'border': '1px dashed black',
+                'margin-top': '30px',
+                #'margin-left': '20px'
+                }
+            ),          
         ], style={
             'display': 'inline-block',  # display elements (children) side by side
             'width': '15%',  # percentage of screen width taken by div
@@ -144,18 +135,18 @@ dash_app.layout = html.Div([
 
                     dcc.Dropdown(
                         options = list(pd.DataFrame(data_table)),
-                        value='x',
-                        placeholder="X-Achse",
-                        id='xaxis-column'
+                        value='y',
+                        placeholder="Y-Achse",
+                        id='yaxis-column'
                     )
                 ], style={'width': '48%', 'display': 'inline-block'}),
 
                 html.Div([
                     dcc.Dropdown(
                         options = [],
-                        value = 'y',
-                        placeholder="Y-Achse",
-                        id='yaxis-column'
+                        value = 'x',
+                        placeholder="X-Achse",
+                        id='xaxis-column'
                     )
                 ], style={'width': '48%', 'display': 'inline-block'}),
             
@@ -194,7 +185,7 @@ dash_app.layout = html.Div([
 
 def create_plot(df, x, y):
     
-    plot = px.scatter(df, x=x, y=y, trendline='ols')
+    plot = px.scatter(df, x=x, y=y)
     plot.update_layout(margin=dict(l=20, r=20, t=20, b=20))
 
     return plot
@@ -215,7 +206,7 @@ def update_scatterplot(data, x_axis, y_axis):
     print("X is: ", x, '\n', "Y is: ", y)
 
     data = pd.DataFrame(data)
-    fig =create_plot(data, x_axis, y_axis)
+    fig = create_plot(data, x_axis, y_axis)
 
     return fig
 
@@ -258,13 +249,17 @@ def calculate_regression(data, target_var, predictor_vars, children, n_clicks, _
 
     # print(df)
     # print(target_var)
-    # print(predictor_vars)
+    print(predictor_vars)
 
     X = sm.add_constant(df[predictor_vars])  # intercept must be added manually
 
     lm = sm.OLS(data = df, endog=df[target_var], exog=X)
     lm_results = lm.fit()
 
+
+    #### Prediction
+    import numpy as np
+    
     # df_results_regression = lm_results.summary().tables[0].as_html()
     # df_results_regression = pd.read_html(df_results_regression, header=0, index_col=0)[0]
     # print(df_results_regression)
@@ -274,11 +269,12 @@ def calculate_regression(data, target_var, predictor_vars, children, n_clicks, _
     df_results_parameters = pd.read_html(df_results_parameters, header=0, index_col=0)[0]
     print(df_results_parameters)
 
-    
+
     #### Extracting the results from df
     list_coefs = df_results_parameters['coef'].tolist()
     result = 'Experiment {number}: Regression '.format(number = n_clicks)
 
+    predictor_vars = list(predictor_vars)
     predictor_vars.insert(0, 'const')
         
     list_results = []
