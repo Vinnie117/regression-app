@@ -38,7 +38,6 @@ dash_app.layout = html.Div([
                     value = '',
                 ),
 
-
             ], style={
                 #'display': 'inline-block',
                 'margin-top': '30px',
@@ -48,12 +47,12 @@ dash_app.layout = html.Div([
 
             html.Div([
         
-                html.P('Predictor variables'),
+                html.P('Predictor variable'),
 
                 dcc.Dropdown(
                     id = 'predictors',
                     options=[],
-                    value = '',
+                    value = ''            
                 )
             ], style={
                 #'display': 'inline-block',
@@ -61,10 +60,26 @@ dash_app.layout = html.Div([
                 'margin-top': '30px',
                 #'margin-left': '20px'
                 }
-            ),          
+            ),
+            
+            html.Div([
+
+                html.P('Control variables'),
+                
+                dcc.Checklist(
+                    id = 'controls',
+                    options=[],
+                    labelStyle= {
+                        'display': 'block'
+                    }               
+                )
+
+            ])
+            
+            ,          
         ], style={
             'display': 'inline-block',  # display elements (children) side by side
-            'width': '15%',  # percentage of screen width taken by div
+            'width': '10%',  # percentage of screen width taken by div
             'border': '1px dashed black',  # border (for debugging)          
             }
         ),
@@ -121,7 +136,7 @@ dash_app.layout = html.Div([
                     
                 ), style={
                     'text-align': 'center', 
-                    'width': '75%', 
+                    'width': '77%', 
                     'margin-left': 'auto', 
                     'margin-right': 'auto',
                     'border': '1px solid black'
@@ -170,7 +185,7 @@ dash_app.layout = html.Div([
             children = [],
             style={
             
-            'width': '25%', 
+            'width': '27%', 
             'border': '1px dashed black',
             }
         )
@@ -223,11 +238,20 @@ def update_radio_items(columns):
 # dynamically adjust list of radio items, dropdown menu for predictors given table vars
 @dash_app.callback(
     Output('predictors', 'options'),
+    Output('controls', 'options'),
     Output('xaxis-column', 'options'),
     Input('table', 'columns'))
 def update_radio_items(columns):
     column_names = [i['name'] for i in columns]
-    return column_names, column_names
+    return column_names, column_names, column_names
+
+# # disable selected predictor for controls (or get options of predictors and subtract its value)
+# @dash_app.callback(
+#     Output('controls', 'options'),
+#     Input('predictors', 'value')    
+# )
+# def no_control():
+#     pass
 
 
 # callback for logic with data - here to calculate the sum of all values
