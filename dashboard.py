@@ -225,36 +225,52 @@ def update_scatterplot(data, x_axis, y_axis):
 
     return fig
 
-
-# dynamically adjust list of radio items, dropdown menu for target given table vars
+# callbacks for scatterplot axis selection
 @dash_app.callback(
-    Output('target', 'options'),
+    Output('xaxis-column', 'options'),
     Output('yaxis-column', 'options'),
     Input('table', 'columns'))
 def update_radio_items(columns):
     column_names = [i['name'] for i in columns]
     return column_names, column_names
 
-# dynamically adjust list of radio items, dropdown menu for predictors given table vars
+
+# callback for target variable selection
+@dash_app.callback(
+    Output('target', 'options'),
+    Input('table', 'columns'),
+    Input('predictors', 'value'),
+    Input('controls', 'value')
+    )
+def update_target(columns, predictor_var, control_vars):
+    column_names = [i['name'] for i in columns if i['name'] not in [control_vars, predictor_var]]
+    return column_names
+
+# callback for predictor variable selection
 @dash_app.callback(
     Output('predictors', 'options'),
+    Input('table', 'columns'),
+    Input('target', 'value'),
+    Input('controls', 'value')
+    )
+def update_predictor(columns, target_var, control_vars):
+    column_names = [i['name'] for i in columns if i['name'] not in [control_vars, target_var]]
+    return column_names
+
+
+# callback for control variable selection
+@dash_app.callback(
     Output('controls', 'options'),
-    Output('xaxis-column', 'options'),
-    Input('table', 'columns'))
-def update_radio_items(columns):
-    column_names = [i['name'] for i in columns]
-    return column_names, column_names, column_names
-
-# # disable selected predictor for controls (or get options of predictors and subtract its value)
-# @dash_app.callback(
-#     Output('controls', 'options'),
-#     Input('predictors', 'value')    
-# )
-# def no_control():
-#     pass
+    Input('table', 'columns'),
+    Input('predictors', 'value'),
+    Input('target', 'value')
+    )
+def update_controls(columns, predictor_var, target_var):
+    column_names = [i['name'] for i in columns if i['name'] not in [predictor_var, target_var]]
+    return column_names
 
 
-# callback for logic with data - here to calculate the sum of all values
+# callback to calculate regression
 @dash_app.callback(
     Output(component_id = 'results', component_property = 'children'),
     State(component_id = 'table', component_property = 'data'),
