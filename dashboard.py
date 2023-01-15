@@ -69,6 +69,7 @@ dash_app.layout = html.Div([
                 dcc.Checklist(
                     id = 'controls',
                     options=[],
+                    value=[''],
                     labelStyle= {
                         'display': 'block'
                     }               
@@ -243,6 +244,7 @@ def update_radio_items(columns):
     Input('controls', 'value')
     )
 def update_target(columns, predictor_var, control_vars):
+    control_vars = ",".join(string for string in control_vars if len(string) > 0)
     column_names = [i['name'] for i in columns if i['name'] not in [control_vars, predictor_var]]
     return column_names
 
@@ -254,6 +256,7 @@ def update_target(columns, predictor_var, control_vars):
     Input('controls', 'value')
     )
 def update_predictor(columns, target_var, control_vars):
+    control_vars = ",".join(string for string in control_vars if len(string) > 0)
     column_names = [i['name'] for i in columns if i['name'] not in [control_vars, target_var]]
     return column_names
 
@@ -276,6 +279,7 @@ def update_controls(columns, predictor_var, target_var):
     State(component_id = 'table', component_property = 'data'),
     State(component_id = 'target', component_property = 'value'),
     State(component_id = 'predictors', component_property = 'value'),
+    State(component_id = 'controls', component_property = 'value'),
     State(component_id='results', component_property='children'),
     [
         Input(component_id = 'submit-button-state', component_property = 'n_clicks'),
@@ -283,13 +287,14 @@ def update_controls(columns, predictor_var, target_var):
     ],
     prevent_initial_call=True
     )
-def calculate_regression(data, target_var, predictor_vars, children, n_clicks, _): # order of arguments in order of classes after 'Output'
+def calculate_regression(data, target_var, predictor_vars, control_vars,children, n_clicks, _): # order of arguments in order of classes after 'Output'
 
     df = pd.DataFrame(data)
 
     # print(df)
     # print(target_var)
     print(predictor_vars)
+    print(control_vars)
 
     X = sm.add_constant(df[predictor_vars])  # intercept must be added manually
 
@@ -298,7 +303,7 @@ def calculate_regression(data, target_var, predictor_vars, children, n_clicks, _
 
 
     #### Prediction
-    import numpy as np
+    #import numpy as np
     
     # df_results_regression = lm_results.summary().tables[0].as_html()
     # df_results_regression = pd.read_html(df_results_regression, header=0, index_col=0)[0]
