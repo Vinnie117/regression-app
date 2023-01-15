@@ -287,20 +287,21 @@ def update_controls(columns, predictor_var, target_var):
     ],
     prevent_initial_call=True
     )
-def calculate_regression(data, target_var, predictor_vars, control_vars,children, n_clicks, _): # order of arguments in order of classes after 'Output'
+def calculate_regression(data, target_var, predictor_var, control_vars,children, n_clicks, _): # order of arguments in order of classes after 'Output'
 
     df = pd.DataFrame(data)
 
     # print(df)
     # print(target_var)
-    print(predictor_vars)
-    print(control_vars)
+    # print(predictor_var)
+    # print(control_vars)
 
-    X = sm.add_constant(df[predictor_vars])  # intercept must be added manually
+    control_vars = [item for item in control_vars if len(item)>0]
+    x_vars = [predictor_var] + control_vars
 
+    X = sm.add_constant(df[x_vars])  # intercept must be added manually
     lm = sm.OLS(data = df, endog=df[target_var], exog=X)
     lm_results = lm.fit()
-
 
     #### Prediction
     #import numpy as np
@@ -319,11 +320,11 @@ def calculate_regression(data, target_var, predictor_vars, control_vars,children
     list_coefs = df_results_parameters['coef'].tolist()
     result = 'Experiment {number}: Regression '.format(number = n_clicks)
 
-    predictor_vars = list(predictor_vars)
-    predictor_vars.insert(0, 'const')
+    x_vars = list(x_vars)
+    x_vars.insert(0, 'const')
         
     list_results = []
-    for var, coef in zip(predictor_vars, list_coefs):
+    for var, coef in zip(x_vars, list_coefs):
         list_results.append('coef of {var} is {coef}'. format(var=var, coef=coef))
     
     print(list_results)
