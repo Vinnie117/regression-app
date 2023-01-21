@@ -1,7 +1,7 @@
 from dash import Dash, dcc, html, dash_table, callback_context
 from dash.dependencies import Input, Output, State, ALL
 from dash.dash_table.Format import Format
-import plotly.express as px
+import plotly.graph_objects as go
 import statsmodels.api as sm
 import pandas as pd
 import numpy as np
@@ -200,9 +200,12 @@ dash_app.layout = html.Div([
 
 ###########################################################################################
 
-def create_plot(df, x, y):
+def create_plot(x, y):
     
-    plot = px.scatter(df, x=x, y=y)
+    # plot = px.scatter(df, x=x, y=y)
+    # plot.update_layout(margin=dict(l=20, r=20, t=20, b=20))
+
+    plot = go.Figure(data=go.Scatter(x=x, y=y, mode='markers'))
     plot.update_layout(margin=dict(l=20, r=20, t=20, b=20))
 
     return plot
@@ -217,21 +220,30 @@ def create_plot(df, x, y):
     Input(component_id = 'xaxis-column', component_property = 'value'),
     Input(component_id = 'yaxis-column', component_property = 'value'),
     Input(component_id = 'regression_results', component_property = 'data'))
-def update_scatterplot(data, x_axis, y_axis, test):
+def update_scatterplot(data, x_axis, y_axis, line):
     x = [d['x'] for d in data]
     y = [d['y'] for d in data]
 
     print("X is: ", x, '\n', "Y is: ", y)
+    
+    x_axis = [d[x_axis] for d in data]
+    y_axis = [d[y_axis] for d in data]
 
-    data = pd.DataFrame(data)
-    fig = create_plot(data, x_axis, y_axis)
+    #data = pd.DataFrame(data)
+    fig = create_plot(x_axis, y_axis)
 
-    if test:
-        print(test)
-        #fig.add_traces(go.Scatter(x=test['x_range'], y=test['y_range'], name='Regression Fit'))
-        fig.add_traces(list(px.line(x=test['x_range'], y=test['y_range']).select_traces()))
- 
-        #fig.add_traces(px.line(x=x, y=y_pred, color_discrete_sequence=["red"]).data)
+    if line:
+        
+        # fig.add_traces(list(px.line(x=line['x_range'], y=line['y_range'], title='Hello').select_traces()))
+        # fig.update_layout(showlegend=True)
+
+        fig.add_trace(go.Scatter(
+            x=line['x_range'],
+             y=line['y_range'],
+            mode='lines',
+            name='BANANE'
+            )
+        )
 
     return fig
 
@@ -313,7 +325,7 @@ def calculate_regression(data, target_var, predictor_var, control_vars,children,
     lm = sm.OLS(data = df, endog=df[target_var], exog=X)
     lm_results = lm.fit()
 
-    #### Prediction
+    #### Prediction (only for predictor_var, without controls!)
     x_range = np.linspace(df[predictor_var].min(), df[predictor_var].max(), 100)
     x_range_with_const = sm.add_constant(x_range)
     y_range = lm_results.predict(x_range_with_const)
@@ -392,6 +404,7 @@ def calculate_regression(data, target_var, predictor_var, control_vars,children,
         )
         children.append(new_element)
 
+    # passing regression results to store
     #dict_results_parameters = df_results_parameters.to_dict('index')
 
     return children, regression_dict #,dict_results_parameters
