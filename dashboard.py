@@ -220,30 +220,33 @@ def create_plot(x, y):
     Input(component_id = 'xaxis-column', component_property = 'value'),
     Input(component_id = 'yaxis-column', component_property = 'value'),
     Input(component_id = 'regression_results', component_property = 'data'))
-def update_scatterplot(data, x_axis, y_axis, line):
+def update_scatterplot(data, x_axis_name, y_axis_name, model):
     x = [d['x'] for d in data]
     y = [d['y'] for d in data]
 
     print("X is: ", x, '\n', "Y is: ", y)
     
-    x_axis = [d[x_axis] for d in data]
-    y_axis = [d[y_axis] for d in data]
+    x_axis = [d[x_axis_name] for d in data]
+    y_axis = [d[y_axis_name] for d in data]
 
     #data = pd.DataFrame(data)
     fig = create_plot(x_axis, y_axis)
 
-    if line:
-        
-        # fig.add_traces(list(px.line(x=line['x_range'], y=line['y_range'], title='Hello').select_traces()))
-        # fig.update_layout(showlegend=True)
 
-        fig.add_trace(go.Scatter(
-            x=line['x_range'],
-             y=line['y_range'],
-            mode='lines',
-            name='BANANE'
+
+    if model:
+
+        if x_axis_name in model['results']:
+        
+            print(model)
+
+            fig.add_trace(go.Scatter(
+                x=model['x_range'],
+                y=model['y_range'],
+                mode='lines',
+                name='BANANE'
+                )
             )
-        )
 
     return fig
 
@@ -325,9 +328,14 @@ def calculate_regression(data, target_var, predictor_var, control_vars,children,
     lm = sm.OLS(data = df, endog=df[target_var], exog=X)
     lm_results = lm.fit()
 
-    #### Prediction (only for predictor_var, without controls!)
+    #### Prediction 
+
+    # for the plot
     x_range = np.linspace(df[predictor_var].min(), df[predictor_var].max(), 100)
-    x_range_with_const = sm.add_constant(x_range)
+
+    # for the model
+    predictor_space = np.linspace(df[x_vars].min(), df[x_vars].max(), 100)
+    x_range_with_const = sm.add_constant(predictor_space)
     y_range = lm_results.predict(x_range_with_const)
 
     regression_dict = {'x_range': x_range, 'y_range': y_range}
@@ -405,9 +413,10 @@ def calculate_regression(data, target_var, predictor_var, control_vars,children,
         children.append(new_element)
 
     # passing regression results to store
-    #dict_results_parameters = df_results_parameters.to_dict('index')
+    regression_dict['results'] = df_results_parameters.to_dict('index')
+    
 
-    return children, regression_dict #,dict_results_parameters
+    return children, regression_dict
 
 
 if __name__ == '__main__':
