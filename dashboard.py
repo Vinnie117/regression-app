@@ -4,6 +4,7 @@ from dash.dash_table.Format import Format
 import plotly.express as px
 import statsmodels.api as sm
 import pandas as pd
+import numpy as np
 import json
 from components.data_table import data_table
 
@@ -304,7 +305,10 @@ def calculate_regression(data, target_var, predictor_var, control_vars,children,
     lm_results = lm.fit()
 
     #### Prediction
-    #import numpy as np
+    # x_range = np.linspace(predictor_var.min(), predictor_var.max(), 100)
+    # y_range = lm_results.predict(x_range.reshape(-1, 1))
+
+    add_line = update_scatterplot
     
     # df_results_regression = lm_results.summary().tables[0].as_html()
     # df_results_regression = pd.read_html(df_results_regression, header=0, index_col=0)[0]
@@ -312,20 +316,33 @@ def calculate_regression(data, target_var, predictor_var, control_vars,children,
     # df_results_distribution = lm_results.summary().tables[2].as_html()
 
     df_results_parameters = lm_results.summary().tables[1].as_html()
+
+    # Replacing column names in HTML
+    df_results_parameters = df_results_parameters.replace("coef", "BANANA")
+    
+    # formatting the HTML table -> BeautifulSoup
+    df_results_parameters = df_results_parameters.replace(
+        '<table class="simpletable">',
+        '<table class="simpletable" border="1" style="border-collapse: collapse;">'
+    )
+
+    print(df_results_parameters)
+
+
     df_results_parameters = pd.read_html(df_results_parameters, header=0, index_col=0)[0]
     print(df_results_parameters)
 
 
     #### Extracting the results from df
-    list_coefs = df_results_parameters['coef'].tolist()
+    list_coefs = df_results_parameters.iloc[:,0].to_list()
     result = 'Experiment {number}: Regression '.format(number = n_clicks)
 
     x_vars = list(x_vars)
     x_vars.insert(0, 'const')
         
     list_results = []
-    for var, coef in zip(x_vars, list_coefs):
-        list_results.append('coef of {var} is {coef}'. format(var=var, coef=coef))
+    for var, coef_value in zip(x_vars, list_coefs):
+        list_results.append('coef of {var} is {coef_value}'. format(var=var, coef_value=coef_value))
     
     print(list_results)
 
