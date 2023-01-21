@@ -194,7 +194,7 @@ dash_app.layout = html.Div([
 
     ], style={'display': 'flex', 'align-items': 'top'}),  # vertically align the children
     
-
+    dcc.Store(id='regression_results')
 ])
 
 
@@ -215,8 +215,9 @@ def create_plot(df, x, y):
     Output(component_id = 'scatterplot', component_property = 'figure'),
     Input(component_id = 'table', component_property = 'data'),
     Input(component_id = 'xaxis-column', component_property = 'value'),
-    Input(component_id = 'yaxis-column', component_property = 'value'))
-def update_scatterplot(data, x_axis, y_axis):
+    Input(component_id = 'yaxis-column', component_property = 'value'),
+    Input(component_id = 'regression_results', component_property = 'data'))
+def update_scatterplot(data, x_axis, y_axis, test):
     x = [d['x'] for d in data]
     y = [d['y'] for d in data]
 
@@ -224,6 +225,13 @@ def update_scatterplot(data, x_axis, y_axis):
 
     data = pd.DataFrame(data)
     fig = create_plot(data, x_axis, y_axis)
+
+    if test:
+        print(test)
+        #fig.add_traces(go.Scatter(x=test['x_range'], y=test['y_range'], name='Regression Fit'))
+        fig.add_traces(list(px.line(x=test['x_range'], y=test['y_range']).select_traces()))
+ 
+        #fig.add_traces(px.line(x=x, y=y_pred, color_discrete_sequence=["red"]).data)
 
     return fig
 
@@ -277,6 +285,7 @@ def update_controls(columns, predictor_var, target_var):
 # callback to calculate regression
 @dash_app.callback(
     Output(component_id = 'results', component_property = 'children'),
+    Output(component_id = 'regression_results', component_property = 'data'),  # dcc.Store
     State(component_id = 'table', component_property = 'data'),
     State(component_id = 'target', component_property = 'value'),
     State(component_id = 'predictors', component_property = 'value'),
@@ -305,10 +314,13 @@ def calculate_regression(data, target_var, predictor_var, control_vars,children,
     lm_results = lm.fit()
 
     #### Prediction
-    # x_range = np.linspace(predictor_var.min(), predictor_var.max(), 100)
-    # y_range = lm_results.predict(x_range.reshape(-1, 1))
+    x_range = np.linspace(df[predictor_var].min(), df[predictor_var].max(), 100)
+    x_range_with_const = sm.add_constant(x_range)
+    y_range = lm_results.predict(x_range_with_const)
 
-    add_line = update_scatterplot
+    regression_dict = {'x_range': x_range, 'y_range': y_range}
+    #print(regression_dict)
+
     
     # df_results_regression = lm_results.summary().tables[0].as_html()
     # df_results_regression = pd.read_html(df_results_regression, header=0, index_col=0)[0]
@@ -380,8 +392,9 @@ def calculate_regression(data, target_var, predictor_var, control_vars,children,
         )
         children.append(new_element)
 
+    #dict_results_parameters = df_results_parameters.to_dict('index')
 
-    return children
+    return children, regression_dict #,dict_results_parameters
 
 
 if __name__ == '__main__':
