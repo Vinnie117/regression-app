@@ -219,8 +219,9 @@ def create_plot(x, y):
     Input(component_id = 'table', component_property = 'data'),
     Input(component_id = 'xaxis-column', component_property = 'value'),
     Input(component_id = 'yaxis-column', component_property = 'value'),
-    Input(component_id = 'regression_results', component_property = 'data'))
-def update_scatterplot(data, x_axis_name, y_axis_name, model):
+    Input(component_id = 'regression_results', component_property = 'data'),
+    Input(component_id = 'submit-button-state', component_property = 'n_clicks'))
+def update_scatterplot(data, x_axis_name, y_axis_name, model, n_clicks):
     x = [d['x'] for d in data]
     y = [d['y'] for d in data]
 
@@ -233,18 +234,26 @@ def update_scatterplot(data, x_axis_name, y_axis_name, model):
     fig = create_plot(x_axis, y_axis)
 
 
-
+    # check if Store contains regression results
     if model:
 
-        if x_axis_name in model['results']:
+        # x_axis_name = 'x'
+        if x_axis_name == model['predictor_var']:
         
-            print(model)
+            #print(model)
 
             fig.add_trace(go.Scatter(
                 x=model['x_range'],
                 y=model['y_range'],
                 mode='lines',
                 name='BANANE'
+                ))
+
+            fig.add_trace(go.Scatter(
+                x=model['x_range'],
+                y=model['y_range'],
+                mode='markers',
+                name='APFEL'
                 )
             )
 
@@ -306,13 +315,14 @@ def update_controls(columns, predictor_var, target_var):
     State(component_id = 'predictors', component_property = 'value'),
     State(component_id = 'controls', component_property = 'value'),
     State(component_id='results', component_property='children'),
+    State(component_id = 'regression_results', component_property = 'data'),  # dcc.Store
     [
         Input(component_id = 'submit-button-state', component_property = 'n_clicks'),
-        Input({"type": "dynamic-delete", "index": ALL}, "n_clicks")       
+        Input({"type": "dynamic-delete", "index": ALL}, "n_clicks")   
     ],
     prevent_initial_call=True
     )
-def calculate_regression(data, target_var, predictor_var, control_vars,children, n_clicks, _): # order of arguments in order of classes after 'Output'
+def calculate_regression(data, target_var, predictor_var, control_vars,children, regression_dict,n_clicks, _): # order of arguments in order of classes after 'Output'
 
     df = pd.DataFrame(data)
 
@@ -338,8 +348,12 @@ def calculate_regression(data, target_var, predictor_var, control_vars,children,
     x_range_with_const = sm.add_constant(predictor_space)
     y_range = lm_results.predict(x_range_with_const)
 
-    regression_dict = {'x_range': x_range, 'y_range': y_range}
-    #print(regression_dict)
+    # For storing multiple runs
+    experiment_runs = 'experiment_' + str(n_clicks)
+    if regression_dict == None:
+        regression_dict = {}
+
+    regression_dict[experiment_runs] = {'x_range': x_range, 'y_range': y_range}
 
     
     # df_results_regression = lm_results.summary().tables[0].as_html()
@@ -413,8 +427,10 @@ def calculate_regression(data, target_var, predictor_var, control_vars,children,
         children.append(new_element)
 
     # passing regression results to store
-    regression_dict['results'] = df_results_parameters.to_dict('index')
+    regression_dict[experiment_runs]['predictor_var'] = predictor_var
+    regression_dict[experiment_runs]['results'] = df_results_parameters.to_dict('index')
     
+    print(regression_dict)
 
     return children, regression_dict
 
