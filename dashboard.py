@@ -230,7 +230,7 @@ def update_scatterplot(data, x_axis_name, y_axis_name, model, n_clicks):
     x_axis = [d[x_axis_name] for d in data]
     y_axis = [d[y_axis_name] for d in data]
 
-    #data = pd.DataFrame(data)
+    # scatter plot with given data points
     fig = create_plot(x_axis, y_axis)
 
 
@@ -373,6 +373,11 @@ def calculate_regression(data, target_var, predictor_var, control_vars,children,
     df_results_parameters = pd.read_html(df_results_parameters, header=0, index_col=0)[0]
     print(df_results_parameters)
 
+    # passing regression results to store
+    regression_dict[experiment_runs]['predictor_var'] = predictor_var
+    regression_dict[experiment_runs]['results'] = df_results_parameters.to_dict('index')
+    
+    print(regression_dict)
 
     #### Extracting the results from df
     list_coefs = df_results_parameters.iloc[:,0].to_list()
@@ -391,17 +396,26 @@ def calculate_regression(data, target_var, predictor_var, control_vars,children,
 
 
     #### appending / removing divs to results html
+
     input_id = callback_context.triggered[0]["prop_id"].split(".")[0]
     # print(input_id)
 
     # if block is triggered by clicking on X
     if "index" in input_id:
+        print(input_id)
         delete_chart = json.loads(input_id)["index"]
-        children = [
-            chart
-            for chart in children
-            if "'index': " + str(delete_chart) not in str(chart)
-        ]
+        print(delete_chart)
+        print(children)
+
+        # remove html child div from list
+        children = [chart for chart in children if "'index': " + str(delete_chart) not in str(chart)]
+        print(children)
+
+        # update dict in Store that experiment was deleted:
+        delete = 'experiment_' + str(delete_chart)
+        print(delete)
+        if delete not in children:
+            del regression_dict[delete]
 
     # otherwise, new experiment results can be appended
     else:
@@ -415,17 +429,11 @@ def calculate_regression(data, target_var, predictor_var, control_vars,children,
                 ),
                 html.Div(
                     results_string,
-                    id = {"type": "dynamic-output", "index": n_clicks}
+                    id = {"type": "dynamic-output", "index": n_clicks, "run":experiment_runs}
                 )
             ]
         )
         children.append(new_element)
-
-    # passing regression results to store
-    regression_dict[experiment_runs]['predictor_var'] = predictor_var
-    regression_dict[experiment_runs]['results'] = df_results_parameters.to_dict('index')
-    
-    print(regression_dict)
 
     return children, regression_dict
 
