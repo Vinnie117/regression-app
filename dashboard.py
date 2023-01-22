@@ -237,25 +237,41 @@ def update_scatterplot(data, x_axis_name, y_axis_name, model, n_clicks):
     # check if Store contains regression results
     if model:
 
-        # x_axis_name = 'x'
-        if x_axis_name == model['predictor_var']:
+        # for each experiment run in the Store
+        for run in model:
+            if x_axis_name == model[run]['predictor_var']:
+
+                # approach with predictor_space
+                #flat_list = [item for sublist in model[run]['x_range'] for item in sublist]
+               
+                fig.add_trace(go.Scatter(
+                    x=model[run]['x_range'],
+                    y=model[run]['y_range'],
+                    mode='lines',
+                    name='BANANE'
+                    ))         
+
+        # OLS Steigung stimmt für einfache, aber nicht für multivariate Regression?   
+
+
+        # if x_axis_name == model[experiment_runs]['predictor_var']:
         
-            #print(model)
+        #     #print(model)
 
-            fig.add_trace(go.Scatter(
-                x=model['x_range'],
-                y=model['y_range'],
-                mode='lines',
-                name='BANANE'
-                ))
+        #     fig.add_trace(go.Scatter(
+        #         x=model[experiment_runs]['x_range'],
+        #         y=model[experiment_runs]['y_range'],
+        #         mode='lines',
+        #         name='BANANE'
+        #         ))
 
-            fig.add_trace(go.Scatter(
-                x=model['x_range'],
-                y=model['y_range'],
-                mode='markers',
-                name='APFEL'
-                )
-            )
+        #     fig.add_trace(go.Scatter(
+        #         x=model[experiment_runs]['x_range'],
+        #         y=model[experiment_runs]['y_range'],
+        #         mode='markers',
+        #         name='APFEL'
+        #         )
+        #     )
 
     return fig
 
@@ -342,11 +358,22 @@ def calculate_regression(data, target_var, predictor_var, control_vars,children,
 
     # for the plot
     x_range = np.linspace(df[predictor_var].min(), df[predictor_var].max(), 100)
+    print(x_range)
 
     # for the model
     predictor_space = np.linspace(df[x_vars].min(), df[x_vars].max(), 100)
+    print(predictor_space)
+
     x_range_with_const = sm.add_constant(predictor_space)
+    print(x_range_with_const)
+
+    # Partial regression plot: Set all controls to value 0 -> see multivariate regression equation
+    if x_range_with_const.shape[1] >= 2:
+        x_range_with_const[:,2:] = 0
+
     y_range = lm_results.predict(x_range_with_const)
+    print(y_range)
+
 
     # For storing multiple runs
     experiment_runs = 'experiment_' + str(n_clicks)
@@ -360,7 +387,6 @@ def calculate_regression(data, target_var, predictor_var, control_vars,children,
     # df_results_regression = pd.read_html(df_results_regression, header=0, index_col=0)[0]
     # print(df_results_regression)
     # df_results_distribution = lm_results.summary().tables[2].as_html()
-
     df_results_parameters = lm_results.summary().tables[1].as_html()
 
     # Replacing column names in HTML
@@ -371,9 +397,7 @@ def calculate_regression(data, target_var, predictor_var, control_vars,children,
         '<table class="simpletable">',
         '<table class="simpletable" border="1" style="border-collapse: collapse;">'
     )
-
-    print(df_results_parameters)
-
+    # print(df_results_parameters)
 
     df_results_parameters = pd.read_html(df_results_parameters, header=0, index_col=0)[0]
     print(df_results_parameters)
