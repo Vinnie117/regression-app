@@ -241,7 +241,7 @@ def update_scatterplot(data, x_axis_name, y_axis_name, model, n_clicks, current_
             x=[d[x_axis_name] for d in data],
             y=[d[y_axis_name] for d in data],
             mode='markers',
-            marker={'color': 'red'},
+            marker={'color': '#636EFA'},
             name=trace_name
         )
 
@@ -254,8 +254,8 @@ def update_scatterplot(data, x_axis_name, y_axis_name, model, n_clicks, current_
     # the following code is executed, if there is a current figure with at least one
     # trace in it.
 
-    # set fixed color map
-    color_map = ['red', 'blue', 'black', 'yellow']
+    # set fixed color map for OLS lines
+    color_map = ['#636EFA', '#EF553B', '#00CC96', '#AB63FA', '#FFA15A', '#19D3F3', '#FF6692', '#B6E880', '#FF97FF', '#FECB52']
 
     # get trace info
     t = TraceInfo(current_figure)
