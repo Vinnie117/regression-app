@@ -7,6 +7,7 @@ import pandas as pd
 import numpy as np
 import json
 from components.data_table import data_table
+from traceinfo import TraceInfo
 
 
 
@@ -168,7 +169,15 @@ dash_app.layout = html.Div([
                 ], style={'width': '48%', 'display': 'inline-block'}),
             
                 # create the scatter plot
-                dcc.Graph(id='scatterplot')
+                dcc.Graph(
+                    id='scatterplot',
+                    # figure=dict(
+                    #     data=[{'x': [],
+                    #            'y': [],
+                    #             'mode':'markers'
+                    #         }]
+                    # )
+                )
             ], style={
                 'margin-top': '50px'
             }
@@ -200,15 +209,15 @@ dash_app.layout = html.Div([
 
 ###########################################################################################
 
-def create_plot(x, y):
+# def create_plot(x, y):
     
-    # plot = px.scatter(df, x=x, y=y)
-    # plot.update_layout(margin=dict(l=20, r=20, t=20, b=20))
+#     # plot = px.scatter(df, x=x, y=y)
+#     # plot.update_layout(margin=dict(l=20, r=20, t=20, b=20))
 
-    plot = go.Figure(data=go.Scatter(x=x, y=y, mode='markers'))
-    plot.update_layout(margin=dict(l=20, r=20, t=20, b=20))
+#     plot = go.Figure(data=go.Scatter(x=x, y=y, mode='markers'))
+#     plot.update_layout(margin=dict(l=20, r=20, t=20, b=20))
 
-    return plot
+#     return plot
 
 ###########################################################################################
 
@@ -220,39 +229,92 @@ def create_plot(x, y):
     Input(component_id = 'xaxis-column', component_property = 'value'),
     Input(component_id = 'yaxis-column', component_property = 'value'),
     Input(component_id = 'regression_results', component_property = 'data'),
-    Input(component_id = 'submit-button-state', component_property = 'n_clicks'))
-def update_scatterplot(data, x_axis_name, y_axis_name, model, n_clicks):
-    x = [d['x'] for d in data]
-    y = [d['y'] for d in data]
-
-    print("X is: ", x, '\n', "Y is: ", y)
+    Input(component_id = 'submit-button-state', component_property = 'n_clicks'),
+    State('scatterplot', 'figure'))
+def update_scatterplot(data, x_axis_name, y_axis_name, model, n_clicks, current_figure):
     
-    x_axis = [d[x_axis_name] for d in data]
-    y_axis = [d[y_axis_name] for d in data]
+    # Initial plot upon page load
+    if not current_figure or len(current_figure.get('data')) == 0:
+        trace_name = 'experiment_0'
 
-    # scatter plot with given data points
-    fig = create_plot(x_axis, y_axis)
+        trace = go.Scatter(
+            x=[d[x_axis_name] for d in data],
+            y=[d[y_axis_name] for d in data],
+            mode='markers',
+            marker={'color': 'red'},
+            name=trace_name
+        )
+
+        plot = go.Figure(data=trace, layout={'showlegend': False})
+        plot.update_layout(margin=dict(l=20, r=20, t=20, b=20))
 
 
-    # check if Store contains regression results
-    if model:
+        return plot
 
-        # for each experiment run in the Store
-        for run in model:
+    # the following code is executed, if there is a current figure with at least one
+    # trace in it.
 
-            # if correct axis is selected
-            if x_axis_name == model[run]['predictor_var']:
+    # set fixed color map
+    color_map = ['red', 'blue', 'black', 'yellow']
 
-                fig.add_trace(go.Scatter(
-                    x=model[run]['x_range'],
-                    y=model[run]['y_range'],
-                    mode='lines',
-                    name='BANANE'
-                    ))         
+    # get trace info
+    t = TraceInfo(current_figure)
+    current_traces = t.traces
 
-    return fig
+    # differences between current selection and current figure. The trace names correspond
+    # to the column names. This has to be guaranteed.
+    existing = set(t.names)
 
-# callbacks for scatterplot axis selection
+    selected = list(model.keys())
+    selected.insert(0, 'experiment_0')
+    selected = set(selected)
+
+    # decide what to do, which traces to keep, to delete and which to create
+    keep = existing & selected
+    delete = existing ^ keep
+    new = keep ^ selected
+
+    # get indices of traces to delete
+    d_index = [t.names.index(d) for d in delete]
+
+    # get the indices of the trace color which are kept
+    # Trace names and colors have the same indices
+    c_index = [t.names.index(k) for k in keep]
+
+    # now that we have the index of the colors, we need to know the color name
+    used_colors = {t.colors[i] for i in c_index}
+
+    # usable colors are the colors of the initial color map
+    # minus the colors which are already used by traces kept
+    usable_colors = iter(
+        sorted(
+            list(used_colors ^ set(color_map)),
+            key=color_map.index
+        )
+    )
+
+    # delete traces to be deleted from current traces
+    # sort the indices in descending order
+    for i in sorted(d_index, reverse=True):
+        current_traces.pop(i)
+
+    # create new traces
+    new_traces = []
+    for run in new:
+        new_traces.append(
+            go.Scatter(
+                x=model[run]['x_range'],
+                y=model[run]['y_range'],
+                mode='lines',
+                marker={'color': next(usable_colors)},
+                name=run
+            )
+        )
+    # create figure with current traces +  the new ones
+    return go.Figure(data=current_traces + new_traces, layout={'showlegend': True})
+
+
+# callback for scatterplot axis selection
 @dash_app.callback(
     Output('xaxis-column', 'options'),
     Output('yaxis-column', 'options'),
@@ -346,11 +408,10 @@ def calculate_regression(data, target_var, predictor_var, control_vars,children,
 
     y_range = lm_results.predict(x_range_with_const)
 
-    # For storing multiple runs
+    # Create / append dict for storing multiple runs
     experiment_runs = 'experiment_' + str(n_clicks)
     if regression_dict == None:
         regression_dict = {}
-
     regression_dict[experiment_runs] = {'x_range': x_range, 'y_range': y_range}
 
     
@@ -378,6 +439,8 @@ def calculate_regression(data, target_var, predictor_var, control_vars,children,
     regression_dict[experiment_runs]['results'] = df_results_parameters.to_dict('index')
     
     print(regression_dict)
+
+    ######################################################################################
 
     #### Extracting the results from df
     list_coefs = df_results_parameters.iloc[:,0].to_list()
