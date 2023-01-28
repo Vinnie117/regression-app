@@ -8,6 +8,7 @@ import numpy as np
 import json
 from components.data_table import data_table
 from traceinfo import TraceInfo
+import sys
 
 
 
@@ -170,13 +171,7 @@ dash_app.layout = html.Div([
             
                 # create the scatter plot
                 dcc.Graph(
-                    id='scatterplot',
-                    # figure=dict(
-                    #     data=[{'x': [],
-                    #            'y': [],
-                    #             'mode':'markers'
-                    #         }]
-                    # )
+                    id='scatterplot'
                 )
             ], style={
                 'margin-top': '50px'
@@ -203,21 +198,32 @@ dash_app.layout = html.Div([
 
     ], style={'display': 'flex', 'align-items': 'top'}),  # vertically align the children
     
-    dcc.Store(id='regression_results')
+    dcc.Store(id='regression_results'),
+    dcc.Store(id='dict_traces'),
+    dcc.Store(id='list_used_colors')
 ])
 
 
 ###########################################################################################
 
-# def create_plot(x, y):
+def create_plot(x, y):
     
-#     # plot = px.scatter(df, x=x, y=y)
-#     # plot.update_layout(margin=dict(l=20, r=20, t=20, b=20))
+    # base_plot = go.Figure(data=go.Scatter(x=x, y=y, mode='markers'))
+    # base_plot.update_layout(margin=dict(l=20, r=20, t=20, b=20))
 
-#     plot = go.Figure(data=go.Scatter(x=x, y=y, mode='markers'))
-#     plot.update_layout(margin=dict(l=20, r=20, t=20, b=20))
+    base_plot = dict({
+        "data": [{
+            "type": "scatter",
+            "x": x,
+            "y": y,
+            "mode": "markers",
+            "name": "experiment_0",
+            "marker": {"color": "#636EFA"}
+        }],
+        "layout": {}        
+    })
 
-#     return plot
+    return base_plot
 
 ###########################################################################################
 
@@ -225,94 +231,85 @@ dash_app.layout = html.Div([
 # callback to update the scatter plot given changes
 @dash_app.callback(
     Output(component_id = 'scatterplot', component_property = 'figure'),
+    Output(component_id = 'dict_traces', component_property = 'data'),
+    Output(component_id = 'list_used_colors', component_property = 'data'),
     Input(component_id = 'table', component_property = 'data'),
     Input(component_id = 'xaxis-column', component_property = 'value'),
     Input(component_id = 'yaxis-column', component_property = 'value'),
     Input(component_id = 'regression_results', component_property = 'data'),
     Input(component_id = 'submit-button-state', component_property = 'n_clicks'),
-    State('scatterplot', 'figure'))
-def update_scatterplot(data, x_axis_name, y_axis_name, model, n_clicks, current_figure):
-    
-    # Initial plot upon page load
-    if not current_figure or len(current_figure.get('data')) == 0:
-        trace_name = 'experiment_0'
+    State(component_id = 'dict_traces', component_property = 'data'),
+    State(component_id = 'list_used_colors', component_property = 'data'))
+def update_scatterplot(data, x_axis_name, y_axis_name, model, n_clicks, dict_traces, list_used_colors):
 
-        trace = go.Scatter(
-            x=[d[x_axis_name] for d in data],
-            y=[d[y_axis_name] for d in data],
-            mode='markers',
-            marker={'color': '#636EFA'},
-            name=trace_name
-        )
+    if dict_traces == None:
+        dict_traces = {}
 
-        plot = go.Figure(data=trace, layout={'showlegend': False})
-        plot.update_layout(margin=dict(l=20, r=20, t=20, b=20))
+    if list_used_colors == None:
+        list_used_colors = []
 
+    # red, azure, purple (default for points is '#636EFA')
+    color_map = ['#EF553B', '#00CC96', '#AB63FA', '#FFA15A', '#19D3F3', '#FF6692', '#B6E880', '#FF97FF', '#FECB52']
+    color_map = [color for color in color_map if color not in list_used_colors]
 
-        return plot
+    if not model:
+        # base plot
+        x_axis = [d[x_axis_name] for d in data]
+        y_axis = [d[y_axis_name] for d in data]
+        base_fig = go.Figure(create_plot(x_axis, y_axis))
 
-    # the following code is executed, if there is a current figure with at least one
-    # trace in it.
+        return base_fig, dict_traces, list_used_colors
 
-    # set fixed color map for OLS lines
-    color_map = ['#636EFA', '#EF553B', '#00CC96', '#AB63FA', '#FFA15A', '#19D3F3', '#FF6692', '#B6E880', '#FF97FF', '#FECB52']
+    elif model:
 
-    # get trace info
-    t = TraceInfo(current_figure)
-    current_traces = t.traces
+        new_traces = []
 
-    # differences between current selection and current figure. The trace names correspond
-    # to the column names. This has to be guaranteed.
-    existing = set(t.names)
-
-    selected = list(model.keys())
-    selected.insert(0, 'experiment_0')
-    selected = set(selected)
-
-    # decide what to do, which traces to keep, to delete and which to create
-    keep = existing & selected
-    delete = existing ^ keep
-    new = keep ^ selected
-
-    # get indices of traces to delete
-    d_index = [t.names.index(d) for d in delete]
-
-    # get the indices of the trace color which are kept
-    # Trace names and colors have the same indices
-    c_index = [t.names.index(k) for k in keep]
-
-    # now that we have the index of the colors, we need to know the color name
-    used_colors = {t.colors[i] for i in c_index}
-
-    # usable colors are the colors of the initial color map
-    # minus the colors which are already used by traces kept
-    usable_colors = iter(
-        sorted(
-            list(used_colors ^ set(color_map)),
-            key=color_map.index
-        )
-    )
-
-    # delete traces to be deleted from current traces
-    # sort the indices in descending order
-    for i in sorted(d_index, reverse=True):
-        current_traces.pop(i)
-
-    # create new traces
-    new_traces = []
-    for run in new:
-        new_traces.append(
-            go.Scatter(
+        # build the OLS line of each respective experiment and store it
+        for run in model:
+            new_trace =go.Scatter(
                 x=model[run]['x_range'],
-                y=model[run]['y_range'],
+                y=model[run]['y_range'], 
                 mode='lines',
-                marker={'color': next(usable_colors)},
-                name=run
-            )
-        )
-    # create figure with current traces +  the new ones
-    return go.Figure(data=current_traces + new_traces, layout={'showlegend': True})
+                marker={'color': color_map[list(model.keys()).index(run)]},  # colors will be hardcoded here
+                name=run)                
+            new_traces.append(new_trace)   
 
+            # build the store which collects all traces
+            if run not in dict_traces:
+                dict_traces[run] = new_trace
+
+                # keep track of used colors
+                list_used_colors.append(color_map[list(model.keys()).index(run)])
+
+        # delete experiment run in trace store 'dict_traces' if it is removed in model
+        # -> not necessary bc it disappears in selected_experiments list
+
+        # match dropdown selection by experiment run (common ID)
+        selected_experiments = []
+        for run in model:
+            if x_axis_name == model[run]['predictor_var'] and y_axis_name == model[run]['target_var']:
+                selected_experiments.append(run)
+
+        print(selected_experiments)
+
+        # fetch traces from trace store that match the experiment run
+        available_traces = []
+        for trace_key, trace_val in dict_traces.items():
+            if trace_key in selected_experiments:
+                available_traces.append(trace_val)
+
+        print(available_traces)
+
+        # return the plot
+        x_axis = [d[x_axis_name] for d in data]
+        y_axis = [d[y_axis_name] for d in data]
+        base_trace = create_plot(x_axis, y_axis)
+        base_trace = [base_trace['data'][0]]
+
+        fig = go.Figure(data= base_trace + available_traces, layout={'showlegend': True})
+
+        return fig, dict_traces, list_used_colors 
+    
 
 # callback for scatterplot axis selection
 @dash_app.callback(
@@ -322,6 +319,17 @@ def update_scatterplot(data, x_axis_name, y_axis_name, model, n_clicks, current_
 def update_radio_items(columns):
     column_names = [i['name'] for i in columns]
     return column_names, column_names
+
+# callback to adjust selected dropdown menu after submitting regression
+@dash_app.callback(
+    Output('xaxis-column', 'value'),
+    Output('yaxis-column', 'value'),
+    State('predictors', 'value'),
+    State('target', 'value'),
+    Input(component_id = 'submit-button-state', component_property = 'n_clicks'),
+    prevent_initial_call=True)
+def update_axis_by_submit(predictor, target, n_clicks):
+    return predictor, target
 
 
 # callback for target variable selection
@@ -396,10 +404,10 @@ def calculate_regression(data, target_var, predictor_var, control_vars,children,
     #### Prediction 
 
     # for the plot
-    x_range = np.linspace(df[predictor_var].min(), df[predictor_var].max(), 100)
+    x_range = np.linspace(df[predictor_var].min(), df[predictor_var].max(), 10)
 
     # for the model
-    predictor_space = np.linspace(df[x_vars].min(), df[x_vars].max(), 100)
+    predictor_space = np.linspace(df[x_vars].min(), df[x_vars].max(), 10)
     x_range_with_const = sm.add_constant(predictor_space)
 
     # Partial regression plot: Set all controls to value 0 -> see multivariate regression equation
@@ -436,9 +444,11 @@ def calculate_regression(data, target_var, predictor_var, control_vars,children,
 
     # passing regression results to store
     regression_dict[experiment_runs]['predictor_var'] = predictor_var
+    regression_dict[experiment_runs]['target_var'] = target_var
     regression_dict[experiment_runs]['results'] = df_results_parameters.to_dict('index')
     
     print(regression_dict)
+    print("The size of the regression_dictionary is {} bytes".format(sys.getsizeof(regression_dict)))  # 232 Bytes
 
     ######################################################################################
 
@@ -503,8 +513,3 @@ def calculate_regression(data, target_var, predictor_var, control_vars,children,
 
 if __name__ == '__main__':
     dash_app.run_server(debug=True)
-
-
-
-
-
