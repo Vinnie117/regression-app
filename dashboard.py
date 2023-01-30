@@ -24,11 +24,13 @@ def serve_layout():
                 # middle column
                 html.Div(children = [
                     table,
+
                     html.Div(children = [
                         dropdowns,
                         plot
                     ], style={'margin-top': '50px'}
                     )
+                    
                 ], style={
                     'width': '55%', 
                     'border': '1px dashed black'
