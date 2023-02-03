@@ -47,8 +47,8 @@ def serve_layout():
             ], style={'display': 'flex', 'align-items': 'top'}
             ),
 
-            model_store, #dcc.Store(id='regression_results'),    #model_store,
-            dcc.Store(id='dict_traces'),  # persistent store where all ever recorded runs are stored
+            model_store, 
+            dcc.Store(id='dict_traces'),
             dcc.Store(id='list_used_colors')
 
         ]
