@@ -3,7 +3,12 @@ from components.table import table
 from components.variable_selection import variable_selection
 from components.plot import plot
 from components.dropdowns import dropdowns
+from components.model_store import model_store
 from components.results import results
+
+
+
+
 from dash_app import dash_app
 
 def serve_layout():
@@ -42,8 +47,8 @@ def serve_layout():
             ], style={'display': 'flex', 'align-items': 'top'}
             ),
 
-            dcc.Store(id='regression_results'),
-            dcc.Store(id='dict_traces'),
+            model_store, #dcc.Store(id='regression_results'),    #model_store,
+            dcc.Store(id='dict_traces'),  # persistent store where all ever recorded runs are stored
             dcc.Store(id='list_used_colors')
 
         ]
