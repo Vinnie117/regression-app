@@ -8,13 +8,14 @@ import sys
 
 def is_number(s):
     try:
-        float(s)
-        return True
+        number = float(s)
+        return number
     except ValueError:
-        return False
+        return s
 
 @dash_app.callback(
     Output('warning_msg', 'displayed'),
+    Output('warning_msg', 'message'),
     State(component_id = 'table', component_property = 'data'),               
     Input('submit-button-state', 'n_clicks'),
     prevent_initial_call=True)
@@ -24,8 +25,11 @@ def display_warning(data, n_clicks):
 
     # true if any NaN in df -> will send confirm dialog
     if data.isnull().values.any():  
-        return True
-    return False
+        message = 'Danger danger! Are you sure you want to continue?'
+        return True, message
+    else:
+        pass
+    
 
 
 
@@ -96,6 +100,9 @@ def calculate_regression(data, target_var, predictor_var, control_vars, children
         # check NaNs and drop rows if necessary
         if df.isnull().values.any():   
             df=df.dropna()
+
+        # try to convert string representation of numerics to numeric
+        df = df.applymap(is_number)
 
         print(df)
         print(df.dtypes)
