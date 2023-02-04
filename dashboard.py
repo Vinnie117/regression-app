@@ -26,6 +26,11 @@ def serve_layout():
                 # left column
                 variable_selection, 
 
+                dcc.ConfirmDialog(
+                    id='warning_msg',
+                    message='Danger danger! Are you sure you want to continue?',
+                ),
+
                 # middle column
                 html.Div(children = [
                     table,
