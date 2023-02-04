@@ -6,6 +6,15 @@ import pandas as pd
 import numpy as np
 import sys
 
+def is_number(s):
+    try:
+        float(s)
+        return True
+    except ValueError:
+        return False
+
+
+
 model_store = dcc.Store(id='regression_results')
 
 # callback to calculate regression
@@ -49,6 +58,42 @@ def calculate_regression(data, target_var, predictor_var, control_vars,children,
     # the case when new models are to be submitted
     else:
         df = pd.DataFrame(data)
+
+
+        # check whether column has numerical or caterogical values only
+        #   -> initial data type is set with sample data_table.py
+        #   -> do it interally here with pandas df
+        #   -> columns with mixed data types are coerced to categories -> cells a string
+        # every cell should be given as a string? 
+        #   -> use function to evaluate whether column contains of integers -> convert column
+        #   -> https://stackoverflow.com/questions/354038/how-do-i-check-if-a-string-represents-a-number-float-or-int
+        #   -> Obj columns containing str initially but replaced with numbers must be converted to float/int!
+        #   -> Initial int columns will automatically convert to Obj, if string is inserted in cell
+
+        # check empty cells -> should be ignored (drop row in df)
+        #   -> leave empty or show N/A? -> better leave empty but still internally drop row
+        #       -> empty cells appear internally as NaN -> must be dropped!!
+        #   -> print confirm dialog: There are empty values. Do you want to continue?
+
+        # column type rausnehmen, damit Spalten auch andere Typen annehmen können
+
+        # drop rows with NaN
+        df=df.dropna()
+
+        print(df)
+        print(df.dtypes)
+
+        print(type(df))
+
+        # cell 'maybe' is a string
+        print(df.iloc[2,4])
+        print(type(df.iloc[2,4]))
+
+
+        
+
+
+
 
         control_vars = [item for item in control_vars if len(item)>0]
         x_vars = [predictor_var] + control_vars
