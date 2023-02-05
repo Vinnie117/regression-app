@@ -23,9 +23,9 @@ plot = html.Div(
     State(component_id = 'dict_traces', component_property = 'data'),
     State(component_id = 'list_used_colors', component_property = 'data'),
     Input('warning_msg', 'cancel_n_clicks'))
-def update_scatterplot(data, x_axis_name, y_axis_name, model, n_clicks, dict_traces, list_used_colors, warning):
+def update_scatterplot(data, x_axis_name, y_axis_name, model, n_clicks, dict_traces, list_used_colors, cancel):
 
-    # if warning == n_clicks:
+    # if cancel
     #     return None, None, None
 
     if dict_traces == None:
@@ -64,7 +64,7 @@ def update_scatterplot(data, x_axis_name, y_axis_name, model, n_clicks, dict_tra
             if run not in dict_traces:
                 dict_traces[run] = new_trace
 
-                # keep track of used colors (could also look into dict_traces instead of using list_used_colors)
+                # keep track of used colors (To do: could also look into dict_traces instead of using list_used_colors)
                 list_used_colors.append(color_map[list(model.keys()).index(run)])
 
         # delete experiment run in trace store 'dict_traces' if it is removed in model

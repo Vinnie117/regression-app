@@ -32,8 +32,6 @@ def display_warning(data, n_clicks):
     return False, '', None
     
 
-
-
 model_store = dcc.Store(id='regression_results')
 
 # callback to calculate regression
@@ -63,6 +61,7 @@ def calculate_regression(data, target_var, predictor_var, control_vars,
     # Create / append dict for storing multiple runs
     if regression_dict == None:
         regression_dict = {}
+    
 
     #### remove experiment from model store
     if all(key in input_id for key in ["index", "type"]):
@@ -81,9 +80,6 @@ def calculate_regression(data, target_var, predictor_var, control_vars,
         return regression_dict
 
 
-    
-
-    
     # cancel button was clicked
     if cancel:
         return regression_dict
@@ -157,8 +153,6 @@ def calculate_regression(data, target_var, predictor_var, control_vars,
 
         # Create / append dict for storing multiple runs
         experiment_runs = 'experiment_' + str(n_clicks)
-        # if regression_dict == None:
-        #     regression_dict = {}
         regression_dict[experiment_runs] = {'x_range': x_range, 'y_range': y_range}
 
         

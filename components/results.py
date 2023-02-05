@@ -50,11 +50,18 @@ def show_results(children, n_clicks, regression_dict, _, cancel, submit):
 
     print(df_results_parameters)
 
+    # assign new experiment names bc cancelling runs messes up names in regression_dict
+    show_results = {}
+    keys = range(100)
+    for (key, value), num in zip(regression_dict.items(), keys):
+        experiment_run = 'experiment_' + str(num+1)
+        show_results[experiment_run] = value
+        
     list_results = []
     for var, coef_value in zip(x_vars, list_coefs):
         list_results.append('coef of {var} is {coef_value}'. format(var=var, coef_value=coef_value))
 
-    result = 'Experiment {number}: Regression '.format(number = n_clicks)
+    result = '{number}: Regression '.format(number = list(show_results)[-1])
     results_string = result + ', '.join(list_results)
 
     #### appending divs to results html
