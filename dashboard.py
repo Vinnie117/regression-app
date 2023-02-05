@@ -28,7 +28,7 @@ def serve_layout():
 
                 dcc.ConfirmDialog(
                     id='warning_msg',
-                    message='Danger danger! Are you sure you want to continue?',
+                    message='',
                 ),
 
                 # middle column

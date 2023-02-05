@@ -21,8 +21,12 @@ plot = html.Div(
     Input(component_id = 'regression_results', component_property = 'data'),
     Input(component_id = 'submit-button-state', component_property = 'n_clicks'),
     State(component_id = 'dict_traces', component_property = 'data'),
-    State(component_id = 'list_used_colors', component_property = 'data'))
-def update_scatterplot(data, x_axis_name, y_axis_name, model, n_clicks, dict_traces, list_used_colors):
+    State(component_id = 'list_used_colors', component_property = 'data'),
+    Input('warning_msg', 'cancel_n_clicks'))
+def update_scatterplot(data, x_axis_name, y_axis_name, model, n_clicks, dict_traces, list_used_colors, warning):
+
+    # if warning == n_clicks:
+    #     return None, None, None
 
     if dict_traces == None:
         dict_traces = {}

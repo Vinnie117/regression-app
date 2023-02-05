@@ -9,6 +9,7 @@ table = html.Div(
                     {
                         'name': 'x', 
                         'id': 'x', 
+                        'type': 'numeric',
                         'format': Format(nully='N/A'),
                         'on_change': {'action': 'coerce', 'failure': 'default'},
                         'renamable': False
@@ -16,6 +17,7 @@ table = html.Div(
                     {
                         'name': 'y', 
                         'id': 'y', 
+                        'type': 'numeric',
                         'format': Format(nully='N/A'),
                         'on_change': {'action': 'coerce', 'failure': 'default'},
                         'renamable': False
@@ -23,6 +25,7 @@ table = html.Div(
                     {
                         'name': 'z', 
                         'id': 'z', 
+                        'type': 'numeric',
                         'format': Format(nully='N/A'),
                         'on_change': {'action': 'coerce', 'failure': 'default'},
                         'deletable': True,
@@ -31,6 +34,7 @@ table = html.Div(
                     {
                         'name': 'a', 
                         'id': 'a', 
+                        'type': 'numeric',
                         'format': Format(nully='N/A'),
                         'on_change': {'action': 'coerce', 'failure': 'default'},
                         'deletable': True,
@@ -39,6 +43,7 @@ table = html.Div(
                     {
                         'name': 'b', 
                         'id': 'b', 
+                        #'type': 'numeric',
                         'format': Format(nully='N/A'),
                         'on_change': {'action': 'coerce', 'failure': 'default'},
                         #'deletable': True,

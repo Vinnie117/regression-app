@@ -6,7 +6,8 @@ import pandas as pd
 import numpy as np
 import sys
 
-def is_number(s):
+# check if df cell contain a (string representation of a) number and convert it if true
+def numeric_converter(s):
     try:
         number = float(s)
         return number
@@ -16,6 +17,7 @@ def is_number(s):
 @dash_app.callback(
     Output('warning_msg', 'displayed'),
     Output('warning_msg', 'message'),
+    Output('warning_msg', 'cancel_n_clicks'),
     State(component_id = 'table', component_property = 'data'),               
     Input('submit-button-state', 'n_clicks'),
     prevent_initial_call=True)
@@ -23,12 +25,11 @@ def display_warning(data, n_clicks):
 
     data = pd.DataFrame(data)
 
-    # true if any NaN in df -> will send confirm dialog
+    # check NaNs: true if any NaN in df -> will send confirm dialog
     if data.isnull().values.any():  
-        message = 'Danger danger! Are you sure you want to continue?'
-        return True, message
-    else:
-        pass
+        message = 'Warnung: Daten enthalten leere Werte, die beim Fortfahren verworfen werden'
+        return True, message, None
+    return False, '', None
     
 
 
@@ -44,19 +45,26 @@ model_store = dcc.Store(id='regression_results')
     State(component_id = 'controls', component_property = 'value'),
     State(component_id='results', component_property='children'),
     State(component_id = 'regression_results', component_property = 'data'),  # dcc.Store
-    State('warning_msg', 'displayed'),
+    Input('warning_msg', 'cancel_n_clicks'),
+    Input('warning_msg', 'submit_n_clicks'),
+    #Input('warning_msg', 'displayed'),
     [
         Input(component_id = 'submit-button-state', component_property = 'n_clicks'),
         Input({"type": "dynamic-delete", "index": ALL}, "n_clicks")   
     ],
     prevent_initial_call=True
     )
-def calculate_regression(data, target_var, predictor_var, control_vars, children, regression_dict, warning, n_clicks, _): # order of arguments in order of classes after 'Output'
+def calculate_regression(data, target_var, predictor_var, control_vars, 
+                        children, regression_dict, cancel, submit, n_clicks, _): # order of arguments in order of classes after 'Output'
 
     # check which component_id was triggered
     input_id = callback_context.triggered_id
     # print(input_id) 
     # print(type(input_id))
+
+    # Create / append dict for storing multiple runs
+    if regression_dict == None:
+        regression_dict = {}
 
     #### remove experiment from model store
     if all(key in input_id for key in ["index", "type"]):
@@ -74,35 +82,49 @@ def calculate_regression(data, target_var, predictor_var, control_vars, children
         
         return regression_dict
 
-    # the case when new models are to be submitted
+
+    
+
+    
+    # cancel button was clicked
+    if cancel:
+        return regression_dict
+    
+
+    # the case when new models are to be submitted and no warning message appeared
     else:
+
         df = pd.DataFrame(data)
-
-
-        # check whether column has numerical or caterogical values only
-        #   -> initial data type is set with sample data_table.py
-        #   -> do it interally here with pandas df
-        #   -> columns with mixed data types are coerced to categories -> cells a string
-        # every cell should be given as a string? 
-        #   -> use function to evaluate whether column contains of integers -> convert column
-        #   -> https://stackoverflow.com/questions/354038/how-do-i-check-if-a-string-represents-a-number-float-or-int
-        #   -> Obj columns containing str initially but replaced with numbers must be converted to float/int!
-        #   -> Initial int columns will automatically convert to Obj, if string is inserted in cell
-
-        # check empty cells -> should be ignored (drop row in df)
-        #   -> leave empty or show N/A? -> better leave empty but still internally drop row
-        #       -> empty cells appear internally as NaN -> must be dropped!!
-        #   -> print confirm dialog: There are empty values. Do you want to continue?
-
-        # column type rausnehmen, damit Spalten auch andere Typen annehmen können
-
 
         # check NaNs and drop rows if necessary
         if df.isnull().values.any():   
             df=df.dropna()
 
         # try to convert string representation of numerics to numeric
-        df = df.applymap(is_number)
+        df = df.applymap(numeric_converter)
+
+
+        # -> wenn auf "abbrechen" geklickt wird, sollte kein Experiment laufen!!
+
+
+        # def column_type_check(col):
+        #     # Erkenntnis: Obwohl column type object, können Zellen unterschiedlice Typen sein!
+
+        #     types = df[col].apply(type).value_counts()
+        #     if len(types) == 1:
+        #         # Column consists only of a single data type
+        #         print("unique data type: ", types)
+        #     else:
+        #         # Column contains mixed data types
+        #         print("mixed data type: ", types)
+
+        # column_type_check('y')
+
+        # # apply column_type_check() on all columns
+        # df.apply(column_type_check, axis=0)
+
+        
+
 
         print(df)
         print(df.dtypes)
@@ -112,11 +134,6 @@ def calculate_regression(data, target_var, predictor_var, control_vars, children
         # cell 'maybe' is a string
         print(df.iloc[2,4])
         print(type(df.iloc[2,4]))
-
-
-        
-
-
 
 
         control_vars = [item for item in control_vars if len(item)>0]
@@ -142,8 +159,8 @@ def calculate_regression(data, target_var, predictor_var, control_vars, children
 
         # Create / append dict for storing multiple runs
         experiment_runs = 'experiment_' + str(n_clicks)
-        if regression_dict == None:
-            regression_dict = {}
+        # if regression_dict == None:
+        #     regression_dict = {}
         regression_dict[experiment_runs] = {'x_range': x_range, 'y_range': y_range}
 
         
