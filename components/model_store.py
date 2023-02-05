@@ -46,8 +46,6 @@ model_store = dcc.Store(id='regression_results')
     State(component_id='results', component_property='children'),
     State(component_id = 'regression_results', component_property = 'data'),  # dcc.Store
     Input('warning_msg', 'cancel_n_clicks'),
-    Input('warning_msg', 'submit_n_clicks'),
-    #Input('warning_msg', 'displayed'),
     [
         Input(component_id = 'submit-button-state', component_property = 'n_clicks'),
         Input({"type": "dynamic-delete", "index": ALL}, "n_clicks")   
@@ -55,7 +53,7 @@ model_store = dcc.Store(id='regression_results')
     prevent_initial_call=True
     )
 def calculate_regression(data, target_var, predictor_var, control_vars, 
-                        children, regression_dict, cancel, submit, n_clicks, _): # order of arguments in order of classes after 'Output'
+                        children, regression_dict, cancel, n_clicks, _): # order of arguments in order of classes after 'Output'
 
     # check which component_id was triggered
     input_id = callback_context.triggered_id
