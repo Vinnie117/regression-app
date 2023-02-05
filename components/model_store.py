@@ -14,6 +14,19 @@ def numeric_converter(s):
     except ValueError:
         return s
 
+# # type checking
+# # Erkenntnis: Obwohl column type 'object', können Zellen unterschiedliche Typen sein!
+# def column_type_check(df, col):
+#     types = df[col].apply(type).value_counts()
+
+#     # Column consists only of a single data type
+#     if len(types) == 1:
+#         print("unique data type: ", types)
+    
+#     # Column contains mixed data types
+#     else:
+#         print("mixed data type: ", types)
+
 @dash_app.callback(
     Output('warning_msg', 'displayed'),
     Output('warning_msg', 'message'),
@@ -29,6 +42,24 @@ def display_warning(data, n_clicks):
     if data.isnull().values.any():  
         message = 'Warnung: Daten enthalten leere Werte, die beim Fortfahren verworfen werden'
         return True, message, None
+    
+    # type checking for each column 
+    # (insight: though column might be of type 'object', the cells can be of mixed primitive types)
+    for i in data.columns:
+        types = data[i].apply(type).value_counts()
+
+        if len(types) == 1:
+            print("unique data type: ", types)
+            pass
+        else:
+            try:
+                data = data.applymap(numeric_converter)
+                return False, '', None
+            except:
+                print("mixed data type: ", types)
+                message = 'Warnung: Gemischte Datentypen'
+                return True, message, None
+
     return False, '', None
     
 
@@ -90,35 +121,18 @@ def calculate_regression(data, target_var, predictor_var, control_vars,
 
         df = pd.DataFrame(data)
 
+
+##########################################################################
+# can also do this in the warnings callback and output it into here?
+# But warnings callback is only triggered when data has mistakes
+
         # check NaNs and drop rows if necessary
         if df.isnull().values.any():   
             df=df.dropna()
 
         # try to convert string representation of numerics to numeric
         df = df.applymap(numeric_converter)
-
-
-        # -> wenn auf "abbrechen" geklickt wird, sollte kein Experiment laufen!!
-
-
-        # def column_type_check(col):
-        #     # Erkenntnis: Obwohl column type object, können Zellen unterschiedlice Typen sein!
-
-        #     types = df[col].apply(type).value_counts()
-        #     if len(types) == 1:
-        #         # Column consists only of a single data type
-        #         print("unique data type: ", types)
-        #     else:
-        #         # Column contains mixed data types
-        #         print("mixed data type: ", types)
-
-        # column_type_check('y')
-
-        # # apply column_type_check() on all columns
-        # df.apply(column_type_check, axis=0)
-
-        
-
+##########################################################################
 
         print(df)
         print(df.dtypes)
