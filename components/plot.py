@@ -35,7 +35,10 @@ def update_scatterplot(data, x_axis_name, y_axis_name, model, n_clicks, dict_tra
         list_used_colors = []
 
     # red, azure, purple (default for points is '#636EFA') -> colors order for lines
-    color_map = ['#EF553B', '#00CC96', '#AB63FA', '#FFA15A', '#19D3F3', '#FF6692', '#B6E880', '#FF97FF', '#FECB52']
+    color_map = [
+        '#EF553B', '#00CC96', '#AB63FA', '#FFA15A', '#19D3F3', '#FF6692', '#B6E880', '#FF97FF', '#FECB52',
+        '#1F77B4', '#FF7F0E', '#2CA02C', '#D62728', '#9467BD', '#8C564B', '#E377C2', '#7F7F7F', '#BCBD22', '#17BECF'
+    ]
     color_map = [color for color in color_map if color not in list_used_colors]
 
     if not model:
