@@ -45,20 +45,20 @@ def display_warning(data, n_clicks):
     
     # type checking for each column 
     # (insight: though column might be of type 'object', the cells can be of mixed primitive types)
-    for i in data.columns:
-        types = data[i].apply(type).value_counts()
+    # for i in data.columns:
+    #     types = data[i].apply(type).value_counts()
 
-        if len(types) == 1:
-            print("unique data type: ", types)
-            pass
-        else:
-            try:
-                data = data.applymap(numeric_converter)
-                return False, '', None
-            except:
-                print("mixed data type: ", types)
-                message = 'Warnung: Gemischte Datentypen'
-                return True, message, None
+    #     if len(types) == 1:
+    #         print("unique data type: ", types)
+    #         pass
+    #     else:
+    #         try:
+    #             data = data.applymap(numeric_converter)
+    #             return True, message, None
+    #         except:
+    #             print("mixed data type: ", types)
+    #             message = 'Warnung: Gemischte Datentypen'
+    #             return True, message, None
 
     return False, '', None
     
@@ -68,12 +68,14 @@ model_store = dcc.Store(id='regression_results')
 # callback to calculate regression
 @dash_app.callback(
     Output(component_id = 'regression_results', component_property = 'data'),  # dcc.Store
+    Output(component_id = 'counter', component_property = 'data'),  # dcc.Store
     State(component_id = 'table', component_property = 'data'),
     State(component_id = 'target', component_property = 'value'),
     State(component_id = 'predictors', component_property = 'value'),
     State(component_id = 'controls', component_property = 'value'),
     State(component_id='results', component_property='children'),
     State(component_id = 'regression_results', component_property = 'data'),  # dcc.Store
+    State(component_id = 'counter', component_property = 'data'),  # dcc.Store
     Input('warning_msg', 'cancel_n_clicks'),
     [
         Input(component_id = 'submit-button-state', component_property = 'n_clicks'),
@@ -82,7 +84,7 @@ model_store = dcc.Store(id='regression_results')
     prevent_initial_call=True
     )
 def calculate_regression(data, target_var, predictor_var, control_vars, 
-                        children, regression_dict, cancel, n_clicks, _): # order of arguments in order of classes after 'Output'
+                        children, regression_dict, counter ,cancel, n_clicks, _): # order of arguments in order of classes after 'Output'
 
     # check which component_id was triggered
     input_id = callback_context.triggered_id
@@ -92,11 +94,13 @@ def calculate_regression(data, target_var, predictor_var, control_vars,
     # Create / append dict for storing multiple runs
     if regression_dict == None:
         regression_dict = {}
+
+    if counter == None:
+        counter = 0
     
 
     #### remove experiment from model store
     if all(key in input_id for key in ["index", "type"]):
-        #input_id = ast.literal_eval(input_id)
         delete_chart = input_id["index"]
 
         # remove html child div from list
@@ -108,12 +112,12 @@ def calculate_regression(data, target_var, predictor_var, control_vars,
         if delete not in children:
             del regression_dict[delete]
         
-        return regression_dict
+        return regression_dict, counter
 
 
     # cancel button was clicked
     if cancel:
-        return regression_dict
+        return regression_dict, counter
     
 
     # the case when new models are to be submitted and no warning message appeared
@@ -165,10 +169,6 @@ def calculate_regression(data, target_var, predictor_var, control_vars,
 
         y_range = lm_results.predict(x_range_with_const)
 
-        # Create / append dict for storing multiple runs
-        experiment_runs = 'experiment_' + str(n_clicks)
-        regression_dict[experiment_runs] = {'x_range': x_range, 'y_range': y_range}
-
         
         # df_results_regression = lm_results.summary().tables[0].as_html()
         # df_results_regression = pd.read_html(df_results_regression, header=0, index_col=0)[0]
@@ -189,7 +189,13 @@ def calculate_regression(data, target_var, predictor_var, control_vars,
         df_results_parameters = pd.read_html(df_results_parameters, header=0, index_col=0)[0]
         print(df_results_parameters)
 
+
         # passing regression results to store
+        # Create / append dict for storing multiple runs
+        counter = counter + 1
+        experiment_runs = 'experiment_' + str(counter)
+        regression_dict[experiment_runs] = {'x_range': x_range, 'y_range': y_range}
+
         regression_dict[experiment_runs]['predictor_var'] = predictor_var
         regression_dict[experiment_runs]['target_var'] = target_var
         regression_dict[experiment_runs]['results'] = df_results_parameters.to_dict('index')
@@ -197,4 +203,4 @@ def calculate_regression(data, target_var, predictor_var, control_vars,
         print(regression_dict)
         print("The size of the regression_dictionary is {} bytes".format(sys.getsizeof(regression_dict)))  # 232 Bytes
 
-        return regression_dict
+        return regression_dict, counter

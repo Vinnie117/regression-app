@@ -54,7 +54,8 @@ def serve_layout():
 
             model_store, 
             dcc.Store(id='dict_traces'),
-            dcc.Store(id='list_used_colors')
+            dcc.Store(id='list_used_colors'),
+            dcc.Store(id='counter')
 
         ]
     )
