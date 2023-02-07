@@ -57,6 +57,10 @@ def serve_layout():
             dcc.Store(id='list_used_colors'),
             dcc.Store(id='counter')
 
+            # dcc.Store for table data? Input is df from validate() callback, output is df
+            # this df feeds into calculate_regression()
+            # advantage: data validation would only have to be performed once instead of currently twice
+
         ]
     )
 
