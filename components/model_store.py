@@ -5,7 +5,7 @@ import statsmodels.api as sm
 import pandas as pd
 import numpy as np
 import sys
-# from patsy.contrasts import Treatment
+from utils.dummy_vars import dummy_vars
 
 # check if df cell contain a (string representation of a) number and convert it if true
 def numeric_converter(s):
@@ -14,19 +14,6 @@ def numeric_converter(s):
         return number
     except ValueError:
         return s
-
-# # type checking
-# # Erkenntnis: Obwohl column type 'object', können Zellen unterschiedliche Typen sein!
-# def column_type_check(df, col):
-#     types = df[col].apply(type).value_counts()
-
-#     # Column consists only of a single data type
-#     if len(types) == 1:
-#         print("unique data type: ", types)
-    
-#     # Column contains mixed data types
-#     else:
-#         print("mixed data type: ", types)
 
 @dash_app.callback(
     Output('warning_msg', 'displayed'),
@@ -167,34 +154,19 @@ def calculate_regression(data, target_var, predictor_var, control_vars, encoding
         # (based on the alphabetical order of the category labels), and the 
         # first category in the sorted list is dropped.
         if encoding == 'Dummy Codierung':
-
-            df = pd.get_dummies(df, columns=categoricals, prefix=categoricals, prefix_sep='!_dummy_!', drop_first=False)
+            df = pd.get_dummies(df, columns=categoricals, prefix=categoricals, prefix_sep='!_dummy_!', drop_first=True)
 
             # extract all dummy columns that are part of predictor variables
-            dummies = []
-            for cat in cat_cols:
-                dummy = cat + str('!_dummy_!')
-                for column in df.columns:
-                    if dummy in column:
-                        dummies.append(column)            
-            x_vars = num_cols + dummies
+            x_vars = dummy_vars(df, cat_cols, num_cols, '!_dummy_!')
+
 
         elif encoding == 'One-Hot Codierung':
             
-            df = pd.get_dummies(df, columns=categoricals, prefix=categoricals, prefix_sep='!_onehot_!', drop_first=True)
-            
-            # extract all dummy columns that are part of predictor variables
-            dummies = []
-            for cat in cat_cols:
-                dummy = cat + str('!_onehot_!')
-                for column in df.columns:
-                    if dummy in column:
-                        dummies.append(column)            
-            x_vars = num_cols + dummies
+            df = pd.get_dummies(df, columns=categoricals, prefix=categoricals, prefix_sep='!_onehot_!', drop_first=False)
+            x_vars = dummy_vars(df, cat_cols, num_cols, '!_onehot_!')
 
 
         print(df)
-
 
 
         X = sm.add_constant(df[x_vars])  # intercept must be added manually
