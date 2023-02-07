@@ -5,6 +5,7 @@ from components.plot import plot
 from components.dropdowns import dropdowns
 from components.model_store import model_store
 from components.results import results
+from components.validation import validation
 
 
 
@@ -26,10 +27,7 @@ def serve_layout():
                 # left column
                 variable_selection, 
 
-                dcc.ConfirmDialog(
-                    id='warning_msg',
-                    message='',
-                ),
+                validation,
 
                 # middle column
                 html.Div(children = [
@@ -68,3 +66,24 @@ def serve_layout():
 if __name__ == '__main__':  
     dash_app.layout = serve_layout()
     dash_app.run_server(debug=True)
+
+    '''
+    
+    - Enable boxplots if predictors are categorical
+        - if predict_var is categorical
+            - then collect x_range and y_range
+                - x_range are the factor levels
+                - y_range the respective target value
+        - multiple experiments -> boxplots colours should have less alpha
+    - Enable categorical target variables
+        - horizontal boxplot in the case with numerical predictors
+        - balloon / bubble plot in the case with categorical predictors
+
+
+    - check type of column with:    
+        col = 'column_name'
+        if df[col].dtypes in ['int64', 'float64']:
+    
+    
+    
+    '''

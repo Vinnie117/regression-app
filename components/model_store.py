@@ -5,61 +5,8 @@ import statsmodels.api as sm
 import pandas as pd
 import numpy as np
 import sys
-from utils.dummy_vars import dummy_vars
+from utils.data_prep import dummy_vars, numeric_converter
 
-# check if df cell contain a (string representation of a) number and convert it if true
-def numeric_converter(s):
-    try:
-        number = float(s)
-        return number
-    except ValueError:
-        return s
-
-@dash_app.callback(
-    Output('warning_msg', 'displayed'),
-    Output('warning_msg', 'message'),
-    Output('warning_msg', 'cancel_n_clicks'),
-    State(component_id = 'table', component_property = 'data'),               
-    Input('submit-button-state', 'n_clicks'),
-    prevent_initial_call=True)
-def validate(data, n_clicks):
-
-    data = pd.DataFrame(data)
-
-    warning = "Warnung! \n"
-    warn_1 = None
-    warn_2 = None
-
-    # check NaNs: true if any NaN in df -> will send confirm dialog
-    if data.isnull().values.any():  
-        warn_1 = '- Datenfelder enthalten leere Werte, die beim Fortfahren verworfen werden \n'
-    
-    # type checking for each column 
-    # (insight: though column might be of type 'object', the cells can be of mixed primitive types)
-    for i in data.columns:
-        types = data[i].apply(type).value_counts()
-
-        if len(types) == 1:
-            print("Column: ", i, "unique data type: ", types)
-            pass
-        else:
-            try:
-                # user input could be numeric but is interpreted as string -> try to convert
-                data[i] = data[i].astype(float)  # applymap(numeric_converter)
-                return False, '', None
-            except:
-                print("Column: ", i, "mixed data type: ", types) 
-                warn_2 = '- Gemischte Datentypen in den Feldern gefunden'
-
-    if warn_1 is not None and warn_2 is not None:
-        return True, warning + warn_1 + warn_2, None
-    elif warn_1 is not None:
-        return True, warning + warn_1, None
-    elif warn_2 is not None:
-        return True, warning + warn_2, None
-
-    return False, '', None
-    
 
 model_store = dcc.Store(id='regression_results')
 
@@ -87,8 +34,7 @@ def calculate_regression(data, target_var, predictor_var, control_vars, encoding
 
     # check which component_id was triggered
     input_id = callback_context.triggered_id
-    # print(input_id) 
-    # print(type(input_id))
+    # print(input_id) # print(type(input_id))
 
     # Create / append dict for storing multiple runs
     if regression_dict == None:
