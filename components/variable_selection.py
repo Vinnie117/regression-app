@@ -77,7 +77,7 @@ variable_selection = html.Div([
             value='Dummy Codierung',             
         ),
         dbc.Tooltip(
-            "Dummy: ...\r\n One-Hot: ...",
+            "Dummy: ... One-Hot: ...",
             target= 'encoding', #"encoding", # "Codierung für Kategorien"
             placement="bottom"
         )
