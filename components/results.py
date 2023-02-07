@@ -43,8 +43,8 @@ def show_results(children, n_clicks, regression_dict, _, cancel, submit):
         return children
 
 
+    # Construct results to display
     experiment_runs = str(list(regression_dict)[-1])
-
     df_results_parameters = pd.DataFrame.from_dict(regression_dict[experiment_runs]['results'], orient='index')
     x_vars = list(df_results_parameters.index.values)
     list_coefs = df_results_parameters.iloc[:,0].to_list()
