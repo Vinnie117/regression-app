@@ -14,6 +14,18 @@ def numeric_converter(s):
     except ValueError:
         return s
 
+# # type checking
+# # Erkenntnis: Obwohl column type 'object', können Zellen unterschiedliche Typen sein!
+# def column_type_check(df, col):
+#     types = df[col].apply(type).value_counts()
+
+#     # Column consists only of a single data type
+#     if len(types) == 1:
+#         print("unique data type: ", types)
+    
+#     # Column contains mixed data types
+#     else:
+#         print("mixed data type: ", types)
 
 @dash_app.callback(
     Output('warning_msg', 'displayed'),
@@ -40,9 +52,14 @@ def validate(data, n_clicks):
             print("Column: ", i, "unique data type: ", types)
             pass
         else:
-            print("Column: ", i, "mixed data type: ", types)
-            message = 'Warnung: Gemischte Datentypen'
-            return True, message, None
+            try:
+                # user input could be numeric but is interpreted as string -> try to convert
+                data[i] = data[i].astype(float)  # applymap(numeric_converter)
+                return False, '', None
+            except:
+                print("Column: ", i, "mixed data type: ", types) 
+                message = 'Warnung: Gemischte Datentypen'
+                return True, message, None
 
     return False, '', None
     
@@ -120,6 +137,7 @@ def calculate_regression(data, target_var, predictor_var, control_vars,
             df=df.dropna()
 
         # try to convert string representation of numerics to numeric
+        # applymap applies function to each cell
         df = df.applymap(numeric_converter)
 ##########################################################################
 
