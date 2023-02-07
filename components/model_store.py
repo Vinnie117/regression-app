@@ -14,18 +14,6 @@ def numeric_converter(s):
     except ValueError:
         return s
 
-# # type checking
-# # Erkenntnis: Obwohl column type 'object', können Zellen unterschiedliche Typen sein!
-# def column_type_check(df, col):
-#     types = df[col].apply(type).value_counts()
-
-#     # Column consists only of a single data type
-#     if len(types) == 1:
-#         print("unique data type: ", types)
-    
-#     # Column contains mixed data types
-#     else:
-#         print("mixed data type: ", types)
 
 @dash_app.callback(
     Output('warning_msg', 'displayed'),
@@ -34,7 +22,7 @@ def numeric_converter(s):
     State(component_id = 'table', component_property = 'data'),               
     Input('submit-button-state', 'n_clicks'),
     prevent_initial_call=True)
-def display_warning(data, n_clicks):
+def validate(data, n_clicks):
 
     data = pd.DataFrame(data)
 
@@ -45,20 +33,16 @@ def display_warning(data, n_clicks):
     
     # type checking for each column 
     # (insight: though column might be of type 'object', the cells can be of mixed primitive types)
-    # for i in data.columns:
-    #     types = data[i].apply(type).value_counts()
+    for i in data.columns:
+        types = data[i].apply(type).value_counts()
 
-    #     if len(types) == 1:
-    #         print("unique data type: ", types)
-    #         pass
-    #     else:
-    #         try:
-    #             data = data.applymap(numeric_converter)
-    #             return True, message, None
-    #         except:
-    #             print("mixed data type: ", types)
-    #             message = 'Warnung: Gemischte Datentypen'
-    #             return True, message, None
+        if len(types) == 1:
+            print("Column: ", i, "unique data type: ", types)
+            pass
+        else:
+            print("Column: ", i, "mixed data type: ", types)
+            message = 'Warnung: Gemischte Datentypen'
+            return True, message, None
 
     return False, '', None
     
@@ -95,6 +79,7 @@ def calculate_regression(data, target_var, predictor_var, control_vars,
     if regression_dict == None:
         regression_dict = {}
 
+    # to track experiments
     if counter == None:
         counter = 0
     
