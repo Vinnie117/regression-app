@@ -160,13 +160,38 @@ def calculate_regression(data, target_var, predictor_var, control_vars, encoding
         # contrast = Treatment(reference=0).code_without_intercept(levels)
         categoricals = df.select_dtypes(include=['object']).columns
 
+        cat_cols = list(categoricals)  
+        num_cols = [col for col in x_vars if col not in cat_cols]  # numeric predictor vars
+
         # By default, pandas sorts the categories in ascending order 
         # (based on the alphabetical order of the category labels), and the 
         # first category in the sorted list is dropped.
-        if encoding == 'One-Hot Codierung':
-            df = pd.get_dummies(df, columns=categoricals, prefix=categoricals, prefix_sep='_', drop_first=False)
-        elif encoding == 'Dummy Codierung':
-            df = pd.get_dummies(df, columns=categoricals, prefix=categoricals, prefix_sep='_', drop_first=True)
+        if encoding == 'Dummy Codierung':
+
+            df = pd.get_dummies(df, columns=categoricals, prefix=categoricals, prefix_sep='!_dummy_!', drop_first=False)
+
+            # extract all dummy columns that are part of predictor variables
+            dummies = []
+            for cat in cat_cols:
+                dummy = cat + str('!_dummy_!')
+                for column in df.columns:
+                    if dummy in column:
+                        dummies.append(column)            
+            x_vars = num_cols + dummies
+
+        elif encoding == 'One-Hot Codierung':
+            
+            df = pd.get_dummies(df, columns=categoricals, prefix=categoricals, prefix_sep='!_onehot_!', drop_first=True)
+            
+            # extract all dummy columns that are part of predictor variables
+            dummies = []
+            for cat in cat_cols:
+                dummy = cat + str('!_onehot_!')
+                for column in df.columns:
+                    if dummy in column:
+                        dummies.append(column)            
+            x_vars = num_cols + dummies
+
 
         print(df)
 
