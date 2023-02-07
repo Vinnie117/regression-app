@@ -1,6 +1,7 @@
 from dash import dcc, html
 from dash.dependencies import Input, Output, State
 from dash_app import dash_app
+import dash_bootstrap_components as dbc
 
 
 variable_selection = html.Div([
@@ -58,7 +59,33 @@ variable_selection = html.Div([
                 'display': 'block'
             }               
         )
-    ])          
+    ], style={
+        'border': '1px dashed black',
+        'margin-top': '30px',
+    }),
+
+    html.Div([
+
+        html.P(
+            'Codierung für Kategorien',
+            id = "encoding_title"
+        ),
+        
+        dcc.Dropdown(
+            id = 'encoding',
+            options=['Dummy Codierung', 'One-Hot Codierung'],
+            value='Dummy Codierung',             
+        ),
+        dbc.Tooltip(
+            "Dummy: ...\r\n One-Hot: ...",
+            target= 'encoding', #"encoding", # "Codierung für Kategorien"
+            placement="bottom"
+        )
+    ], style={
+        'border': '1px dashed black',
+        'margin-top': '30px',
+    })
+
 ], style={
     'display': 'inline-block',  # display elements (children) side by side
     'width': '10%',  # percentage of screen width taken by div

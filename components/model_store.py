@@ -5,6 +5,7 @@ import statsmodels.api as sm
 import pandas as pd
 import numpy as np
 import sys
+# from patsy.contrasts import Treatment
 
 # check if df cell contain a (string representation of a) number and convert it if true
 def numeric_converter(s):
@@ -74,6 +75,7 @@ model_store = dcc.Store(id='regression_results')
     State(component_id = 'target', component_property = 'value'),
     State(component_id = 'predictors', component_property = 'value'),
     State(component_id = 'controls', component_property = 'value'),
+    State(component_id = 'encoding', component_property = 'value'),
     State(component_id='results', component_property='children'),
     State(component_id = 'regression_results', component_property = 'data'),  # dcc.Store
     State(component_id = 'counter', component_property = 'data'),  # dcc.Store
@@ -84,7 +86,7 @@ model_store = dcc.Store(id='regression_results')
     ],
     prevent_initial_call=True
     )
-def calculate_regression(data, target_var, predictor_var, control_vars, 
+def calculate_regression(data, target_var, predictor_var, control_vars, encoding,
                         children, regression_dict, counter ,cancel, n_clicks, _): # order of arguments in order of classes after 'Output'
 
     # check which component_id was triggered
@@ -153,6 +155,22 @@ def calculate_regression(data, target_var, predictor_var, control_vars,
 
         control_vars = [item for item in control_vars if len(item)>0]
         x_vars = [predictor_var] + control_vars
+
+        # dummy encoding for categorical variables
+        # contrast = Treatment(reference=0).code_without_intercept(levels)
+        categoricals = df.select_dtypes(include=['object']).columns
+
+        # By default, pandas sorts the categories in ascending order 
+        # (based on the alphabetical order of the category labels), and the 
+        # first category in the sorted list is dropped.
+        if encoding == 'One-Hot Codierung':
+            df = pd.get_dummies(df, columns=categoricals, prefix=categoricals, prefix_sep='_', drop_first=False)
+        elif encoding == 'Dummy Codierung':
+            df = pd.get_dummies(df, columns=categoricals, prefix=categoricals, prefix_sep='_', drop_first=True)
+
+        print(df)
+
+
 
         X = sm.add_constant(df[x_vars])  # intercept must be added manually
         lm = sm.OLS(data = df, endog=df[target_var], exog=X)
