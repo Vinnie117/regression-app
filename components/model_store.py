@@ -100,7 +100,11 @@ def calculate_regression(data, target_var, predictor_var, control_vars, encoding
 
         # dummy encoding for categorical variables
         # contrast = Treatment(reference=0).code_without_intercept(levels)
-        categoricals = df.select_dtypes(include=['object']).columns
+        categoricals = []
+        for i in df.select_dtypes(include=['object']).columns:
+            if i in x_vars:
+                categoricals.append(i)
+        # categoricals = df.select_dtypes(include=['object']).columns
 
         cat_cols = list(categoricals)  
         num_cols = [col for col in x_vars if col not in cat_cols]  # numeric predictor vars
@@ -120,7 +124,7 @@ def calculate_regression(data, target_var, predictor_var, control_vars, encoding
             df = pd.get_dummies(df, columns=categoricals, prefix=categoricals, prefix_sep='!_onehot_!', drop_first=False)
             x_vars = dummy_vars(df, cat_cols, num_cols, '!_onehot_!')
 
-
+        print(x_vars)
         print(df)
 
 
