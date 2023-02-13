@@ -98,22 +98,28 @@ def calculate_regression(data, target_var, predictor_var, control_vars, encoding
         control_vars = [item for item in control_vars if len(item)>0]
         x_vars = [predictor_var] + control_vars
 
-        # dummy encoding for categorical variables
-        # contrast = Treatment(reference=0).code_without_intercept(levels)
-        categoricals = []
+        # for the plot
+        if df[predictor_var].dtypes == 'object':
+            x_range = df[predictor_var].value_counts()
+        else:
+            x_range = np.linspace(df[predictor_var].min(), df[predictor_var].max(), 10)
+
+        print(x_range)
+        
+        cat_cols = []
         for i in df.select_dtypes(include=['object']).columns:
             if i in x_vars:
-                categoricals.append(i)
-        # categoricals = df.select_dtypes(include=['object']).columns
+                cat_cols.append(i)
 
-        cat_cols = list(categoricals)  
         num_cols = [col for col in x_vars if col not in cat_cols]  # numeric predictor vars
 
+
+        # dummy encoding for categorical variables
         # By default, pandas sorts the categories in ascending order 
         # (based on the alphabetical order of the category labels), and the 
         # first category in the sorted list is dropped.
         if encoding == 'Dummy Codierung':
-            df = pd.get_dummies(df, columns=categoricals, prefix=categoricals, prefix_sep='!_dummy_!', drop_first=True)
+            df = pd.get_dummies(df, columns=cat_cols, prefix=cat_cols, prefix_sep='!_dummy_!', drop_first=True)
 
             # extract all dummy columns that are part of predictor variables
             x_vars = dummy_vars(df, cat_cols, num_cols, '!_dummy_!')
@@ -121,7 +127,7 @@ def calculate_regression(data, target_var, predictor_var, control_vars, encoding
 
         elif encoding == 'One-Hot Codierung':
             
-            df = pd.get_dummies(df, columns=categoricals, prefix=categoricals, prefix_sep='!_onehot_!', drop_first=False)
+            df = pd.get_dummies(df, columns=cat_cols, prefix=cat_cols, prefix_sep='!_onehot_!', drop_first=False)
             x_vars = dummy_vars(df, cat_cols, num_cols, '!_onehot_!')
 
         print(x_vars)
@@ -133,12 +139,11 @@ def calculate_regression(data, target_var, predictor_var, control_vars, encoding
         lm_results = lm.fit()
 
         #### Prediction 
-        # for the plot
-        x_range = np.linspace(df[predictor_var].min(), df[predictor_var].max(), 10)
-
         # for the model
         predictor_space = np.linspace(df[x_vars].min(), df[x_vars].max(), 10)
+        print(predictor_space)
         x_range_with_const = sm.add_constant(predictor_space)
+        print(x_range_with_const)
 
         # Partial regression plot: Set all controls to value 0 -> see multivariate regression equation
         if x_range_with_const.shape[1] >= 2:
