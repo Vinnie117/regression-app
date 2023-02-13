@@ -1,8 +1,9 @@
 from dash import dcc, html
-from dash.dependencies import Input, Output, State
+from dash.dependencies import Input, Output
 from dash_app import dash_app
 import dash_bootstrap_components as dbc
-
+import pandas as pd
+import numpy as np
 
 variable_selection = html.Div([
 
@@ -99,11 +100,18 @@ variable_selection = html.Div([
     Output('target', 'options'),
     Input('table', 'columns'),
     Input('predictors', 'value'),
-    Input('controls', 'value')
+    Input('controls', 'value'),
+    Input(component_id = 'table', component_property = 'data')
     )
-def update_target(columns, predictor_var, control_vars):
+def update_target(columns, predictor_var, control_vars, data):
+
+    df = pd.DataFrame(data)
+
+    categorical = df.columns[(df.dtypes.values == np.dtype('object'))]
     control_vars = ",".join(string for string in control_vars if len(string) > 0)
     column_names = [i['name'] for i in columns if i['name'] not in [control_vars, predictor_var]]
+    column_names = [i for i in column_names if i not in categorical]
+
     return column_names
 
 
