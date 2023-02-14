@@ -8,7 +8,10 @@ def create_base_plot(x, y, type):
                 "x": x,
                 "y": y,
                 "name": "experiment_0",
-                "marker": {"color": "#636EFA"}
+                "marker": {"color": "#636EFA"},
+                "boxpoints": "all",
+                "jitter": 0.3,
+                "pointpos": 0
             }],
             # "layout": {"margin":{"l":20, "r":20, "t":20, "b": 20}}        
         })
