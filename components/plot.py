@@ -45,7 +45,12 @@ def update_scatterplot(data, x_axis_name, y_axis_name, model, n_clicks, dict_tra
         # base plot
         x_axis = [d[x_axis_name] for d in data]
         y_axis = [d[y_axis_name] for d in data]
-        base_fig = go.Figure(create_base_plot(x_axis, y_axis))
+
+
+        if all(isinstance(item, str) for item in x_axis):
+            base_fig = go.Figure(create_base_plot(x_axis, y_axis, 'object'))
+        else:
+            base_fig = go.Figure(create_base_plot(x_axis, y_axis, 'numeric'))
 
         return base_fig, dict_traces, list_used_colors
 
@@ -92,7 +97,7 @@ def update_scatterplot(data, x_axis_name, y_axis_name, model, n_clicks, dict_tra
         # return the plot
         x_axis = [d[x_axis_name] for d in data]
         y_axis = [d[y_axis_name] for d in data]
-        base_trace = create_base_plot(x_axis, y_axis)
+        base_trace = create_base_plot(x_axis, y_axis, 'numeric')
         base_trace = [base_trace['data'][0]]
 
         fig = go.Figure(data= base_trace + available_traces, layout={'showlegend': True})

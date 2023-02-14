@@ -110,6 +110,8 @@ def update_target(columns, predictor_var, control_vars, data):
     categorical = df.columns[(df.dtypes.values == np.dtype('object'))]
     control_vars = ",".join(string for string in control_vars if len(string) > 0)
     column_names = [i['name'] for i in columns if i['name'] not in [control_vars, predictor_var]]
+
+    # only numeric targets for (linear) regression
     column_names = [i for i in column_names if i not in categorical]
 
     return column_names
