@@ -165,10 +165,11 @@ def calculate_regression(data, target_var, predictor_var, control_vars, encoding
             new_X = cat_df_with_dummies.drop('cat', axis=1)
             new_X = sm.add_constant(new_X)
 
-            y_range = lm_results.predict(new_X)
+            y_range = lm_results.predict(new_X).tolist()
 
         
         print(y_range)
+        print(type(y_range))
 
         
         # df_results_regression = lm_results.summary().tables[0].as_html()

@@ -56,52 +56,96 @@ def update_scatterplot(data, x_axis_name, y_axis_name, model, n_clicks, dict_tra
 
     elif model:
 
-        # new_traces = []
-
-        # build the OLS line of each respective experiment and store it
-        for run in model:
-            new_trace =go.Scatter(
-                x=model[run]['x_range'],
-                y=model[run]['y_range'], 
-                mode='lines',
-                marker={'color': color_map[list(model.keys()).index(run)]},  # colors will be hardcoded here
-                name=run)                
-            # new_traces.append(new_trace)   
-
-            # build the store which collects all traces
-            if run not in dict_traces:
-                dict_traces[run] = new_trace
-
-                # keep track of used colors (To do: could also look into dict_traces instead of using list_used_colors)
-                list_used_colors.append(color_map[list(model.keys()).index(run)])
-
-        # delete experiment run in trace store 'dict_traces' if it is removed in model
-        # -> not necessary bc it disappears in selected_experiments list
-
-        # match dropdown selection by experiment run (common ID)
-        selected_experiments = []
-        for run in model:
-            if x_axis_name == model[run]['predictor_var'] and y_axis_name == model[run]['target_var']:
-                selected_experiments.append(run)
-
-        # print(selected_experiments)
-
-        # fetch traces from trace store that match the experiment run
-        available_traces = []
-        for trace_key, trace_val in dict_traces.items():
-            if trace_key in selected_experiments:
-                available_traces.append(trace_val)
-
-        # print(available_traces)
-
-        # return the plot
+        # the case for categorical targets
         x_axis = [d[x_axis_name] for d in data]
-        y_axis = [d[y_axis_name] for d in data]
-        base_trace = create_base_plot(x_axis, y_axis, 'numeric')
-        base_trace = [base_trace['data'][0]]
+        if all(isinstance(item, str) for item in x_axis):
 
-        fig = go.Figure(data= base_trace + available_traces, layout={'showlegend': True})
-        print("The size of the dict_traces is {} bytes".format(sys.getsizeof(dict_traces)))  # 232 Bytes
+            for run in model:
+
+                new_trace = go.Box(x=model[run]['x_range'], y=model[run]['y_range'], name= run)   
+
+                # build the store which collects all traces
+                if run not in dict_traces:
+                    dict_traces[run] = new_trace
+
+                    # keep track of used colors (To do: could also look into dict_traces instead of using list_used_colors)
+                    list_used_colors.append(color_map[list(model.keys()).index(run)])
+
+            # delete experiment run in trace store 'dict_traces' if it is removed in model
+            # -> not necessary bc it disappears in selected_experiments list
+
+            # match dropdown selection by experiment run (common ID)
+            selected_experiments = []
+            for run in model:
+                if x_axis_name == model[run]['predictor_var'] and y_axis_name == model[run]['target_var']:
+                    selected_experiments.append(run)
+
+            # print(selected_experiments)
+
+            # fetch traces from trace store that match the experiment run
+            available_traces = []
+            for trace_key, trace_val in dict_traces.items():
+                if trace_key in selected_experiments:
+                    available_traces.append(trace_val)
+
+            # print(available_traces)
+
+            # return the plot
+            x_axis = [d[x_axis_name] for d in data]
+            y_axis = [d[y_axis_name] for d in data]
+            base_trace = create_base_plot(x_axis, y_axis, 'object')
+            base_trace = [base_trace['data'][0]]
+
+            fig = go.Figure(data= base_trace + available_traces, layout={'showlegend': True})
+            print("The size of the dict_traces is {} bytes".format(sys.getsizeof(dict_traces)))  # 232 Bytes
+
+
+        
+        # the case for numeric target
+        else:
+            # build the OLS line of each respective experiment and store it
+            for run in model:
+                new_trace =go.Scatter(
+                    x=model[run]['x_range'],
+                    y=model[run]['y_range'], 
+                    mode='lines',
+                    marker={'color': color_map[list(model.keys()).index(run)]},  # colors will be hardcoded here
+                    name=run)                
+
+                # build the store which collects all traces
+                if run not in dict_traces:
+                    dict_traces[run] = new_trace
+
+                    # keep track of used colors (To do: could also look into dict_traces instead of using list_used_colors)
+                    list_used_colors.append(color_map[list(model.keys()).index(run)])
+
+            # delete experiment run in trace store 'dict_traces' if it is removed in model
+            # -> not necessary bc it disappears in selected_experiments list
+
+            # match dropdown selection by experiment run (common ID)
+            selected_experiments = []
+            for run in model:
+                if x_axis_name == model[run]['predictor_var'] and y_axis_name == model[run]['target_var']:
+                    selected_experiments.append(run)
+
+            # print(selected_experiments)
+
+            # fetch traces from trace store that match the experiment run
+            available_traces = []
+            for trace_key, trace_val in dict_traces.items():
+                if trace_key in selected_experiments:
+                    available_traces.append(trace_val)
+
+            # print(available_traces)
+
+            # return the plot
+            x_axis = [d[x_axis_name] for d in data]
+            y_axis = [d[y_axis_name] for d in data]
+            base_trace = create_base_plot(x_axis, y_axis, 'numeric')
+            base_trace = [base_trace['data'][0]]
+
+            fig = go.Figure(data= base_trace + available_traces, layout={'showlegend': True})
+            print("The size of the dict_traces is {} bytes".format(sys.getsizeof(dict_traces)))  # 232 Bytes
 
 
         return fig, dict_traces, list_used_colors
