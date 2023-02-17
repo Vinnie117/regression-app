@@ -41,11 +41,11 @@ def update_scatterplot(data, x_axis_name, y_axis_name, model, n_clicks, dict_tra
     ]
     color_map = [color for color in color_map if color not in list_used_colors]
 
-    if not model:
-        # base plot
-        x_axis = [d[x_axis_name] for d in data]
-        y_axis = [d[y_axis_name] for d in data]
+    # base plot
+    x_axis = [d[x_axis_name] for d in data]
+    y_axis = [d[y_axis_name] for d in data]
 
+    if not model:
 
         if all(isinstance(item, str) for item in x_axis):
             base_fig = go.Figure(create_base_plot(x_axis, y_axis, 'object'))
@@ -56,13 +56,16 @@ def update_scatterplot(data, x_axis_name, y_axis_name, model, n_clicks, dict_tra
 
     elif model:
 
-        # the case for categorical targets
-        x_axis = [d[x_axis_name] for d in data]
+        # the case for categorical predictor
         if all(isinstance(item, str) for item in x_axis):
 
             for run in model:
 
-                new_trace = go.Box(x=model[run]['x_range'], y=model[run]['y_range'], name= run)   
+                new_trace = go.Box(
+                    x=model[run]['x_range'],
+                    y=model[run]['y_range'],
+                    marker={'color': color_map[list(model.keys()).index(run)]}, 
+                    name= run)   
 
                 # build the store which collects all traces
                 if run not in dict_traces:
@@ -91,8 +94,6 @@ def update_scatterplot(data, x_axis_name, y_axis_name, model, n_clicks, dict_tra
             # print(available_traces)
 
             # return the plot
-            x_axis = [d[x_axis_name] for d in data]
-            y_axis = [d[y_axis_name] for d in data]
             base_trace = create_base_plot(x_axis, y_axis, 'object')
             base_trace = [base_trace['data'][0]]
 
@@ -101,7 +102,7 @@ def update_scatterplot(data, x_axis_name, y_axis_name, model, n_clicks, dict_tra
 
 
         
-        # the case for numeric target
+        # the case for numeric predictor
         else:
             # build the OLS line of each respective experiment and store it
             for run in model:
@@ -139,8 +140,6 @@ def update_scatterplot(data, x_axis_name, y_axis_name, model, n_clicks, dict_tra
             # print(available_traces)
 
             # return the plot
-            x_axis = [d[x_axis_name] for d in data]
-            y_axis = [d[y_axis_name] for d in data]
             base_trace = create_base_plot(x_axis, y_axis, 'numeric')
             base_trace = [base_trace['data'][0]]
 

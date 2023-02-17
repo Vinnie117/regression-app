@@ -138,40 +138,35 @@ def calculate_regression(data, target_var, predictor_var, control_vars, encoding
         lm = sm.OLS(data = df, endog=df[target_var], exog=X)
         lm_results = lm.fit()
 
-        #### Prediction 
-        # for the model
+        #### Prediction for the model
 
-
-        # hacky way of saying that predictor is numeric
-        # (bc non-numeric predictors are dropped after encoding)
+        # hacky way of saying that predictor is numeric (bc non-numeric predictors are dropped after encoding)
         if predictor_var in list(df.columns):
             predictor_space = np.linspace(df[x_vars].min(), df[x_vars].max(), 10)
             print(predictor_space)
-            x_range_with_const = sm.add_constant(predictor_space)
-            print(x_range_with_const)
+            predictor_space_with_const = sm.add_constant(predictor_space)
+            print(predictor_space_with_const)
 
             # Partial regression plot: Set all controls to value 0 -> see multivariate regression equation
-            if x_range_with_const.shape[1] >= 2:
-                x_range_with_const[:,2:] = 0
+            if predictor_space_with_const.shape[1] >= 2:
+                predictor_space_with_const[:,2:] = 0
 
-            y_range = lm_results.predict(x_range_with_const)
+            y_range = lm_results.predict(predictor_space_with_const)
 
         else:
             print('it is object!!')
             print(x_range)
             cat_df = pd.DataFrame({'cat': x_range})
             cat_dummies = pd.get_dummies(cat_df['cat'], prefix='cat', drop_first=True)  # only the dummy case
-            cat_df_with_dummies = pd.concat([cat_df, cat_dummies], axis=1)
-            new_X = cat_df_with_dummies.drop('cat', axis=1)
-            new_X = sm.add_constant(new_X)
+            predictor_space_with_const = sm.add_constant(cat_dummies)
 
-            y_range = lm_results.predict(new_X).tolist()
+            # Partial regression: set all controls to 0
+            for control in control_vars:
+                predictor_space_with_const[control] = 0
 
-        
-        print(y_range)
-        print(type(y_range))
+            y_range = lm_results.predict(predictor_space_with_const).tolist()
 
-        
+
         # df_results_regression = lm_results.summary().tables[0].as_html()
         # df_results_regression = pd.read_html(df_results_regression, header=0, index_col=0)[0]
         # print(df_results_regression)
