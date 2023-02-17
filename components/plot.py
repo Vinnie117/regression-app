@@ -1,7 +1,7 @@
 from dash import dcc, html
 from dash.dependencies import Input, Output, State
 import plotly.graph_objects as go
-from utils.base_plot import create_base_plot
+from utils.plotting import create_base_plot
 from dash_app import dash_app
 import sys
 

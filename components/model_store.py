@@ -153,6 +153,7 @@ def calculate_regression(data, target_var, predictor_var, control_vars, encoding
 
             y_range = lm_results.predict(predictor_space_with_const)
 
+        # predictor is categorical
         else:
             print('it is object!!')
             print(x_range)
