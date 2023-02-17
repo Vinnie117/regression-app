@@ -5,7 +5,7 @@ import statsmodels.api as sm
 import pandas as pd
 import numpy as np
 import sys
-from utils.data_prep import dummy_vars, numeric_converter
+from utils.data_prep import dummy_vars, numeric_converter, cat_inference
 
 
 model_store = dcc.Store(id='regression_results')
@@ -156,13 +156,12 @@ def calculate_regression(data, target_var, predictor_var, control_vars, encoding
         else:
             print('it is object!!')
             print(x_range)
-            cat_df = pd.DataFrame({'cat': x_range})
-            cat_dummies = pd.get_dummies(cat_df['cat'], prefix='cat', drop_first=True)  # only the dummy case
-            predictor_space_with_const = sm.add_constant(cat_dummies)
 
-            # Partial regression: set all controls to 0
-            for control in control_vars:
-                predictor_space_with_const[control] = 0
+            if encoding == 'Dummy Codierung':
+                predictor_space_with_const = cat_inference(x_range, control_vars, True)
+
+            elif encoding == 'One-Hot Codierung':
+                predictor_space_with_const = cat_inference(x_range, control_vars, False)
 
             y_range = lm_results.predict(predictor_space_with_const).tolist()
 
