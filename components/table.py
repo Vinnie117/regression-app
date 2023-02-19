@@ -1,8 +1,26 @@
 from dash.dash_table.Format import Format
-from dash import html, dash_table
+from dash import html, dash_table, dcc
 from assets.data_table import data_table
 
-table = html.Div(
+table = html.Div([
+
+            html.Div(
+                dcc.Checklist(
+                id = 'decimal_separator', 
+                options = ['Punkt als Dezimaltrennzeichen'], 
+                value = [''], inline=True),
+                style={}
+            ),
+
+            # html.Div(
+            #     html.P("EMPTY"), 
+            #     style={         
+            #         'display': 'inline-block',
+            #         'border': '1px dashed blue'
+            #     }
+            # ),
+
+            html.Div(
             dash_table.DataTable(
                 id='table',
                 columns=[
@@ -16,8 +34,13 @@ table = html.Div(
                     {
                         'name': 'y', 
                         'id': 'y', 
-                        'format': Format(nully='N/A'),
-                        'on_change': {'action': 'coerce', 'failure': 'default'},
+                        'format': dict(locale=dict(decimal='.'), nully='N/A'),
+                        
+                        
+                            #  Format(
+                            #     nully='N/A',
+                            #     ),
+                        #'on_change': {'action': 'coerce', 'failure': 'default'},
                         'renamable': False
                     },
                     {
@@ -57,6 +80,8 @@ table = html.Div(
                 'width': '77%', 
                 'margin-left': 'auto', 
                 'margin-right': 'auto',
-                'border': '1px solid black'
+                'border': '1px solid black',
+                # 'display': 'inline-block'
             }
-        )
+            )
+])

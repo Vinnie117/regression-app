@@ -4,6 +4,8 @@ import plotly.graph_objects as go
 from utils.plotting import create_base_plot
 from dash_app import dash_app
 import sys
+import pandas as pd
+from utils.data_prep import numeric_converter
 
 plot = html.Div(
     dcc.Graph(id='scatterplot')
@@ -42,8 +44,12 @@ def update_scatterplot(data, x_axis_name, y_axis_name, model, n_clicks, dict_tra
     color_map = [color for color in color_map if color not in list_used_colors]
 
     # base plot
-    x_axis = [d[x_axis_name] for d in data]
-    y_axis = [d[y_axis_name] for d in data]
+    df = pd.DataFrame(data)
+    df = df.applymap(numeric_converter)
+
+    x_axis = df[x_axis_name] 
+    y_axis = df[y_axis_name]
+
 
     if not model:
 

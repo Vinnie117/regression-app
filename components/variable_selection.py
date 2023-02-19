@@ -4,6 +4,7 @@ from dash_app import dash_app
 import dash_bootstrap_components as dbc
 import pandas as pd
 import numpy as np
+from utils.data_prep import numeric_converter
 
 variable_selection = html.Div([
 
@@ -106,6 +107,12 @@ variable_selection = html.Div([
 def update_target(columns, predictor_var, control_vars, data):
 
     df = pd.DataFrame(data)
+
+
+    df = df.applymap(numeric_converter)
+
+    print(df)
+    print(df.dtypes)
 
     categorical = df.columns[(df.dtypes.values == np.dtype('object'))]
     control_vars = ",".join(string for string in control_vars if len(string) > 0)

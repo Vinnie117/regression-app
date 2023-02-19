@@ -16,7 +16,7 @@ def dummy_vars(df, cat_cols, num_cols, dummy_marker):
 # check if df cell contain a (string representation of a) number and convert it if true
 def numeric_converter(s):
     try:
-        number = float(s)
+        number = float(str(s).replace(',', '.'))
         return number
     except ValueError:
         return s
