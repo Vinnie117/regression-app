@@ -31,6 +31,7 @@ def serve_layout():
 
                 # middle column
                 html.Div(children = [
+
                     table,
 
                     html.Div(children = [
@@ -67,23 +68,28 @@ if __name__ == '__main__':
     dash_app.layout = serve_layout()
     dash_app.run_server(debug=True)
 
-    '''
-    
-    - Enable boxplots if predictors are categorical
-        - if predict_var is categorical
-            - then collect x_range and y_range
-                - x_range are the factor levels
-                - y_range the respective target value
-        - multiple experiments -> boxplots colours should have less alpha
-    - Enable categorical target variables
-        - horizontal boxplot in the case with numerical predictors
-        - balloon / bubble plot in the case with categorical predictors
+
+'''
+
+TO DO
+
+Bei Komma als Dezimal-Separator:
+- Zellen mit Punkt werden immer noch als Zahlen gelesen
+    - Umwandeln in category!
 
 
-    - check type of column with:    
-        col = 'column_name'
-        if df[col].dtypes in ['int64', 'float64']:
-    
-    
-    
-    '''
+- Umgekehrt gleiches Problem:
+    Bei Punkt als Dezimal Separator
+        - eine Dezimalzahl mit Komma wird ohne Komma als Zahl gelesen
+
+
+- Für variable_selection klappt es aber!
+
+
+Error:
+- when there is a line and then points are deleted in table
+    - change in numeric_converter()
+- plot error: boxplots and then cell is edited to have a number
+- behaviour for thousands separator
+
+'''

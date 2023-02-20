@@ -83,6 +83,10 @@ def calculate_regression(data, target_var, predictor_var, control_vars, encoding
         # try to convert string representation of numerics to numeric
         # applymap applies function to each cell
         df = df.applymap(numeric_converter)
+
+        # conversion might lead to NaN in some cells
+        if df.isnull().values.any():   
+            df=df.dropna()
 ##########################################################################
 
         print(df)
@@ -130,8 +134,9 @@ def calculate_regression(data, target_var, predictor_var, control_vars, encoding
             df = pd.get_dummies(df, columns=cat_cols, prefix=cat_cols, prefix_sep='!_onehot_!', drop_first=False)
             x_vars = dummy_vars(df, cat_cols, num_cols, '!_onehot_!')
 
-        print(x_vars)
+        # print(x_vars)
         print(df)
+        print(df.dtypes)
 
 
         X = sm.add_constant(df[x_vars])  # intercept must be added manually

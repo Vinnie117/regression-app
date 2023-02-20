@@ -102,13 +102,13 @@ variable_selection = html.Div([
     Input('table', 'columns'),
     Input('predictors', 'value'),
     Input('controls', 'value'),
-    Input(component_id = 'table', component_property = 'data')
+    Input(component_id = 'table', component_property = 'data'),
+    Input(component_id='decimal_separator', component_property = 'value')
     )
-def update_target(columns, predictor_var, control_vars, data):
+def update_target(columns, predictor_var, control_vars, data, decimal_separator):
 
     df = pd.DataFrame(data)
-
-
+    # df = df.applymap(lambda s: numeric_converter(s, ',') if decimal_separator == [''] else numeric_converter(s, '.'))
     df = df.applymap(numeric_converter)
 
     print(df)

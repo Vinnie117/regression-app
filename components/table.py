@@ -13,6 +13,14 @@ table = html.Div([
             ),
 
             # html.Div(
+            #     dcc.Checklist(
+            #     id = 'thousands_separator', 
+            #     options = ['1000er-Trennzeichen'], 
+            #     value = [''], inline=True),
+            #     style={}
+            # ),
+
+            # html.Div(
             #     html.P("EMPTY"), 
             #     style={         
             #         'display': 'inline-block',

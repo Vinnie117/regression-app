@@ -24,11 +24,9 @@ plot = html.Div(
     Input(component_id = 'submit-button-state', component_property = 'n_clicks'),
     State(component_id = 'dict_traces', component_property = 'data'),
     State(component_id = 'list_used_colors', component_property = 'data'),
-    Input('warning_msg', 'cancel_n_clicks'))
-def update_scatterplot(data, x_axis_name, y_axis_name, model, n_clicks, dict_traces, list_used_colors, cancel):
-
-    # if cancel
-    #     return None, None, None
+    Input('warning_msg', 'cancel_n_clicks'),
+    Input(component_id='decimal_separator', component_property = 'value'))
+def update_scatterplot(data, x_axis_name, y_axis_name, model, n_clicks, dict_traces, list_used_colors, cancel, decimal_separator):
 
     if dict_traces == None:
         dict_traces = {}
@@ -45,10 +43,29 @@ def update_scatterplot(data, x_axis_name, y_axis_name, model, n_clicks, dict_tra
 
     # base plot
     df = pd.DataFrame(data)
+
+    print(df)
+    print(df.dtypes)
+
+    #df = df.applymap(lambda s: numeric_converter(s, ',') if decimal_separator == [''] else numeric_converter(s, '.'))
     df = df.applymap(numeric_converter)
 
+    print(df)
+    print(df.dtypes)
+
+    # -> pandas only include numeric rows
+
+
     x_axis = df[x_axis_name] 
-    y_axis = df[y_axis_name]
+    y_axis = df[y_axis_name] 
+    # y_axis = [d[y_axis_name] for d in data]
+    # y_axis = pd.to_numeric(df[y_axis_name], errors='coerce').dropna()
+
+    print(y_axis)
+
+    test = df.iloc[1,1]
+    print(test)
+    print(type(test))
 
 
     if not model:
@@ -105,7 +122,6 @@ def update_scatterplot(data, x_axis_name, y_axis_name, model, n_clicks, dict_tra
 
             fig = go.Figure(data= base_trace + available_traces, layout={'showlegend': True})
             print("The size of the dict_traces is {} bytes".format(sys.getsizeof(dict_traces)))  # 232 Bytes
-
 
         
         # the case for numeric predictor

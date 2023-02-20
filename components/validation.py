@@ -27,7 +27,7 @@ def validate(data, n_clicks):
 
     # check NaNs: true if any NaN in df -> will send confirm dialog
     if data.isnull().values.any():  
-        warn_1 = '- Datenfelder enthalten leere Werte, die beim Fortfahren verworfen werden \n'
+        warn_1 = '- Datenfelder enthalten fehlerhafte / leere Werte, die beim Fortfahren ignoriert werden \n'
     
     # type checking for each column 
     # (insight: though column might be of type 'object', the cells can be of mixed primitive types)
