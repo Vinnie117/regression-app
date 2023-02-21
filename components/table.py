@@ -12,21 +12,6 @@ table = html.Div([
                 style={}
             ),
 
-            # html.Div(
-            #     dcc.Checklist(
-            #     id = 'thousands_separator', 
-            #     options = ['1000er-Trennzeichen'], 
-            #     value = [''], inline=True),
-            #     style={}
-            # ),
-
-            # html.Div(
-            #     html.P("EMPTY"), 
-            #     style={         
-            #         'display': 'inline-block',
-            #         'border': '1px dashed blue'
-            #     }
-            # ),
 
             html.Div(
             dash_table.DataTable(
@@ -35,43 +20,83 @@ table = html.Div([
                     {
                         'name': 'x', 
                         'id': 'x', 
-                        'format': Format(nully='N/A'),
-                        'on_change': {'action': 'coerce', 'failure': 'default'},
+                        'type': 'numeric',
+                        'format': {
+                            'locale': {'decimal': ','}, 
+                            'nully': '', 
+                            'prefix': None, 
+                            'specifier': ''
+                        },
+                        'on_change':{
+                            'action': 'coerce',
+                            'failure': 'accept'
+                        },
                         'renamable': False
                     }, 
                     {
                         'name': 'y', 
                         'id': 'y', 
-                        'format': dict(locale=dict(decimal='.'), nully='N/A'),
-                        
-                        
-                            #  Format(
-                            #     nully='N/A',
-                            #     ),
-                        #'on_change': {'action': 'coerce', 'failure': 'default'},
+                        'type': 'numeric',
+                        'format': {
+                            'locale': {'decimal': ','}, 
+                            'nully': '', 
+                            'prefix': None, 
+                            'specifier': ''
+                        },
+                        'on_change':{
+                            'action': 'coerce',
+                            'failure': 'accept'
+                        },
                         'renamable': False
                     },
                     {
                         'name': 'z', 
                         'id': 'z', 
-                        'format': Format(nully='N/A'),
-                        'on_change': {'action': 'coerce', 'failure': 'default'},
+                        'type': 'numeric',
+                        'format': {
+                            'locale': {'decimal': ','}, 
+                            'nully': '', 
+                            'prefix': None, 
+                            'specifier': ''
+                        },
+                        'on_change':{
+                            'action': 'coerce',
+                            'failure': 'accept'
+                        },
                         'deletable': True,
                         'renamable': True
                     },
                     {
                         'name': 'a', 
                         'id': 'a', 
-                        'format': Format(nully='N/A'),
-                        'on_change': {'action': 'coerce', 'failure': 'default'},
+                        'type': 'numeric',
+                        'format': {
+                            'locale': {'decimal': ','}, 
+                            'nully': '', 
+                            'prefix': None, 
+                            'specifier': ''
+                        },
+                        'on_change':{
+                            'action': 'coerce',
+                            'failure': 'accept'
+                        },
                         'deletable': True,
                         'renamable': True
                     },
                     {
                         'name': 'b', 
                         'id': 'b', 
-                        'format': Format(nully='N/A'),
-                        'on_change': {'action': 'coerce', 'failure': 'default'},
+                        'type': 'numeric',
+                        'format': {
+                            'locale': {'decimal': ','}, 
+                            'nully': '', 
+                            'prefix': None, 
+                            'specifier': ''
+                        },
+                        'on_change':{
+                            'action': 'coerce',
+                            'failure': 'accept'
+                        },
                         #'deletable': True,
                         #'renamable': True
                     }
