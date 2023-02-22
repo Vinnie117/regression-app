@@ -84,23 +84,29 @@ def calculate_regression(data, target_var, predictor_var, control_vars, encoding
         # applymap applies function to each cell
         df = df.applymap(numeric_converter)
 
-        # conversion might lead to NaN in some cells
-        if df.isnull().values.any():   
-            df=df.dropna()
-##########################################################################
-
-        print(df)
-        print(df.dtypes)
-
-        print(type(df))
-
-        # cell 'maybe' is a string
-        print(df.iloc[2,4])
-        print(type(df.iloc[2,4]))
-
-
         control_vars = [item for item in control_vars if len(item)>0]
         x_vars = [predictor_var] + control_vars
+
+        # type checkin in each column
+        for col in [target_var] + x_vars:
+            types = df[col].apply(type).value_counts()
+            
+            if len(types) != 1:
+
+                # print("Column has multiple data types")
+
+                # for columns with mixed data types: drop rows with minority type
+                value_counts = df[col].apply(type).value_counts()
+                minority_type = value_counts.index[-1]
+                df = df[df[col].apply(type) != minority_type] 
+
+                # print('value_counts is: ', value_counts)
+                # print('minority type is: ', minority_type)
+
+                # muss hier nochmal angewendet werden, nachdem fehlerhafte Zellen weg sind
+                # weil bei gemischten Datentypen der column type == 'object' war
+                df = df.applymap(numeric_converter) 
+
 
         # for the plot
         if df[predictor_var].dtypes == 'object':

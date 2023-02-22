@@ -67,29 +67,3 @@ def serve_layout():
 if __name__ == '__main__':  
     dash_app.layout = serve_layout()
     dash_app.run_server(debug=True)
-
-
-'''
-
-TO DO
-
-Bei Komma als Dezimal-Separator:
-- Zellen mit Punkt werden immer noch als Zahlen gelesen
-    - Umwandeln in category!
-
-
-- Umgekehrt gleiches Problem:
-    Bei Punkt als Dezimal Separator
-        - eine Dezimalzahl mit Komma wird ohne Komma als Zahl gelesen
-
-
-- Für variable_selection klappt es aber!
-
-
-Error:
-- when there is a line and then points are deleted in table
-    - change in numeric_converter()
-- plot error: boxplots and then cell is edited to have a number
-- behaviour for thousands separator
-
-'''
