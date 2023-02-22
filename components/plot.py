@@ -45,9 +45,9 @@ def update_scatterplot(data, x_axis_name, y_axis_name, model, n_clicks, dict_tra
     # base plot
     df = pd.DataFrame(data)
 
-    # check NaNs and drop rows if necessary
-    if df.isnull().values.any():   
-        df=df.dropna()
+    # # check NaNs and drop rows if necessary
+    # if df.isnull().values.any():   
+    #     df=df.dropna()
 
     #df = df.applymap(lambda s: numeric_converter(s, ',') if decimal_separator == [''] else numeric_converter(s, '.'))
     df = df.applymap(numeric_converter)

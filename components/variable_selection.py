@@ -109,10 +109,10 @@ def update_target(columns, predictor_var, control_vars, data, decimal_separator)
 
     df = pd.DataFrame(data)
 
-    # check NaNs and drop rows if necessary
-    if df.isnull().values.any():   
-        df=df.dropna()
-        
+    # # check NaNs and drop rows if necessary
+    # if df.isnull().values.any():   
+    #     df=df.dropna()
+
     # df = df.applymap(lambda s: numeric_converter(s, ',') if decimal_separator == [''] else numeric_converter(s, '.'))
     df = df.applymap(numeric_converter)
 
