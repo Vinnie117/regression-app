@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 import statsmodels.api as sm
 
 def dummy_vars(df, cat_cols, num_cols, dummy_marker):
@@ -14,19 +15,27 @@ def dummy_vars(df, cat_cols, num_cols, dummy_marker):
     return x_vars
 
 # check if df cell contains a (string representation of a) number and convert it if true
+# try to convert string representation of numerics to numeric
 def numeric_converter(s):
 
     # comma as decimal separator
     try:
+
         if ',' in str(s):
             number = float(str(s).replace(',', '.'))
-        elif '.' in str(s):
-            number = None # ''  # these cells will be empty (strings) INTERNALLY ONLY
         else:
-            number = s  # or float(s)?
+            number = float(s)
         return number
     except ValueError:
-        return s
+        return s # return s # return None  # pass
+
+    # try:
+    #     number = float(s)
+    #     # print(type(s))
+    #     # print(s)
+    #     return number
+    # except ValueError:
+    #     return s
 
         
 
@@ -35,6 +44,7 @@ def numeric_converter(s):
 '''
 
 # THE ORIGINAL FUNCTION
+# # # try to convert string representation of numerics to numeric
 def numeric_converter(s):
     try:
         number = float(s)
@@ -72,7 +82,7 @@ def numeric_converter(s, decimal_separator):
 
 def cat_inference(x_range, control_vars, drop_first):
     cat_df = pd.DataFrame({'cat': x_range})
-    cat_dummies = pd.get_dummies(cat_df['cat'], prefix='cat', drop_first=drop_first)  # only the dummy case
+    cat_dummies = pd.get_dummies(cat_df['cat'], prefix='cat', drop_first=drop_first)
     predictor_space_with_const = sm.add_constant(cat_dummies)
 
     # Partial regression: set all controls to 0

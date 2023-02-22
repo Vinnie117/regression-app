@@ -5,6 +5,7 @@ from utils.plotting import create_base_plot
 from dash_app import dash_app
 import sys
 import pandas as pd
+import numpy as np
 from utils.data_prep import numeric_converter
 
 plot = html.Div(
@@ -44,29 +45,11 @@ def update_scatterplot(data, x_axis_name, y_axis_name, model, n_clicks, dict_tra
     # base plot
     df = pd.DataFrame(data)
 
-    print(df)
-    print(df.dtypes)
-
     #df = df.applymap(lambda s: numeric_converter(s, ',') if decimal_separator == [''] else numeric_converter(s, '.'))
     df = df.applymap(numeric_converter)
 
-    print(df)
-    print(df.dtypes)
-
-    # -> pandas only include numeric rows
-
-
     x_axis = df[x_axis_name] 
     y_axis = df[y_axis_name] 
-    # y_axis = [d[y_axis_name] for d in data]
-    # y_axis = pd.to_numeric(df[y_axis_name], errors='coerce').dropna()
-
-    print(y_axis)
-
-    test = df.iloc[1,1]
-    print(test)
-    print(type(test))
-
 
     if not model:
 
