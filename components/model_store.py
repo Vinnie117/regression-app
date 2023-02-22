@@ -87,7 +87,7 @@ def calculate_regression(data, target_var, predictor_var, control_vars, encoding
         control_vars = [item for item in control_vars if len(item)>0]
         x_vars = [predictor_var] + control_vars
 
-        # type checkin in each column
+        # type checking in each column
         for col in [target_var] + x_vars:
             types = df[col].apply(type).value_counts()
             

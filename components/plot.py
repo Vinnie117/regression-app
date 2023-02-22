@@ -48,6 +48,17 @@ def update_scatterplot(data, x_axis_name, y_axis_name, model, n_clicks, dict_tra
     #df = df.applymap(lambda s: numeric_converter(s, ',') if decimal_separator == [''] else numeric_converter(s, '.'))
     df = df.applymap(numeric_converter)
 
+    # remove rows with minority data type
+    for col in [x_axis_name] + [y_axis_name]:
+            types = df[col].apply(type).value_counts()
+            
+            if len(types) != 1:
+                value_counts = df[col].apply(type).value_counts()
+                minority_type = value_counts.index[-1]
+                df = df[df[col].apply(type) != minority_type] 
+                df = df.applymap(numeric_converter) 
+
+
     x_axis = df[x_axis_name] 
     y_axis = df[y_axis_name] 
 
