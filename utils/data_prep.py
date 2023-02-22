@@ -90,3 +90,16 @@ def cat_inference(x_range, control_vars, drop_first):
         predictor_space_with_const[control] = 0
 
     return predictor_space_with_const
+
+
+def drop_minority_type(df, vars):
+    for col in vars:
+        types = df[col].apply(type).value_counts()
+        
+        if len(types) != 1:
+            value_counts = df[col].apply(type).value_counts()
+            minority_type = value_counts.index[-1]
+            df = df[df[col].apply(type) != minority_type] 
+            df = df.applymap(numeric_converter) 
+            
+            return df

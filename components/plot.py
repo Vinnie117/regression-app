@@ -6,7 +6,7 @@ from dash_app import dash_app
 import sys
 import pandas as pd
 import numpy as np
-from utils.data_prep import numeric_converter
+from utils.data_prep import numeric_converter, drop_minority_type
 
 plot = html.Div(
     dcc.Graph(id='scatterplot')
@@ -45,10 +45,15 @@ def update_scatterplot(data, x_axis_name, y_axis_name, model, n_clicks, dict_tra
     # base plot
     df = pd.DataFrame(data)
 
+    # check NaNs and drop rows if necessary
+    if df.isnull().values.any():   
+        df=df.dropna()
+
     #df = df.applymap(lambda s: numeric_converter(s, ',') if decimal_separator == [''] else numeric_converter(s, '.'))
     df = df.applymap(numeric_converter)
 
     # remove rows with minority data type
+    # df = drop_minority_type(df, [x_axis_name] + [y_axis_name])
     for col in [x_axis_name] + [y_axis_name]:
             types = df[col].apply(type).value_counts()
             
