@@ -27,9 +27,6 @@ def numeric_converter(s):
             number = float(s)
         return number
 
-    # except ValueError:
-    #     return s
-
     # except (ValueError, TypeError):
     #     return s
 
