@@ -41,13 +41,14 @@ def validate(data, target_var, predictor_var, control_vars, n_clicks):
     for col in [target_var] + x_vars:
         types = data[col].apply(type).value_counts()
 
-        if len(types) == 1:
+        if len(types) == 1 or (len(types) == 2 and "<class 'NoneType'>" in str(types)):
             print("Column: ", col, "unique data type: ", types)
             pass
         else:
             try:
                 # user input could be numeric but is interpreted as string -> try to convert
                 data[col] = data[col].astype(float)  # applymap(numeric_converter)
+                # data[col] = data[col].apply(numeric_converter)
                 return False, '', None
             except:
                 print("Column: ", col, "mixed data type: ", types) 

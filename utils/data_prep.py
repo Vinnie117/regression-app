@@ -26,16 +26,19 @@ def numeric_converter(s):
         else:
             number = float(s)
         return number
-    except (ValueError, TypeError):
-        return s # return s # return None  # pass
 
-    # try:
-    #     number = float(s)
-    #     # print(type(s))
-    #     # print(s)
-    #     return number
     # except ValueError:
     #     return s
+
+    # except (ValueError, TypeError):
+    #     return s
+
+    except ValueError:
+        return s
+    except TypeError:
+        pass
+
+
 
         
 
@@ -102,4 +105,4 @@ def drop_minority_type(df, vars):
             df = df[df[col].apply(type) != minority_type] 
             df = df.applymap(numeric_converter) 
             
-            return df
+        return df
