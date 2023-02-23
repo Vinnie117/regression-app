@@ -71,21 +71,20 @@ def calculate_regression(data, target_var, predictor_var, control_vars, encoding
 
         df = pd.DataFrame(data)
 
+        control_vars = [item for item in control_vars if len(item)>0]
+        x_vars = [predictor_var] + control_vars
 
 ##########################################################################
 # can also do this in the warnings callback and output it into here?
 # But warnings callback is only triggered when data has mistakes
 
         # check NaNs and drop rows if necessary
-        if df.isnull().values.any():   
+        if df[[target_var] + x_vars].isnull().values.any():   
             df=df.dropna()
 
         # try to convert string representation of numerics to numeric
         # applymap applies function to each cell
         df = df.applymap(numeric_converter)
-
-        control_vars = [item for item in control_vars if len(item)>0]
-        x_vars = [predictor_var] + control_vars
 
         # type checking in each column
         for col in [target_var] + x_vars:
@@ -103,9 +102,9 @@ def calculate_regression(data, target_var, predictor_var, control_vars, encoding
                 # print('value_counts is: ', value_counts)
                 # print('minority type is: ', minority_type)
 
-                # muss hier nochmal angewendet werden, nachdem fehlerhafte Zellen weg sind
-                # weil bei gemischten Datentypen der column type == 'object' war
-                df = df.applymap(numeric_converter) 
+        # muss hier nochmal angewendet werden, nachdem fehlerhafte Zellen weg sind
+        # weil bei gemischten Datentypen der column type == 'object' war
+        df = df.applymap(numeric_converter) 
 
 
         # for the plot
