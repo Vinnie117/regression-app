@@ -13,7 +13,8 @@ validation =dcc.ConfirmDialog(
     Output('warning_msg', 'displayed'),
     Output('warning_msg', 'message'),
     Output('warning_msg', 'cancel_n_clicks'),
-    State(component_id = 'table', component_property = 'data'),
+    # State(component_id = 'table', component_property = 'data'),
+    State(component_id = 'table_store', component_property = 'data'),
     State(component_id = 'target', component_property = 'value'),
     State(component_id = 'predictors', component_property = 'value'),
     State(component_id = 'controls', component_property = 'value'),               
@@ -26,7 +27,6 @@ def validate(data, target_var, predictor_var, control_vars, n_clicks):
     x_vars = [predictor_var] + control_vars
 
     data = pd.DataFrame(data)
-    data = data.applymap(numeric_converter)
 
     warning = "Warnung! \n"
     warn_1 = None

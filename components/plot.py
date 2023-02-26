@@ -18,7 +18,8 @@ plot = html.Div(
     Output(component_id = 'scatterplot', component_property = 'figure'),
     Output(component_id = 'dict_traces', component_property = 'data'),
     Output(component_id = 'list_used_colors', component_property = 'data'),
-    Input(component_id = 'table', component_property = 'data'),
+    # Input(component_id = 'table', component_property = 'data'),
+    Input(component_id = 'table_store', component_property = 'data'),
     Input(component_id = 'xaxis-column', component_property = 'value'),
     Input(component_id = 'yaxis-column', component_property = 'value'),
     Input(component_id = 'regression_results', component_property = 'data'),
@@ -44,9 +45,6 @@ def update_scatterplot(data, x_axis_name, y_axis_name, model, n_clicks, dict_tra
 
     # base plot
     df = pd.DataFrame(data)
-
-    #df = df.applymap(lambda s: numeric_converter(s, ',') if decimal_separator == [''] else numeric_converter(s, '.'))
-    df = df.applymap(numeric_converter)
 
     # remove rows with minority data type 
     # (needed here to ensure that boxplots still appear if some categories are numbers)

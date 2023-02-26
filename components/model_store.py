@@ -15,6 +15,7 @@ model_store = dcc.Store(id='regression_results')
     Output(component_id = 'regression_results', component_property = 'data'),  # dcc.Store
     Output(component_id = 'counter', component_property = 'data'),  # dcc.Store
     State(component_id = 'table', component_property = 'data'),
+    # State(component_id = 'table_store', component_property = 'data'),
     State(component_id = 'target', component_property = 'value'),
     State(component_id = 'predictors', component_property = 'value'),
     State(component_id = 'controls', component_property = 'value'),
@@ -34,7 +35,6 @@ def calculate_regression(data, target_var, predictor_var, control_vars, encoding
 
     # check which component_id was triggered
     input_id = callback_context.triggered_id
-    # print(input_id) # print(type(input_id))
 
     # Create / append dict for storing multiple runs
     if regression_dict == None:
@@ -44,7 +44,6 @@ def calculate_regression(data, target_var, predictor_var, control_vars, encoding
     if counter == None:
         counter = 0
     
-
     #### remove experiment from model store
     if all(key in input_id for key in ["index", "type"]):
         delete_chart = input_id["index"]
@@ -60,7 +59,6 @@ def calculate_regression(data, target_var, predictor_var, control_vars, encoding
         
         return regression_dict, counter
 
-
     # cancel button was clicked
     if cancel:
         return regression_dict, counter
@@ -70,6 +68,8 @@ def calculate_regression(data, target_var, predictor_var, control_vars, encoding
     else:
 
         df = pd.DataFrame(data)
+
+        print(df)
 
         control_vars = [item for item in control_vars if len(item)>0]
         x_vars = [predictor_var] + control_vars
@@ -81,10 +81,6 @@ def calculate_regression(data, target_var, predictor_var, control_vars, encoding
         # check NaNs and drop rows if necessary
         if df[[target_var] + x_vars].isnull().values.any():   
             df=df.dropna()
-
-        # try to convert string representation of numerics to numeric
-        # applymap applies function to each cell
-        df = df.applymap(numeric_converter)
 
         # type checking in each column
         for col in [target_var] + x_vars:

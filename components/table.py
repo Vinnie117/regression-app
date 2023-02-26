@@ -1,8 +1,8 @@
-from dash.dash_table.Format import Format
+import sys
 from dash import html, dash_table, dcc
 from assets.data_table import data_table
 from dash_app import dash_app
-from dash.dependencies import Input, Output, State
+from dash.dependencies import Input, Output
 from utils.data_prep import numeric_converter
 import pandas as pd
 
@@ -125,33 +125,33 @@ table = html.Div([
 
 @dash_app.callback(
     Output('table', 'columns'),
-    
+    Output('table_store', 'data'),
     Output('table', 'data'),
-    # Output('table_store', 'data'),
-
     Input('decimal_separator', 'value'),
     Input('table', 'columns'),
-
     Input('table', 'data'),
-    # Input('table', 'data'),
-
-    prevent_initial_call=True
+    # prevent_initial_call=True
 )
-def decimal_separator(value, columns,data):
+def data_prep(value, columns, data):
 
+    # to adjust view dynamically
     df = pd.DataFrame(data)
-    # print(df)
-    # print(df.dtypes)
+
+    # try to convert string representation of numerics to numeric
+    # applymap applies function to each cell
     df = df.applymap(numeric_converter)
-    json_data = df.to_dict(orient='records')
+    
+    json_data = df.to_dict(orient='records')  # json Serialisierung, weil df nicht übertragen wird
+
+    print("The size of df in data_store is {} bytes".format(sys.getsizeof(json_data)))  # 232 Bytes
+
 
     if 'Punkt als Dezimaltrennzeichen' in value:
         decimal = '.'
     else:
         decimal = ','
 
-
-    return [
+    table_columns = [
         {
             **col,
             'format': {
@@ -165,14 +165,10 @@ def decimal_separator(value, columns,data):
         }
         for col in columns
 
-    ], json_data
+    ]
+
+    return table_columns, json_data, json_data
 
 
 
-# @dash_app.callback(
-#     Output('table', 'data'),
-#     Input('table_store', 'data')
-# )
-# def clean_data(clean_df):
-#     return clean_df
 
