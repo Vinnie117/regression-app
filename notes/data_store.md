@@ -8,23 +8,22 @@ Den Table auch in einem Store speichern?
 - das Preprocessing muss aus den anderen Components dann rausgenommen werden.
     - ist auch besser für die Übersichtlichkeit
     - liefert Performance, weil Preprocessing nur einmal gemacht werden muss
-    - losere Kopplung
+    - höhere Kohäsion
 - da rein können auch csv oder Excel files erst mal reingeladen werden
 
 
 Warum nicht nur im table.py callback die dataprep machen und ann alle anderen callbacks weitergeben?
-    - Store stellt sicher, dass die Daten wirklich im Browser des User gespeichert sind
-        - wo werden sie sonst gespeichert?
-    - hier kann noch mehr data_prep unter der Haube passieren, was für den View ungeeignet ist
-        - drop_minority_type -> rows
-        - drop NaNs -> rows
-        - ...
-    - Store auch besser, weil sonst immer wenn View sich ändert ALLE data prep Sachen gemacht werden
-        - Bzw. immer wenn Plot oder Berechnung getriggert wird -> passiert was genau?
-            -> nochmal genau überlegen
-
-    - computation for data cleaning has to be calculated two times
-        - Dashboard hat viele andere Elemente
+- Store stellt sicher, dass die Daten wirklich im Browser des User gespeichert sind
+    - wo werden sie sonst gespeichert?
+- hier kann noch mehr data_prep unter der Haube passieren, was für den View ungeeignet ist
+    - drop_minority_type -> rows
+    - drop NaNs -> rows
+    - ...
+- Store auch besser, weil sonst immer wenn View sich ändert ALLE data prep Sachen gemacht werden
+    - Bzw. immer wenn Plot oder Berechnung getriggert wird -> passiert was genau?
+        -> nochmal genau überlegen
+- computation for data cleaning has to be calculated two times
+    - Dashboard hat viele andere Elemente
 
 
 # Fazit
