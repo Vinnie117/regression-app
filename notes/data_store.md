@@ -36,4 +36,5 @@ Entscheidung: Mit Store probieren (und Performance auswerten)
 - data prep sollte NICHT nochmal gemacht werden, wenn z.B. target_var oder Plot geändert wird
     
 
+![grafik](https://user-images.githubusercontent.com/52510339/221421081-5d22d171-06f9-47ef-8c19-70972c0adc76.png)
 
