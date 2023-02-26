@@ -29,6 +29,7 @@ Warum nicht nur im table.py callback die dataprep machen und ann alle anderen ca
 
 # Fazit
 Frage: Store nutzen für Data Prep oder nicht?
+<br>
 Entscheidung: Mit Store probieren (und Performance auswerten)
 
 - Passiert eine teure Berechnung unnötig oft?
