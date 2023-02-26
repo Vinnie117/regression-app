@@ -11,6 +11,7 @@ Den Table auch in einem Store speichern?
     - höhere Kohäsion
 - da rein können auch csv oder Excel files erst mal reingeladen werden
 
+<br>
 
 Warum nicht nur im table.py callback die dataprep machen und ann alle anderen callbacks weitergeben?
 - Store stellt sicher, dass die Daten wirklich im Browser des User gespeichert sind
