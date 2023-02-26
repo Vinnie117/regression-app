@@ -6,7 +6,7 @@ from dash_app import dash_app
 import sys
 import pandas as pd
 import numpy as np
-from utils.data_prep import numeric_converter, drop_minority_type
+from utils.data_prep import drop_minority_type
 
 plot = html.Div(
     dcc.Graph(id='scatterplot')

@@ -4,7 +4,6 @@ from dash_app import dash_app
 import dash_bootstrap_components as dbc
 import pandas as pd
 import numpy as np
-from utils.data_prep import numeric_converter
 
 variable_selection = html.Div([
 

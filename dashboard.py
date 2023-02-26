@@ -9,7 +9,6 @@ from components.validation import validation
 
 
 
-
 from dash_app import dash_app
 
 def serve_layout():
@@ -54,7 +53,8 @@ def serve_layout():
             model_store, 
             dcc.Store(id='dict_traces'),
             dcc.Store(id='list_used_colors'),
-            dcc.Store(id='counter')
+            dcc.Store(id='counter'),
+            dcc.Store(id='table_store')
 
             # dcc.Store for table data? Input is df from validate() callback, output is df
             # this df feeds into calculate_regression()
@@ -65,5 +65,16 @@ def serve_layout():
 
 
 if __name__ == '__main__':  
+
+
     dash_app.layout = serve_layout()
     dash_app.run_server(debug=True)
+
+
+'''
+Performance
+    - clientside callbacks für Berechnung
+    - Store für alle plots
+    - Store für Tabelle/Daten
+
+'''

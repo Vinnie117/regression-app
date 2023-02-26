@@ -5,7 +5,7 @@ import statsmodels.api as sm
 import pandas as pd
 import numpy as np
 import sys
-from utils.data_prep import dummy_vars, numeric_converter, cat_inference
+from utils.data_prep import dummy_vars, numeric_converter, cat_inference, drop_minority_type
 
 
 model_store = dcc.Store(id='regression_results')
@@ -75,32 +75,13 @@ def calculate_regression(data, target_var, predictor_var, control_vars, encoding
         x_vars = [predictor_var] + control_vars
 
 ##########################################################################
-# can also do this in the warnings callback and output it into here?
-# But warnings callback is only triggered when data has mistakes
 
         # check NaNs and drop rows if necessary
         if df[[target_var] + x_vars].isnull().values.any():   
             df=df.dropna()
 
-        # type checking in each column
-        for col in [target_var] + x_vars:
-            types = df[col].apply(type).value_counts()
-            
-            if len(types) != 1:
 
-                # print("Column has multiple data types")
-
-                # for columns with mixed data types: drop rows with minority type
-                value_counts = df[col].apply(type).value_counts()
-                minority_type = value_counts.index[-1]
-                df = df[df[col].apply(type) != minority_type] 
-
-                # print('value_counts is: ', value_counts)
-                # print('minority type is: ', minority_type)
-
-        # muss hier nochmal angewendet werden, nachdem fehlerhafte Zellen weg sind
-        # weil bei gemischten Datentypen der column type == 'object' war
-        df = df.applymap(numeric_converter) 
+        df = drop_minority_type(df, [target_var] + x_vars)
 
 
         # for the plot

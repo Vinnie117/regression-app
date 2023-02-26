@@ -2,7 +2,7 @@ from dash import dcc
 from dash.dependencies import Input, Output, State
 from dash_app import dash_app
 import pandas as pd
-from utils.data_prep import numeric_converter
+
 
 validation =dcc.ConfirmDialog(
                 id='warning_msg',

@@ -140,9 +140,8 @@ def data_prep(value, columns, data):
     # try to convert string representation of numerics to numeric
     # applymap applies function to each cell
     df = df.applymap(numeric_converter)
-    
-    json_data = df.to_dict(orient='records')  # json Serialisierung, weil df nicht übertragen wird
 
+    json_data = df.to_dict(orient='records')  # json Serialisierung, weil df nicht übertragen wird
     print("The size of df in data_store is {} bytes".format(sys.getsizeof(json_data)))  # 232 Bytes
 
 

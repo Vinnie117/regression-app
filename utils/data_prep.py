@@ -93,13 +93,25 @@ def cat_inference(x_range, control_vars, drop_first):
 
 
 def drop_minority_type(df, vars):
+
+    # type checking in each column
     for col in vars:
         types = df[col].apply(type).value_counts()
         
         if len(types) != 1:
+
+            # print("Column has multiple data types")
+
+            # # for columns with mixed data types: drop rows with minority type
             value_counts = df[col].apply(type).value_counts()
             minority_type = value_counts.index[-1]
             df = df[df[col].apply(type) != minority_type] 
-            df = df.applymap(numeric_converter) 
+
+            # print('value_counts is: ', value_counts)
+            # print('minority type is: ', minority_type)
+    
+    # muss hier nochmal angewendet werden, nachdem fehlerhafte Zellen weg sind
+    # weil bei gemischten Datentypen der column type == 'object' war            
+    df = df.applymap(numeric_converter) 
             
-        return df
+    return df
