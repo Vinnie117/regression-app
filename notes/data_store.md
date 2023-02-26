@@ -1,15 +1,15 @@
 Den Table auch in einem Store speichern?
-    - ist wsl auch besser perspektivisch für den Datenupload
-    - dort das ganze Preprocessing machen und das saubere Ergebnis weitergeben
-        - model_results.py für OLS
-        - plot.py für den Graph
-        - validation.py für die Warnmeldungen
-        - variable_selection.py für die Auswahl der Zielvariablen
-    - das Preprocessing muss aus den anderen Components dann rausgenommen werden.
-        - ist auch besser für die Übersichtlichkeit
-        - liefert Performance, weil Preprocessing nur einmal gemacht werden muss
-        - losere Kopplung
-    - da rein können auch csv oder Excel files erst mal reingeladen werden
+- ist wsl auch besser perspektivisch für den Datenupload
+- dort das ganze Preprocessing machen und das saubere Ergebnis weitergeben
+    - model_results.py für OLS
+    - plot.py für den Graph
+    - validation.py für die Warnmeldungen
+    - variable_selection.py für die Auswahl der Zielvariablen
+- das Preprocessing muss aus den anderen Components dann rausgenommen werden.
+    - ist auch besser für die Übersichtlichkeit
+    - liefert Performance, weil Preprocessing nur einmal gemacht werden muss
+    - losere Kopplung
+- da rein können auch csv oder Excel files erst mal reingeladen werden
 
 
 Warum nicht nur im table.py callback die dataprep machen und ann alle anderen callbacks weitergeben?
