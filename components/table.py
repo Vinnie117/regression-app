@@ -161,7 +161,7 @@ def data_prep(value, columns, data, contents, filename, date):
         json_data = children[0].data
 
 
-        table_columns = columns # [{'name': i, 'id': i} for i in df.columns]
+        table_columns = children[0].columns # columns # [{'name': i, 'id': i} for i in df.columns]
         # print(table_columns)
 
         return table_columns, json_data, json_data
