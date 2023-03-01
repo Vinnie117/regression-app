@@ -6,6 +6,8 @@ from components.dropdowns import dropdowns
 from components.model_store import model_store
 from components.results import results
 from components.validation import validation
+from components.upload import upload
+from components.formatting import formatting
 
 
 
@@ -30,7 +32,10 @@ def serve_layout():
 
                 # middle column
                 html.Div(children = [
-
+                    
+                    formatting,
+                    upload,
+                    
                     table,
 
                     html.Div(children = [
@@ -76,5 +81,17 @@ Performance
     - clientside callbacks für Berechnung
     - Store für alle plots
     - Store für Tabelle/Daten
+
+Data upload
+
+Should the callback for the data upload return
+    - the data property of the existing data table? -> this
+    - or a completely new data table?
+
+Considerations
+    - different column names -> enable
+    - more columns than default table -> should be truncated!
+    - more rows than defaul table -> should be truncated!
+
 
 '''
