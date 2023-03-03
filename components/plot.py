@@ -19,7 +19,6 @@ plot = html.Div(
     Output(component_id = 'dict_traces', component_property = 'data'),
     Output(component_id = 'list_used_colors', component_property = 'data'),
     Input(component_id = 'table', component_property = 'data'),
-    # Input(component_id = 'table_store', component_property = 'data'),
     Input(component_id = 'xaxis-column', component_property = 'value'),
     Input(component_id = 'yaxis-column', component_property = 'value'),
     Input(component_id = 'regression_results', component_property = 'data'),
