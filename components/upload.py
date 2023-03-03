@@ -1,5 +1,33 @@
 
-from dash import dcc, html
+from dash import dcc, html, dash_table
+from dash_app import dash_app
+from dash.dependencies import Input, Output, State
+import pandas as pd
+import base64, io, sys
+
+
+def parse_contents(contents, filename, date):
+    content_type, content_string = contents.split(',')
+
+    decoded = base64.b64decode(content_string)
+    try:
+        if 'csv' in filename:
+            # Assume that the user uploaded a CSV file
+            df = pd.read_csv(
+                io.StringIO(decoded.decode('utf-8')))
+        elif 'xls' in filename:
+            # Assume that the user uploaded an excel file
+            df = pd.read_excel(io.BytesIO(decoded))
+    except Exception as e:
+        print(e)
+        return html.Div([
+            'There was an error processing this file.'
+        ])
+
+    return dash_table.DataTable(data = df.to_dict('records'),
+                                columns = [{'name': i, 'id': i} for i in df.columns]
+            )
+
 
 upload = dcc.Upload(
             id='upload-data',
@@ -23,3 +51,21 @@ upload = dcc.Upload(
                 }
                 )
 
+
+@dash_app.callback(
+    Output('table_store', 'data'),
+    Input('upload-data', 'contents'),
+    State('upload-data', 'filename'),
+    State('upload-data', 'last_modified')
+)
+def store_external_data(contents, filename, date):
+
+    if contents is not None:
+  
+        children = [parse_contents(c, n, d) for c, n, d in zip([contents], [filename], [date])]
+
+        # retrieve 'data' property of data table
+        json_data = children[0].data
+        print("The size of df in data_store is {} bytes".format(sys.getsizeof(json_data)))  # 232 Bytes
+
+        return json_data

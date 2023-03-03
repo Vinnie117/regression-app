@@ -15,7 +15,6 @@ model_store = dcc.Store(id='regression_results')
     Output(component_id = 'regression_results', component_property = 'data'),  # dcc.Store
     Output(component_id = 'counter', component_property = 'data'),  # dcc.Store
     State(component_id = 'table', component_property = 'data'),
-    # State(component_id = 'table_store', component_property = 'data'),
     State(component_id = 'target', component_property = 'value'),
     State(component_id = 'predictors', component_property = 'value'),
     State(component_id = 'controls', component_property = 'value'),
