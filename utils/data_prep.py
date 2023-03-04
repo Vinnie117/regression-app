@@ -36,50 +36,6 @@ def numeric_converter(s):
         pass
 
 
-
-        
-
-
-
-'''
-
-# THE ORIGINAL FUNCTION
-# # # try to convert string representation of numerics to numeric
-def numeric_converter(s):
-    try:
-        number = float(s)
-        return number
-    except ValueError:
-        return s
-
-
-def numeric_converter(s):
-    try:
-        number = float(str(s).replace(',', '.'))
-        return number
-    except ValueError:
-        return s
-
-
-def numeric_converter(s, decimal_separator):
-
-    try:
-        s_str = str(s)
-        if decimal_separator == ',':
-            if '.' in s_str:
-                return s_str == None
-            else:
-                number = float(s_str.replace(',', '.'))
-        elif decimal_separator == '.':
-            number = float(s_str)
-        return number
-    except ValueError:
-        return str(s)
-
-'''
-
-
-
 def cat_inference(x_range, control_vars, drop_first):
     cat_df = pd.DataFrame({'cat': x_range})
     cat_dummies = pd.get_dummies(cat_df['cat'], prefix='cat', drop_first=drop_first)

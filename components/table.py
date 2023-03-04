@@ -153,7 +153,7 @@ def data_prep(value, columns, data, selected_cells, table_store, contents):
         # try to convert string representation of numerics to numeric for edited cell
         if selected_cells != None:
             for i in selected_cells:
-                print(df.iloc[i['row']-1, i['column']])
+                # print(df.iloc[i['row']-1, i['column']])
                 df.iloc[i['row']-1, i['column']] = numeric_converter(df.iloc[i['row']-1, i['column']])
         
         json_data = df.to_dict(orient='records')  # json Serialisierung, weil df nicht übertragen wird
