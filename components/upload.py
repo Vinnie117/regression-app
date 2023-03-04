@@ -1,4 +1,3 @@
-
 from dash import dcc, html, dash_table
 from dash_app import dash_app
 from dash.dependencies import Input, Output, State
@@ -56,7 +55,8 @@ upload = dcc.Upload(
     Output('table_store', 'data'),
     Input('upload-data', 'contents'),
     State('upload-data', 'filename'),
-    State('upload-data', 'last_modified')
+    State('upload-data', 'last_modified'),
+    prevent_initial_call=True
 )
 def store_external_data(contents, filename, date):
 
@@ -65,7 +65,12 @@ def store_external_data(contents, filename, date):
         children = [parse_contents(c, n, d) for c, n, d in zip([contents], [filename], [date])]
 
         # retrieve 'data' property of data table
-        json_data = children[0].data
-        print("The size of df in data_store is {} bytes".format(sys.getsizeof(json_data)))  # 232 Bytes
+        # json_data = children[0].data
+        print("The size of df in data_store is {} bytes".format(sys.getsizeof(children)))  # 232 Bytes
 
-        return json_data
+        # table_columns = children[0].columns # columns # [{'name': i, 'id': i} for i in df.columns]
+        # print(table_columns)
+
+        table_store = {contents: children[0]}
+
+    return table_store

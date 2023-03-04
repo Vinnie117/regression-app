@@ -1,5 +1,5 @@
 import sys
-from dash import html, dash_table
+from dash import html, dash_table, callback_context
 from assets.data_table import data_table
 from dash_app import dash_app
 from dash.dependencies import Input, Output, State
@@ -120,48 +120,59 @@ table = html.Div(
     Input('table', 'columns'),
     Input('table', 'data'),
     State('table', 'selected_cells'),
-    Input('table_store', 'data')
+    Input('table_store', 'data'),   
+    Input('upload-data', 'contents')
 )
-def data_prep(value, columns, data, selected_cells, table_store):
-
-    if table_store != None:
-        df = pd.DataFrame(table_store)
-    else:
-        df = pd.DataFrame(data)
-
-    # try to convert string representation of numerics to numeric for edited cell
-    if selected_cells != None:
-        for i in selected_cells:
-            print(df.iloc[i['row']-1, i['column']])
-            df.iloc[i['row']-1, i['column']] = numeric_converter(df.iloc[i['row']-1, i['column']] )
-
-
-    json_data = df.to_dict(orient='records')  # json Serialisierung, weil df nicht übertragen wird
-    
-
+def data_prep(value, columns, data, selected_cells, table_store, contents):
 
     if 'Punkt als Dezimaltrennzeichen' in value:
         decimal = '.'
     else:
         decimal = ','
 
-    table_columns = [
-        {
-            **col,
-            'format': {
-                **col.get('format', {}),
-                'locale': {'decimal': decimal}
-            },
-            'on_change':{
-                'action': 'coerce',
-                'failure': 'accept'
+    # fetch which input triggered the callback
+    triggered_id = callback_context.triggered[0]['prop_id'].split('.')[0]
+
+    if table_store != None and triggered_id == 'upload-data':
+        
+        df = pd.DataFrame(table_store.get(contents)['props']['data'])
+        json_data = df.to_dict(orient='records')
+        external_columns = table_store.get(contents)['props']['columns']
+
+        table_columns = []
+
+        # this stops when the shorter iterable stops -> no more than number of default cols!
+        for i, j in zip(columns, external_columns):
+            col = {**i, **j}
+            table_columns.append(col)
+
+
+    else:
+        df = pd.DataFrame(data)
+
+        # try to convert string representation of numerics to numeric for edited cell
+        if selected_cells != None:
+            for i in selected_cells:
+                print(df.iloc[i['row']-1, i['column']])
+                df.iloc[i['row']-1, i['column']] = numeric_converter(df.iloc[i['row']-1, i['column']])
+        
+        json_data = df.to_dict(orient='records')  # json Serialisierung, weil df nicht übertragen wird
+        table_columns = [
+            {
+                **col,
+                'format': {
+                    **col.get('format', {}),
+                    'locale': {'decimal': decimal}
+                },
+                'on_change':{
+                    'action': 'coerce',
+                    'failure': 'accept'
+                }
             }
-        }
-        for col in columns
+            for col in columns
 
-    ]
+        ]
 
-    print(json_data)
 
     return table_columns, json_data
 
