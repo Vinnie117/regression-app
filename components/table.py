@@ -5,6 +5,7 @@ from dash_app import dash_app
 from dash.dependencies import Input, Output, State
 from utils.data_prep import numeric_converter
 import pandas as pd
+import json
 
 
 table = html.Div(
@@ -137,14 +138,35 @@ def data_prep(value, columns, data, selected_cells, table_store, contents):
         
         df = pd.DataFrame(table_store.get(contents)['props']['data'])
         json_data = df.to_dict(orient='records')
+
+        # print(json_data)
+        # print(json.loads(json_data))  # check if json
+
         external_columns = table_store.get(contents)['props']['columns']
+        
 
-        table_columns = []
+        table_columns = [
+            {
+                **col,
+                'type': 'numeric',
+                'format': {
+                    **col.get('format', {}),
+                    'locale': {'decimal': decimal}
+                },
+                'on_change':{
+                    'action': 'coerce',
+                    'failure': 'accept'
+                },
+                'deletable': True,
+                'renamable': True
+            }
+            for col in external_columns
 
-        # this stops when the shorter iterable stops -> no more than number of default cols!
-        for i, j in zip(columns, external_columns):
-            col = {**i, **j}
-            table_columns.append(col)
+        ]
+
+        print(table_columns)
+
+
 
 
     else:
