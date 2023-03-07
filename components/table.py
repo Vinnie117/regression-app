@@ -26,7 +26,8 @@ table = html.Div(
                             'action': 'coerce',
                             'failure': 'accept'
                         },
-                        'renamable': False
+                        'deletable': True,
+                        'renamable': True
                     }, 
                     {
                         'name': 'y', 
@@ -42,7 +43,8 @@ table = html.Div(
                             'action': 'coerce',
                             'failure': 'accept'
                         },
-                        'renamable': False
+                        'deletable': True,
+                        'renamable': True
                     },
                     {
                         'name': 'z', 
@@ -92,8 +94,8 @@ table = html.Div(
                             'action': 'coerce',
                             'failure': 'accept'
                         },
-                        #'deletable': True,
-                        #'renamable': True
+                        'deletable': True,
+                        'renamable': True
                     }
 
                 ],
@@ -160,11 +162,10 @@ def data_prep(value, columns, data, selected_cells, table_store, contents):
                 'deletable': True,
                 'renamable': True
             }
-            for col in external_columns
-
+            for col_index, col in enumerate(external_columns) if col_index <= 4  # default is 5 cols!
         ]
 
-        print(table_columns)
+        # print(table_columns)
 
 
 
