@@ -103,8 +103,9 @@ table = html.Div(
                 editable=True,
                 fill_width=False,
                 virtualization=True,  # make datatable scrollable
-                style_cell={'width': '100px'} # width of columns
-                
+                style_cell={'width': '100px'}, # width of columns
+                fixed_rows={'headers': True},  #  fix headers for scrolling
+                style_table={'height': '200px', 'overflowY': 'auto'}
             ), style={
                 'text-align': 'center', 
                 'width': '77%', 
