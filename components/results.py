@@ -1,9 +1,24 @@
 
-from dash import html, callback_context
+from dash import html, callback_context, dash_table
 from dash.dependencies import Input, Output, State, ALL
 from dash_app import dash_app
 import pandas as pd
+import bs4 as bs
 
+def extract_style(el):
+    return {k.strip():v.strip() for k,v in [x.split(": ") for x in el.attrs["style"].split(";")]}
+
+
+
+def convert_html_to_dash(el,style = None):
+    if type(el) == bs.element.NavigableString:
+        return str(el)
+    else:
+        name = el.name
+        style = extract_style(el) if style is None else style
+        contents = [convert_html_to_dash(x) for x in el.contents]
+        return getattr(html,name.title())(contents,style = style)
+    
 # Extract html results!
 results = html.Div(
             id='results',
@@ -46,21 +61,13 @@ def show_results(children, n_clicks, regression_dict, _, cancel, submit):
     # Construct results to display
     experiment_runs = str(list(regression_dict)[-1])
     df_results_parameters = pd.DataFrame.from_dict(regression_dict[experiment_runs]['results'], orient='index')
-    x_vars = list(df_results_parameters.index.values)
-    list_coefs = df_results_parameters.iloc[:,0].to_list()
 
     print(df_results_parameters)
 
+    result_table = df_results_parameters.reset_index(names='Variable')
 
-    list_results = []
-    for var, coef_value in zip(x_vars, list_coefs):
-        list_results.append('coef of {var} is {coef_value}'. format(var=var, coef_value=coef_value))
-
-    result = 'Experiment {number}: Regression '.format(number = list(regression_dict)[-1])
-    results_string = result + ', '.join(list_results)
 
     #### appending divs to results html
-
     new_element = html.Div(
     children=[
 
@@ -68,12 +75,14 @@ def show_results(children, n_clicks, regression_dict, _, cancel, submit):
             "X",
             id={"type": "dynamic-delete", "index": n_clicks},
             n_clicks=0,
-            style={"display": "block"},
+            style={
+                    "display": "block", 
+                    'float':'right'  # position of the button
+                },
         ),
-        html.Div(
-            results_string,
-            id = {"type": "dynamic-output", "index": n_clicks, "run":experiment_runs}
-        )
+
+        dash_table.DataTable(result_table.to_dict('records'), 
+                             [{"name": i, "id": i} for i in result_table.columns])
     ]
     )
     children.append(new_element)

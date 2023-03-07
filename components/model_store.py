@@ -157,17 +157,7 @@ def calculate_regression(data, target_var, predictor_var, control_vars, encoding
         # df_results_regression = pd.read_html(df_results_regression, header=0, index_col=0)[0]
         # print(df_results_regression)
         # df_results_distribution = lm_results.summary().tables[2].as_html()
-        df_results_parameters = lm_results.summary().tables[1].as_html()
-
-        # Replacing column names in HTML
-        df_results_parameters = df_results_parameters.replace("coef", "BANANA")
-        
-        # formatting the HTML table -> BeautifulSoup
-        df_results_parameters = df_results_parameters.replace(
-            '<table class="simpletable">',
-            '<table class="simpletable" border="1" style="border-collapse: collapse;">'
-        )
-        # print(df_results_parameters)
+        df_results_parameters = lm_results.summary().tables[1].as_html()       
 
         df_results_parameters = pd.read_html(df_results_parameters, header=0, index_col=0)[0]
         print(df_results_parameters)
