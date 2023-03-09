@@ -62,9 +62,11 @@ def show_results(children, n_clicks, regression_dict, _, cancel, submit):
     experiment_runs = str(list(regression_dict)[-1])
     df_results_parameters = pd.DataFrame.from_dict(regression_dict[experiment_runs]['results'], orient='index')
 
-    print(df_results_parameters)
 
-    result_table = df_results_parameters.reset_index(names='Variable')
+    df_results_parameters.index = df_results_parameters.index.astype(str).str.replace('!_dummy_!', ': ')
+    df_results_parameters.index = df_results_parameters.index.astype(str).str.replace('!_onehot_!', ': ')
+
+    result_table = df_results_parameters.reset_index(names='')
 
 
     #### appending divs to results html
