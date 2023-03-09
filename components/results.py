@@ -62,7 +62,6 @@ def show_results(children, n_clicks, regression_dict, _, cancel, submit):
     experiment_runs = str(list(regression_dict)[-1])
     df_results_parameters = pd.DataFrame.from_dict(regression_dict[experiment_runs]['results'], orient='index')
 
-
     df_results_parameters.index = df_results_parameters.index.astype(str).str.replace('!_dummy_!', ': ')
     df_results_parameters.index = df_results_parameters.index.astype(str).str.replace('!_onehot_!', ': ')
 
@@ -85,7 +84,7 @@ def show_results(children, n_clicks, regression_dict, _, cancel, submit):
 
         dash_table.DataTable(result_table.to_dict('records'), 
                              [{"name": i, "id": i} for i in result_table.columns])
-    ]
+    ], style={'margin-bottom': '5%'}
     )
     children.append(new_element)
 

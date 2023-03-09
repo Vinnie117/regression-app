@@ -9,19 +9,20 @@ variable_selection = html.Div([
 
     html.Button(
         id='submit-button-state', 
-        children='Submit', 
+        children='Berechnen', 
         type='button', 
-        style={'margin-top': '20px'}  # space between the button and the table below
+        style={'margin-top': '0px'}  # space between the button and the table below
         ), 
 
     html.Div([
 
-        html.P('Target variable'),
+        html.P('Zielvariable'),
 
         dcc.Dropdown(
             id = 'target',
             options=[],
             value = '',
+            placeholder='Auswählen' 
         ),
 
     ], style={
@@ -33,12 +34,13 @@ variable_selection = html.Div([
 
     html.Div([
 
-        html.P('Predictor variable'),
+        html.P('Erklärende Variable'),
 
         dcc.Dropdown(
             id = 'predictors',
             options=[],
-            value = ''            
+            value = '',
+            placeholder='Auswählen'            
         )
     ], style={
         #'display': 'inline-block',
@@ -50,7 +52,7 @@ variable_selection = html.Div([
     
     html.Div([
 
-        html.P('Control variables'),
+        html.P('Kontrollvariablen'),
         
         dcc.Checklist(
             id = 'controls',
