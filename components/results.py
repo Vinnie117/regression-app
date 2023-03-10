@@ -72,20 +72,22 @@ def show_results(children, n_clicks, regression_dict, _, cancel, submit):
     new_element = html.Div(
     children=[
 
-        html.Button(
+        html.Div([
+            html.Button(
             "X",
             id={"type": "dynamic-delete", "index": n_clicks},
             n_clicks=0,
-            style={
-                    "display": "block", 
-                    'float':'right'  # position of the button
-                },
-        ),
+            style={"display": "block", "float": "right"}
 
+        )], style = {"overflow":"hidden"}),
+
+        html.Div([
         dash_table.DataTable(result_table.to_dict('records'), 
                              [{"name": i, "id": i} for i in result_table.columns])
+        ])
+
     ], style={'margin-bottom': '5%'}
     )
-    children.append(new_element)
 
+    children.append(new_element)
     return children
