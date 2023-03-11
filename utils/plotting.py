@@ -7,7 +7,7 @@ def create_base_plot(x, y, type):
                 "type": "box",
                 "x": x,
                 "y": y,
-                "name": "experiment_0",
+                "showlegend": False,
                 "marker": {"color": "#636EFA"},
                 "boxpoints": "all",
                 "jitter": 0.3,
@@ -23,7 +23,7 @@ def create_base_plot(x, y, type):
                 "x": x,
                 "y": y,
                 "mode": "markers",
-                "name": "experiment_0",
+                "showlegend": False,
                 "marker": {"color": "#636EFA"}
             }],
             # "layout": {"margin":{"l":20, "r":20, "t":20, "b": 20}}        

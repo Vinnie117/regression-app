@@ -68,11 +68,14 @@ def update_scatterplot(data, x_axis_name, y_axis_name, model, n_clicks, dict_tra
 
             for run in model:
 
+                run_number = run.split("experiment_")[1:]
+                run_name = "Modell " + run_number[0]
+
                 new_trace = go.Box(
                     x=model[run]['x_range'],
                     y=model[run]['y_range'],
                     marker={'color': color_map[list(model.keys()).index(run)]}, 
-                    name= run)   
+                    name= run_name)   
 
                 # build the store which collects all traces
                 if run not in dict_traces:
@@ -112,12 +115,16 @@ def update_scatterplot(data, x_axis_name, y_axis_name, model, n_clicks, dict_tra
         else:
             # build the OLS line of each respective experiment and store it
             for run in model:
+
+                run_number = run.split("experiment_")[1:]
+                run_name = "Modell " + run_number[0]
+
                 new_trace =go.Scatter(
                     x=model[run]['x_range'],
                     y=model[run]['y_range'], 
                     mode='lines',
                     marker={'color': color_map[list(model.keys()).index(run)]},  # colors will be hardcoded here
-                    name=run)                
+                    name=run_name)                
 
                 # build the store which collects all traces
                 if run not in dict_traces:
