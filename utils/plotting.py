@@ -14,7 +14,7 @@ def create_base_plot(x, y, type):
                 "pointpos": 0
             }],
             # "layout": {"margin":{"l":20, "r":20, "t":20, "b": 20}}    
-            "layout": {"margin":{"t":35}}       
+            "layout": {"margin":{"l":0, "t":35, "r":0}}       
         })
 
     elif type  == 'numeric':
@@ -28,7 +28,7 @@ def create_base_plot(x, y, type):
                 "marker": {"color": "#636EFA"}
             }],
             # "layout": {"margin":{"l":20, "r":20, "t":20, "b": 20}} 
-            "layout": {"margin":{"t":35}}          
+            "layout": {"margin":{"l":0, "t":35, "r":0}}          
         })
 
 

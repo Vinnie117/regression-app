@@ -9,7 +9,12 @@ import numpy as np
 from utils.data_prep import drop_minority_type
 
 plot = html.Div(
-    dcc.Graph(id='scatterplot')
+    dcc.Graph(id='scatterplot'),
+    style= {
+        'width': '77%', 
+        'margin-left': 'auto', 
+        'margin-right': 'auto',
+    }           
 )
 
 
@@ -158,7 +163,7 @@ def update_scatterplot(data, x_axis_name, y_axis_name, model, n_clicks, dict_tra
 
             fig = go.Figure(data= base_trace + available_traces, layout={
                 'showlegend': True,
-                'margin': {'t':35}
+                'margin': {"l":0, 't':35}
                 })
             print("The size of the dict_traces is {} bytes".format(sys.getsizeof(dict_traces)))  # 232 Bytes
 
