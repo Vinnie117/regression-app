@@ -79,7 +79,7 @@ def show_results(children, n_clicks, regression_dict, _, cancel, submit):
             n_clicks=0,
             style={"display": "block", "float": "right"}
 
-        )], style = {"overflow":"hidden"}),
+        )], style = {"overflow":"hidden"}), # clip overflowing element
 
         html.Div([
         dash_table.DataTable(result_table.to_dict('records'), 

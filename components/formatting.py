@@ -5,5 +5,9 @@ formatting = html.Div(
                 id = 'decimal_separator', 
                 options = ['Punkt als Dezimaltrennzeichen'], 
                 value = [''], inline=True),
-                style={}
+                style={
+                    'width': '77%',
+                    'margin-left': 'auto', 
+                    'margin-right': 'auto',
+                }
             )

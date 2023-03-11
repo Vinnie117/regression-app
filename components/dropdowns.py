@@ -22,8 +22,11 @@ dropdowns = html.Div([
             id='xaxis-column'
         )], style={'width': '48%', 'display': 'inline-block'}
     )
-
-])
+], style={
+    'width': '77%',
+    'margin-left': 'auto', 
+    'margin-right': 'auto',
+})
 
 
 # callback for scatterplot axis selection
