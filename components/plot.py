@@ -149,7 +149,10 @@ def update_scatterplot(data, x_axis_name, y_axis_name, model, n_clicks, dict_tra
             base_trace = create_base_plot(x_axis, y_axis, 'numeric')
             base_trace = [base_trace['data'][0]]
 
-            fig = go.Figure(data= base_trace + available_traces, layout={'showlegend': True})
+            fig = go.Figure(data= base_trace + available_traces, layout={
+                'showlegend': True,
+                'margin': {'t':35}
+                })
             print("The size of the dict_traces is {} bytes".format(sys.getsizeof(dict_traces)))  # 232 Bytes
 
 

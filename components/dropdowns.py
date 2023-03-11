@@ -12,7 +12,7 @@ dropdowns = html.Div([
             value='y',
             placeholder="Y-Achse",
             id='yaxis-column'
-        )], style={'width': '48%', 'display': 'inline-block'}
+        )], style={'width': '50%', 'display': 'inline-block'}
     ),
     html.Div([
         dcc.Dropdown(
@@ -20,12 +20,12 @@ dropdowns = html.Div([
             value='x',
             placeholder="X-Achse",
             id='xaxis-column'
-        )], style={'width': '48%', 'display': 'inline-block'}
+        )], style={'width': '50%', 'display': 'inline-block'}
     )
 ], style={
     'width': '77%',
     'margin-left': 'auto', 
-    'margin-right': 'auto',
+    'margin-right': 'auto'
 })
 
 
