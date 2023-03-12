@@ -7,6 +7,7 @@ def create_base_plot(x, y, type):
                 "type": "box",
                 "x": x,
                 "y": y,
+                "name": "",
                 "showlegend": False,
                 "marker": {"color": "#636EFA"},
                 "boxpoints": "all",
