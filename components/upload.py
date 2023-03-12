@@ -11,12 +11,14 @@ def parse_contents(contents, filename, date):
     decoded = base64.b64decode(content_string)
     try:
         if 'csv' in filename:
-            # Assume that the user uploaded a CSV file
+            # Assume that the user uploaded a CSV file - limit to 100 rows + header
             df = pd.read_csv(
                 io.StringIO(decoded.decode('utf-8')))
+            df = df.head(101)
         elif 'xls' in filename:
-            # Assume that the user uploaded an excel file
+            # Assume that the user uploaded an excel file - limit to 100 rows + header
             df = pd.read_excel(io.BytesIO(decoded))
+            df = df.head(101)
     except Exception as e:
         print(e)
         return html.Div([
