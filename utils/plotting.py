@@ -24,6 +24,7 @@ def create_base_plot(x, y, type):
                 "x": x,
                 "y": y,
                 "mode": "markers",
+                "name": "",
                 "showlegend": False,
                 "marker": {"color": "#636EFA"}
             }],
