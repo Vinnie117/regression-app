@@ -125,9 +125,10 @@ table = html.Div(
     Input('table', 'data'),
     State('table', 'selected_cells'),
     Input('table_store', 'data'),   
-    Input('upload-data', 'contents')
+    Input('upload-data', 'contents'),
+    Input('warning_upload_msg', 'cancel_n_clicks')
 )
-def data_prep(value, columns, data, selected_cells, table_store, contents):
+def data_prep(value, columns, data, selected_cells, table_store, contents, cancel):
 
     if 'Punkt als Dezimaltrennzeichen' in value:
         decimal = '.'
@@ -137,17 +138,13 @@ def data_prep(value, columns, data, selected_cells, table_store, contents):
     # fetch which input triggered the callback
     triggered_id = callback_context.triggered[0]['prop_id'].split('.')[0]
 
-    if table_store != None and triggered_id == 'upload-data':
-        
+    if table_store != None and triggered_id == 'upload-data' and cancel != True:
+
         df = pd.DataFrame(table_store.get(contents)['props']['data'])
         json_data = df.to_dict(orient='records')
 
-        # print(json_data)
-        # print(json.loads(json_data))  # check if json
-
         external_columns = table_store.get(contents)['props']['columns']
         
-
         table_columns = [
             {
                 **col,
@@ -165,10 +162,6 @@ def data_prep(value, columns, data, selected_cells, table_store, contents):
             }
             for col_index, col in enumerate(external_columns) if col_index <= 4  # default is 5 cols!
         ]
-
-        # print(table_columns)
-
-
 
 
     else:
