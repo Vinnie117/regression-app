@@ -80,6 +80,8 @@ def show_results(children, n_clicks, regression_dict, _, cancel, submit):
 
         html.Details(open=True, children=[
         
+            html.Summary(run_name),
+
             html.Div([
                 html.Button(
                 "X",
@@ -88,8 +90,6 @@ def show_results(children, n_clicks, regression_dict, _, cancel, submit):
                 style={"display": "block", "float": "right"}
             )], style = {"overflow":"hidden"}),
         
-            html.Summary(run_name),
-
             html.Div([
                 dash_table.DataTable(result_table.to_dict('records'), 
                                     [{"name": i, "id": i} for i in result_table.columns])
