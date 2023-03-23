@@ -50,10 +50,31 @@ def store_external_data(contents, filename, date):
         children = [parse_contents(c, n, d) for c, n, d in zip([contents], [filename], [date])]
         table_store = {contents: children[0][0]}
 
+        print(children[0])
+        print(children[0][1])
+
+        # print(table_store)
+
+
         # Check for warning message of parse_contents()
-        if children[0][1]:
+
+        # have a dictionary with all warnings as values
+        # for each key in the dict, print the warning
+
+        if children[0][1]:  # a dict containing warning messages
             warning_displayed = True
-            warning_msg = children[0][1]
+
+            warning_msg = ""
+
+            for key, value in children[0][1].items():
+                warning_msg += value
+
+
+
+            # test = [value for key, value in children[0][1].items()]
+            # warning_msg = [value for key, value in children[0][1].items()][0]
+
+
         else:
             warning_displayed = False
             warning_msg = None
