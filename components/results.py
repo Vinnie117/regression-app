@@ -3,7 +3,6 @@ from dash import html, callback_context, dash_table
 from dash.dependencies import Input, Output, State, ALL
 from dash_app import dash_app
 import pandas as pd
-import bs4 as bs
 
     
 # Extract html results!
@@ -59,45 +58,22 @@ def show_results(children, n_clicks, regression_dict, _, cancel, submit):
 
     #### appending divs to results html
     new_element = html.Div(
-    children=[
-
-
-        # html.Div([
-        #     html.Button(
-        #     "X",
-        #     id={"type": "dynamic-delete", "index": n_clicks},
-        #     n_clicks=0,
-        #     style={"display": "block", "float": "right"}
-
-        # )], style = {"overflow":"hidden"}), # clip overflowing element, otherwise X does not delete
-
-        # html.Div([
-        # dash_table.DataTable(result_table.to_dict('records'), 
-        #                      [{"name": i, "id": i} for i in result_table.columns])
-        # ]),
-
-#################################################################################################
-
-        html.Details(open=True, children=[
-        
-            html.Summary(run_name),
-
+        children=[html.Details(open=True, children=[
+            html.Summary(children=[
+                run_name,
+                html.Button("X", 
+                            id={"type": "dynamic-delete","index": n_clicks},
+                            n_clicks=0,style={"float": "right"}
+                            )
+                        ]
+                ),
             html.Div([
-                html.Button(
-                "X",
-                id={"type": "dynamic-delete", "index": n_clicks},
-                n_clicks=0,
-                style={"display": "block", "float": "right"}
-            )], style = {"overflow":"hidden"}),
-        
-            html.Div([
-                dash_table.DataTable(result_table.to_dict('records'), 
-                                    [{"name": i, "id": i} for i in result_table.columns])
+                dash_table.DataTable(result_table.to_dict('records'),
+                                        [{"name": i, "id": i} for i in result_table.columns])
             ])
-
-        ])
-
-    ], style={'margin-bottom': '5%'}
+            ])
+        ], 
+        style={'margin-bottom': '5%'}
     )
 
     children.append(new_element)
