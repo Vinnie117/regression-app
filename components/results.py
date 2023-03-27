@@ -8,11 +8,8 @@ import pandas as pd
 # Extract html results!
 results = html.Div(
             id='results',
+            className="results",
             children = [],
-            style={
-            'width': '27%', 
-            'border': '1px dashed black',
-            }
         )
 
 @dash_app.callback(
