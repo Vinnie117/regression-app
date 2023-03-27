@@ -1,0 +1,8 @@
+.dashboard{
+    display: flex;
+    align-items: top;
+}
+
+.dashboard .dashboard-plot{
+    margin-top: 50px;
+}

@@ -1,0 +1,9 @@
+.variable_selection{
+    border: 1px dashed black;
+    margin-top: 30px;
+}
+
+.submit-button-state{
+    /* space between the button and the table below */
+    margin-top: 0px;
+}

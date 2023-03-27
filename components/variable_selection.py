@@ -8,86 +8,78 @@ import numpy as np
 variable_selection = html.Div([
 
     html.Button(
-        id='submit-button-state', 
+        id='submit-button-state',
+        className="submit-button-state",
         children='Berechnen', 
         type='button', 
-        style={'margin-top': '0px'}  # space between the button and the table below
         ), 
 
-    html.Div([
+    html.Div(
+        className = "variable_selection",
+        children=[
 
-        html.P('Zielvariable'),
+            html.P('Zielvariable'),
 
-        dcc.Dropdown(
-            id = 'target',
-            options=[],
-            value = '',
-            placeholder='Auswählen' 
-        ),
-
-    ], style={
-        #'display': 'inline-block',
-        'margin-top': '30px',
-        'border': '1px dashed black'
-        }
+            dcc.Dropdown(
+                id = 'target',
+                options=[],
+                value = '',
+                placeholder='Auswählen' 
+            )
+        ]
     ),
 
-    html.Div([
+    html.Div(
+        className = "variable_selection",
+        children=[
 
-        html.P('Erklärende Variable'),
+            html.P('Erklärende Variable'),
 
-        dcc.Dropdown(
-            id = 'predictors',
-            options=[],
-            value = '',
-            placeholder='Auswählen'            
-        )
-    ], style={
-        #'display': 'inline-block',
-        'border': '1px dashed black',
-        'margin-top': '30px',
-        #'margin-left': '20px'
-        }
+            dcc.Dropdown(
+                id = 'predictors',
+                options=[],
+                value = '',
+                placeholder='Auswählen'            
+            )
+        ]
     ),
     
-    html.Div([
+    html.Div(
+        className = "variable_selection",
+        children=[
 
-        html.P('Kontrollvariablen'),
-        
-        dcc.Checklist(
-            id = 'controls',
-            options=[],
-            value=[''],
-            labelStyle= {
-                'display': 'block'
-            }               
-        )
-    ], style={
-        'border': '1px dashed black',
-        'margin-top': '30px',
-    }),
+            html.P('Kontrollvariablen'),
+            
+            dcc.Checklist(
+                id = 'controls',
+                options=[],
+                value=[''],
+                labelStyle= {'display': 'block'}               
+            )
+        ]
+    ),
 
-    html.Div([
+    html.Div(
+        className = "variable_selection",
+        children=[
 
-        html.P(
-            'Codierung für Kategorien',
-            id = "encoding_title"
-        ),
-        
-        dcc.Dropdown(
-            id = 'encoding',
-            options=['Dummy Codierung', 'One-Hot Codierung'],
-            value='Dummy Codierung',             
-        ),
-        dbc.Tooltip(
-            "Dummy: ... One-Hot: ...",
-            target= 'encoding', #"encoding", # "Codierung für Kategorien"
-            placement="bottom"
-        )
-    ], style={
-        'border': '1px dashed black',
-        'margin-top': '30px',
-    })
+            html.P(
+                'Codierung für Kategorien',
+                id = "encoding_title"
+            ),
+            
+            dcc.Dropdown(
+                id = 'encoding',
+                options=['Dummy Codierung', 'One-Hot Codierung'],
+                value='Dummy Codierung',             
+            ),
+            dbc.Tooltip(
+                "Dummy: ... One-Hot: ...",
+                target= 'encoding', #"encoding", # "Codierung für Kategorien"
+                placement="bottom"
+            )
+        ]
+    )
 
 ], style={
     'display': 'inline-block',  # display elements (children) side by side
