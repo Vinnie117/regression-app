@@ -5,87 +5,86 @@ import dash_bootstrap_components as dbc
 import pandas as pd
 import numpy as np
 
-variable_selection = html.Div([
-
-    html.Button(
-        id='submit-button-state',
-        className="submit-button-state",
-        children='Berechnen', 
-        type='button', 
-        ), 
-
-    html.Div(
-        className = "variable_selection",
-        children=[
-
-            html.P('Zielvariable'),
-
-            dcc.Dropdown(
-                id = 'target',
-                options=[],
-                value = '',
-                placeholder='Auswählen' 
-            )
-        ]
-    ),
-
-    html.Div(
-        className = "variable_selection",
-        children=[
-
-            html.P('Erklärende Variable'),
-
-            dcc.Dropdown(
-                id = 'predictors',
-                options=[],
-                value = '',
-                placeholder='Auswählen'            
-            )
-        ]
-    ),
+variable_selection = html.Div(
     
-    html.Div(
-        className = "variable_selection",
-        children=[
+    className="left-column",
+    children=[
 
-            html.P('Kontrollvariablen'),
-            
-            dcc.Checklist(
-                id = 'controls',
-                options=[],
-                value=[''],
-                labelStyle= {'display': 'block'}               
-            )
-        ]
-    ),
+        html.Button(
+            id='submit-button-state',
+            className="submit-button-state",
+            children='Berechnen', 
+            type='button', 
+            ), 
 
-    html.Div(
-        className = "variable_selection",
-        children=[
+        html.Div(
+            className = "variable_selection",
+            children=[
 
-            html.P(
-                'Codierung für Kategorien',
-                id = "encoding_title"
-            ),
-            
-            dcc.Dropdown(
-                id = 'encoding',
-                options=['Dummy Codierung', 'One-Hot Codierung'],
-                value='Dummy Codierung',             
-            ),
-            dbc.Tooltip(
-                "Dummy: ... One-Hot: ...",
-                target= 'encoding', #"encoding", # "Codierung für Kategorien"
-                placement="bottom"
-            )
-        ]
-    )
+                html.P('Zielvariable'),
 
-], style={
-    'display': 'inline-block',  # display elements (children) side by side
-    'width': '10%',  # percentage of screen width taken by div
-    'border': '1px dashed black',  # border (for debugging)          
-    }
+                dcc.Dropdown(
+                    id = 'target',
+                    options=[],
+                    value = '',
+                    placeholder='Auswählen' 
+                )
+            ]
+        ),
+
+        html.Div(
+            className = "variable_selection",
+            children=[
+
+                html.P('Erklärende Variable'),
+
+                dcc.Dropdown(
+                    id = 'predictors',
+                    options=[],
+                    value = '',
+                    placeholder='Auswählen'            
+                )
+            ]
+        ),
+        
+        html.Div(
+            className = "variable_selection",
+            children=[
+
+                html.P('Kontrollvariablen'),
+                
+                dcc.Checklist(
+                    id = 'controls',
+                    options=[],
+                    value=[''],
+                    labelStyle= {'display': 'block'}               
+                )
+            ]
+        ),
+
+        html.Div(
+            className = "variable_selection",
+            children=[
+
+                html.P(
+                    'Codierung für Kategorien',
+                    id = "encoding_title"
+                ),
+                
+                dcc.Dropdown(
+                    id = 'encoding',
+                    options=['Dummy Codierung', 'One-Hot Codierung'],
+                    value='Dummy Codierung',             
+                ),
+                dbc.Tooltip(
+                    "Dummy: ... One-Hot: ...",
+                    target= 'encoding', #"encoding", # "Codierung für Kategorien"
+                    placement="bottom"
+                )
+            ]
+        )
+
+    ]
 )
 
 

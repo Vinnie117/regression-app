@@ -6,3 +6,19 @@
 .dashboard .dashboard-plot{
     margin-top: 50px;
 }
+
+.left-column{
+    display: inline-block;
+    width: 10%;
+    border: 1px dashed black
+}
+
+.middle-column{
+    width: 55%;
+    border: 1px solid green;
+}
+
+.right-column{
+    width: 27%;
+    border: 1px dashed black;
+}

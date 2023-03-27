@@ -8,7 +8,7 @@ import pandas as pd
 # Extract html results!
 results = html.Div(
             id='results',
-            className="results",
+            className="right-column",
             children = [],
         )
 
