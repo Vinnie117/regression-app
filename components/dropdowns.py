@@ -5,28 +5,29 @@ from dash.dependencies import Input, Output, State
 from dash_app import dash_app
 
 
-dropdowns = html.Div([
-    html.Div([
-        dcc.Dropdown(
-            options = list(pd.DataFrame(data_table)),
-            value='y',
-            placeholder="Y-Achse",
-            id='yaxis-column'
-        )], style={'width': '50%', 'display': 'inline-block'}
-    ),
-    html.Div([
-        dcc.Dropdown(
-            options = list(pd.DataFrame(data_table)),
-            value='x',
-            placeholder="X-Achse",
-            id='xaxis-column'
-        )], style={'width': '50%', 'display': 'inline-block'}
-    )
-], style={
-    'width': '77%',
-    'margin-left': 'auto', 
-    'margin-right': 'auto'
-})
+dropdowns = html.Div(className="dropdowns",
+    children=[
+        html.Div(
+            className="single_dropdown", 
+            children=[
+                dcc.Dropdown(
+                    options = list(pd.DataFrame(data_table)),
+                    value='y',
+                    placeholder="Y-Achse",
+                    id='yaxis-column'
+            )]
+        ),
+        html.Div(
+            className="single_dropdown", 
+            children=[
+                dcc.Dropdown(
+                    options = list(pd.DataFrame(data_table)),
+                    value='x',
+                    placeholder="X-Achse",
+                    id='xaxis-column'
+            )]
+        )
+])
 
 
 # callback for scatterplot axis selection

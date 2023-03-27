@@ -1,0 +1,10 @@
+.dropdowns{
+    width: 77%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.dropdowns .single_dropdown{
+    width: 50%;
+    display: inline-block;
+}
