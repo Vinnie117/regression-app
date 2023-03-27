@@ -9,16 +9,13 @@ import numpy as np
 from utils.data_prep import drop_minority_type
 
 plot = html.Div(
-    dcc.Graph(id='scatterplot'),
-    style= {
-        'width': '77%', 
-        'margin-left': 'auto', 
-        'margin-right': 'auto',
-    }           
+    className="plot",
+    children=dcc.Graph(id='scatterplot')        
 )
+    
 
 
-# callback to update the scatter plot given changes
+# callback to update the scatter plot given changes 
 @dash_app.callback(
     Output(component_id = 'scatterplot', component_property = 'figure'),
     Output(component_id = 'dict_traces', component_property = 'data'),
