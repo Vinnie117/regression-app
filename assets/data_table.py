@@ -27,8 +27,25 @@ data_table = [
     {'x': 3, 'y': 3, 'z': 4, 'a': 1.4, 'b': 'yes'},
     {'x': 4, 'y': 4, 'z': 5, 'a': 9.2, 'b': 'no'},
     {'x': 2, 'y': 5, 'z': 9, 'a': 5.8, 'b': 'no'},
-    {'x': 3, 'y': 4, 'z': 6, 'a': 7.3, 'b': 'yes'}
-     
-     
+    {'x': 3, 'y': 4, 'z': 6, 'a': 7.3, 'b': 'yes'}     
+]
+
+empty_data_table = [
+    {'x': None, 'y': None, 'z': None, 'a': None, 'b': None},
+    {'x': None, 'y': None, 'z': None, 'a': None, 'b': None},
+    {'x': None, 'y': None, 'z': None, 'a': None, 'b': None},
+    {'x': None, 'y': None, 'z': None, 'a': None, 'b': None},
+    {'x': None, 'y': None, 'z': None, 'a': None, 'b': None},
+    {'x': None, 'y': None, 'z': None, 'a': None, 'b': None},
+    {'x': None, 'y': None, 'z': None, 'a': None, 'b': None},
+    {'x': None, 'y': None, 'z': None, 'a': None, 'b': None}, 
+    
+    {'x': None, 'y': None, 'z': None, 'a': None, 'b': None},
+    {'x': None, 'y': None, 'z': None, 'a': None, 'b': None},
+    {'x': None, 'y': None, 'z': None, 'a': None, 'b': None},
+    {'x': None, 'y': None, 'z': None, 'a': None, 'b': None},
+    {'x': None, 'y': None, 'z': None, 'a': None, 'b': None},
+    {'x': None, 'y': None, 'z': None, 'a': None, 'b': None},
+    {'x': None, 'y': None, 'z': None, 'a': None, 'b': None},
 ]
 

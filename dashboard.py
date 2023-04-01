@@ -6,11 +6,8 @@ from components.dropdowns import dropdowns
 from components.model_store import model_store
 from components.results import results
 from components.validation import validation
-from components.upload import upload
+from components.upload import upload, validation_upload
 from components.formatting import formatting
-
-
-
 from dash_app import dash_app
 
 def serve_layout():
@@ -19,52 +16,51 @@ def serve_layout():
 
     return html.Div(
         [
-            # a header for the webpage
-            html.H1('My Dash App'),
+        # a header for the webpage
+        html.H1('My Dash App'),
 
-            # the dashboard application
-            html.Div(children = [
+        # the dashboard application
+        html.Div(
+            className="dashboard",
+            children = [
 
                 # left column
                 variable_selection, 
 
                 validation,
+                validation_upload,
 
                 # middle column
-                html.Div(children = [
+                html.Div(
+                    className="middle-column",
+                    children = [
                     
-                    formatting,
-                    upload,
-                    
-                    table,
+                        formatting,
+                        upload,
+                        
+                        table,
 
-                    html.Div(children = [
-                        dropdowns,
-                        plot
-                    ], style={'margin-top': '50px'}
-                    )
-                    
-                ], style={
-                    'width': '55%', 
-                    'border': '1px dashed black'
-                }),
+                        html.Div(
+                            className="dashboard-plot",
+                            children = [
+                                dropdowns,
+                                plot
+                            ]
+                        )
+                    ]
+                ),
 
                 # right column
                 results
 
-            ], style={'display': 'flex', 'align-items': 'top'}
-            ),
+            ]
+        ),
 
-            model_store, 
-            dcc.Store(id='dict_traces'),
-            dcc.Store(id='list_used_colors'),
-            dcc.Store(id='counter'),
-            dcc.Store(id='table_store')
-
-            # dcc.Store for table data? Input is df from validate() callback, output is df
-            # this df feeds into calculate_regression()
-            # advantage: data validation would only have to be performed once instead of currently twice
-
+        model_store, 
+        dcc.Store(id='dict_traces'),
+        dcc.Store(id='list_used_colors'),
+        dcc.Store(id='counter'),
+        dcc.Store(id='table_store')
         ]
     )
 
@@ -74,24 +70,3 @@ if __name__ == '__main__':
 
     dash_app.layout = serve_layout()
     dash_app.run_server(debug=True)
-
-
-'''
-Performance
-    - clientside callbacks für Berechnung
-    - Store für alle plots
-    - Store für Tabelle/Daten
-
-Data upload
-
-Should the callback for the data upload return
-    - the data property of the existing data table? -> this
-    - or a completely new data table?
-
-Considerations
-    - different column names -> enable
-    - more columns than default table -> should be truncated!
-    - more rows than defaul table -> should be truncated!
-
-
-'''

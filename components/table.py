@@ -1,6 +1,6 @@
 import sys
 from dash import html, dash_table, callback_context
-from assets.data_table import data_table
+from assets.data_table import data_table, empty_data_table
 from dash_app import dash_app
 from dash.dependencies import Input, Output, State
 from utils.data_prep import numeric_converter
@@ -116,6 +116,7 @@ table = html.Div(
     Output('table', 'columns'),
     Output('table', 'data'),
     Input('decimal_separator', 'value'),
+    Input('clear_data', 'n_clicks'),
     Input('table', 'columns'),
     Input('table', 'data'),
     State('table', 'selected_cells'),
@@ -123,12 +124,15 @@ table = html.Div(
     Input('upload-data', 'contents'),
     Input('warning_upload_msg', 'cancel_n_clicks')
 )
-def data_prep(value, columns, data, selected_cells, table_store, contents, cancel):
+def data_prep(value, clear, columns, data, selected_cells, table_store, contents, cancel):
 
     if 'Punkt als Dezimaltrennzeichen' in value:
         decimal = '.'
     else:
         decimal = ','
+
+    if clear:
+        data = empty_data_table  
 
     # fetch which input triggered the callback
     triggered_id = callback_context.triggered[0]['prop_id'].split('.')[0]
