@@ -131,7 +131,7 @@ def data_prep(value, clear, columns, data, selected_cells, table_store, contents
     else:
         decimal = ','
 
-    if clear:
+    if callback_context.triggered_id == 'clear_data':
         data = empty_data_table  
 
     # fetch which input triggered the callback
