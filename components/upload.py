@@ -38,6 +38,7 @@ def store_external_data(contents, filename, date):
     if contents is not None:
 
         children = [parse_contents(c, n, d) for c, n, d in zip([contents], [filename], [date])]
+
         table_store = {contents: children[0][0]}
 
         # Check for warning message of parse_contents()

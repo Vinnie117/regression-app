@@ -6,6 +6,7 @@ def parse_contents(contents, filename, date):
     content_type, content_string = contents.split(',')
 
     decoded = base64.b64decode(content_string)
+
     try:
         if 'csv' in filename:
             # Assume that the user uploaded a CSV file - limit to 100 rows + header
@@ -23,7 +24,7 @@ def parse_contents(contents, filename, date):
             else:
                 warning_upload_cols = None
 
-        elif 'xls' in filename:
+        elif 'xls' in filename or 'xlsx' in filename:
             # Assume that the user uploaded an excel file - limit to 100 rows + header
             df = pd.read_excel(io.BytesIO(decoded))
 
