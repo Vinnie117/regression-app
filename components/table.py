@@ -24,9 +24,9 @@ table = html.Div(
                                 'prefix': None, 
                                 'specifier': ''
                             },
-                            'on_change':{
-                                'action': 'coerce',
-                                'failure': 'accept'
+                            'on_change':{  # behaviour if user edits data cells
+                                'action': 'coerce',  # try to coerce to column type
+                                'failure': 'accept'  # accept failed coercion
                             },
                             'deletable': True,
                             'renamable': True
@@ -103,11 +103,11 @@ table = html.Div(
                     ],
                     data=data_table,
                     editable=True,
-                    fill_width=False,
+                    # fill_width=True,
                     virtualization=True,  # make datatable scrollable
-                    style_cell={'width': '100px'}, # width of columns
+                    style_cell={'width': '20%'}, # width of columns (100% / 5 cols)
                     fixed_rows={'headers': True},  #  fix headers for scrolling
-                    style_table={'height': '200px', 'overflowY': 'auto'}
+                    style_table={'height': '200px'}
                 )
         )
 
