@@ -47,6 +47,10 @@ def update_scatterplot(data, x_axis_name, y_axis_name, model, n_clicks, dict_tra
     # base plot
     df = pd.DataFrame(data)
 
+    print(df)
+    print('x_axis_name is: ', x_axis_name)
+    print('y_axis_name is: ', y_axis_name)
+
     # remove rows with minority data type 
     # (needed here to ensure that boxplots still appear if some categories are numbers)
     df = drop_minority_type(df, [x_axis_name] + [y_axis_name])

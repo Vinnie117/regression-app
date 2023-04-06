@@ -30,18 +30,21 @@ dropdowns = html.Div(className="dropdowns",
 ])
 
 
-# callback for scatterplot axis selection
+# callback for scatterplot axis selections
 @dash_app.callback(
     Output('xaxis-column', 'options'),
     Output('yaxis-column', 'options'),
     Input('upload-data', 'contents'),
-    Input('table', 'columns'))
-def update_radio_items(contents, columns):
+    Input('table', 'columns'),
+    Input('clear_data', 'n_clicks'))
+def update_radio_items(contents, columns, clear):
 
     if callback_context.triggered_id == 'upload-data':
         column_names = [i['name'] for i in columns]
+    elif callback_context.triggered_id == 'clear_data':
+        column_names = list(pd.DataFrame(empty_data_table))
     else:
-        column_names = list(pd.DataFrame(data_table))
+        column_names = [i['name'] for i in columns] # list(pd.DataFrame(data_table))
 
     return column_names, column_names
 
@@ -54,13 +57,17 @@ def update_radio_items(contents, columns):
     Input('submit-button-state', 'n_clicks'),
     Input('upload-data', 'contents'),
     Input('table', 'columns'),
+    Input('clear_data', 'n_clicks'),
     prevent_initial_call=True)
-def update_axis_by_submit(predictor, target, n_clicks, contents, columns):
+def update_axis_by_submit(predictor, target, n_clicks, contents, columns, clear):
 
     if callback_context.triggered_id == 'upload-data':
         column_names = [i['name'] for i in columns]
         predictor = column_names[0]
         target = column_names[1]
+    elif callback_context.triggered_id == 'clear_data':
+        predictor = 'Variable 2'
+        target = 'Variable 1'
     else:
         predictor = 'x'
         target = 'y'

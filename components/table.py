@@ -131,21 +131,30 @@ def data_prep(value, clear, columns, data, selected_cells, table_store, contents
     else:
         decimal = ','
 
+    # if user clicks button to clear table data
     if callback_context.triggered_id == 'clear_data':
-        data = empty_data_table  
+        data = pd.DataFrame(empty_data_table)  
+
+        # adjust column names
+        table_columns = [{**col,
+                          'name': 'Variable ' + str(col_index + 1),
+                          'id': 'Variable ' + str(col_index + 1),
+                          } for col_index, col in enumerate(columns)]
+
+        json_data = data.to_dict(orient='records') 
 
     # fetch which input triggered the callback
-    triggered_id = callback_context.triggered[0]['prop_id'].split('.')[0]
+    # triggered_id = callback_context.triggered[0]['prop_id'].split('.')[0]
 
-    if table_store != None and triggered_id == 'upload-data' and cancel != True:
+    # if user uploads data from external file
+    elif table_store != None and callback_context.triggered_id == 'upload-data' and cancel != True:
 
         df = pd.DataFrame(table_store.get(contents)['props']['data'])
         json_data = df.to_dict(orient='records')
 
         external_columns = table_store.get(contents)['props']['columns']
         
-        table_columns = [
-            {
+        table_columns = [{
                 **col,
                 'type': 'numeric',
                 'format': {
@@ -161,6 +170,8 @@ def data_prep(value, clear, columns, data, selected_cells, table_store, contents
             }
             for col_index, col in enumerate(external_columns) if col_index <= 4  # default is 5 cols!
         ]
+
+        print(table_columns)
 
 
     else:
