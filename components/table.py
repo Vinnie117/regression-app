@@ -143,8 +143,6 @@ def data_prep(value, clear, columns, data, selected_cells, table_store, contents
 
         json_data = data.to_dict(orient='records') 
 
-    # fetch which input triggered the callback
-    # triggered_id = callback_context.triggered[0]['prop_id'].split('.')[0]
 
     # if user uploads data from external file
     elif table_store != None and callback_context.triggered_id == 'upload-data' and cancel != True:
@@ -176,6 +174,10 @@ def data_prep(value, clear, columns, data, selected_cells, table_store, contents
 
     else:
         df = pd.DataFrame(data)
+
+        # when user edits column names in table
+        if callback_context.triggered_id == 'table':
+            print("HELLO")
 
         # try to convert string representation of numerics to numeric for edited cell
         if selected_cells != None:

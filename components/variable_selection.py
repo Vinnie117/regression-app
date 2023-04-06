@@ -95,17 +95,20 @@ variable_selection = html.Div(
     Input('table', 'columns'),
     Input('predictors', 'value'),
     Input('controls', 'value'),
-    # Input(component_id = 'table', component_property = 'data'),
+    Input(component_id = 'table', component_property = 'data'),
     Input(component_id = 'table_store', component_property = 'data'),
     Input(component_id='decimal_separator', component_property = 'value'),
     Input('clear_data', 'n_clicks')
     )
-def update_target(columns, predictor_var, control_vars, data, decimal_separator, clear):
+def update_target(columns, predictor_var, control_vars, data, data_store, decimal_separator, clear):
 
     if clear:
         column_names = list(pd.DataFrame(empty_data_table))
     else:
-        df = pd.DataFrame(data)
+        if data:
+            df = pd.DataFrame(data)
+        elif data_store:
+            df = pd.DataFrame(data_store)
 
         categorical = df.columns[(df.dtypes.values == np.dtype('object'))]
         control_vars = ",".join(string for string in control_vars if len(string) > 0)
@@ -113,6 +116,7 @@ def update_target(columns, predictor_var, control_vars, data, decimal_separator,
 
         # only numeric targets for (linear) regression
         column_names = [i for i in column_names if i not in categorical]
+
 
     return column_names
 
