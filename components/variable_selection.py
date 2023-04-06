@@ -1,7 +1,8 @@
-from dash import dcc, html
+from dash import dcc, html, callback_context
 from dash.dependencies import Input, Output
 from dash_app import dash_app
 import dash_bootstrap_components as dbc
+from assets.data_table import empty_data_table
 import pandas as pd
 import numpy as np
 
@@ -96,18 +97,22 @@ variable_selection = html.Div(
     Input('controls', 'value'),
     # Input(component_id = 'table', component_property = 'data'),
     Input(component_id = 'table_store', component_property = 'data'),
-    Input(component_id='decimal_separator', component_property = 'value')
+    Input(component_id='decimal_separator', component_property = 'value'),
+    Input('clear_data', 'n_clicks')
     )
-def update_target(columns, predictor_var, control_vars, data, decimal_separator):
+def update_target(columns, predictor_var, control_vars, data, decimal_separator, clear):
 
-    df = pd.DataFrame(data)
+    if clear:
+        column_names = list(pd.DataFrame(empty_data_table))
+    else:
+        df = pd.DataFrame(data)
 
-    categorical = df.columns[(df.dtypes.values == np.dtype('object'))]
-    control_vars = ",".join(string for string in control_vars if len(string) > 0)
-    column_names = [i['name'] for i in columns if i['name'] not in [control_vars, predictor_var]]
+        categorical = df.columns[(df.dtypes.values == np.dtype('object'))]
+        control_vars = ",".join(string for string in control_vars if len(string) > 0)
+        column_names = [i['name'] for i in columns if i['name'] not in [control_vars, predictor_var]]
 
-    # only numeric targets for (linear) regression
-    column_names = [i for i in column_names if i not in categorical]
+        # only numeric targets for (linear) regression
+        column_names = [i for i in column_names if i not in categorical]
 
     return column_names
 
@@ -117,11 +122,17 @@ def update_target(columns, predictor_var, control_vars, data, decimal_separator)
     Output('predictors', 'options'),
     Input('table', 'columns'),
     Input('target', 'value'),
-    Input('controls', 'value')
+    Input('controls', 'value'),
+    Input('clear_data', 'n_clicks')
     )
-def update_predictor(columns, target_var, control_vars):
-    control_vars = ",".join(string for string in control_vars if len(string) > 0)
-    column_names = [i['name'] for i in columns if i['name'] not in [control_vars, target_var]]
+def update_predictor(columns, target_var, control_vars, clear):
+
+    if clear:
+        column_names = list(pd.DataFrame(empty_data_table))
+        # print(column_names)
+    else:
+        control_vars = ",".join(string for string in control_vars if len(string) > 0)
+        column_names = [i['name'] for i in columns if i['name'] not in [control_vars, target_var]]
     return column_names
 
 
@@ -130,8 +141,12 @@ def update_predictor(columns, target_var, control_vars):
     Output('controls', 'options'),
     Input('table', 'columns'),
     Input('predictors', 'value'),
-    Input('target', 'value')
+    Input('target', 'value'),
+    Input('clear_data', 'n_clicks')
     )
-def update_controls(columns, predictor_var, target_var):
-    column_names = [i['name'] for i in columns if i['name'] not in [predictor_var, target_var]]
+def update_controls(columns, predictor_var, target_var, clear):
+    if clear:
+        column_names = list(pd.DataFrame(empty_data_table))
+    else:
+        column_names = [i['name'] for i in columns if i['name'] not in [predictor_var, target_var]]
     return column_names
