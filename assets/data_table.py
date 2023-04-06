@@ -49,3 +49,22 @@ empty_data_table = [
     {'x': None, 'y': None, 'z': None, 'a': None, 'b': None},
 ]
 
+
+# empty_data_table = [
+#     {'Variable 1': None, 'Variable 2': None, 'Variable 3': None, 'Variable 4': None, 'Variable 5': None},
+#     {'Variable 1': None, 'Variable 2': None, 'Variable 3': None, 'Variable 4': None, 'Variable 5': None},
+#     {'Variable 1': None, 'Variable 2': None, 'Variable 3': None, 'Variable 4': None, 'Variable 5': None},
+#     {'Variable 1': None, 'Variable 2': None, 'Variable 3': None, 'Variable 4': None, 'Variable 5': None},
+#     {'Variable 1': None, 'Variable 2': None, 'Variable 3': None, 'Variable 4': None, 'Variable 5': None},
+#     {'Variable 1': None, 'Variable 2': None, 'Variable 3': None, 'Variable 4': None, 'Variable 5': None},
+#     {'Variable 1': None, 'Variable 2': None, 'Variable 3': None, 'Variable 4': None, 'Variable 5': None},
+#     {'Variable 1': None, 'Variable 2': None, 'Variable 3': None, 'Variable 4': None, 'Variable 5': None},
+
+#     {'Variable 1': None, 'Variable 2': None, 'Variable 3': None, 'Variable 4': None, 'Variable 5': None},
+#     {'Variable 1': None, 'Variable 2': None, 'Variable 3': None, 'Variable 4': None, 'Variable 5': None},
+#     {'Variable 1': None, 'Variable 2': None, 'Variable 3': None, 'Variable 4': None, 'Variable 5': None},
+#     {'Variable 1': None, 'Variable 2': None, 'Variable 3': None, 'Variable 4': None, 'Variable 5': None},
+#     {'Variable 1': None, 'Variable 2': None, 'Variable 3': None, 'Variable 4': None, 'Variable 5': None},
+#     {'Variable 1': None, 'Variable 2': None, 'Variable 3': None, 'Variable 4': None, 'Variable 5': None},
+#     {'Variable 1': None, 'Variable 2': None, 'Variable 3': None, 'Variable 4': None, 'Variable 5': None}
+# ]
