@@ -95,9 +95,9 @@ variable_selection = html.Div(
     Input('table', 'columns'),
     Input('predictors', 'value'),
     Input('controls', 'value'),
-    Input(component_id = 'table', component_property = 'data'),
-    Input(component_id = 'table_store', component_property = 'data'),
-    Input(component_id='decimal_separator', component_property = 'value'),
+    Input('table', 'data'),
+    Input('table_store', 'data'),
+    Input('decimal_separator', 'value'),
     Input('clear_data', 'n_clicks')
     )
 def update_target(columns, predictor_var, control_vars, data, data_store, decimal_separator, clear):
@@ -126,17 +126,12 @@ def update_target(columns, predictor_var, control_vars, data, data_store, decima
     Output('predictors', 'options'),
     Input('table', 'columns'),
     Input('target', 'value'),
-    Input('controls', 'value'),
-    Input('clear_data', 'n_clicks')
+    Input('controls', 'value')
     )
-def update_predictor(columns, target_var, control_vars, clear):
+def update_predictor(columns, target_var, control_vars):
 
-    if clear:
-        column_names = list(pd.DataFrame(empty_data_table))
-        # print(column_names)
-    else:
-        control_vars = ",".join(string for string in control_vars if len(string) > 0)
-        column_names = [i['name'] for i in columns if i['name'] not in [control_vars, target_var]]
+    control_vars = ",".join(string for string in control_vars if len(string) > 0)
+    column_names = [i['name'] for i in columns if i['name'] not in [control_vars, target_var]]
     return column_names
 
 
@@ -145,12 +140,9 @@ def update_predictor(columns, target_var, control_vars, clear):
     Output('controls', 'options'),
     Input('table', 'columns'),
     Input('predictors', 'value'),
-    Input('target', 'value'),
-    Input('clear_data', 'n_clicks')
+    Input('target', 'value')
     )
-def update_controls(columns, predictor_var, target_var, clear):
-    if clear:
-        column_names = list(pd.DataFrame(empty_data_table))
-    else:
-        column_names = [i['name'] for i in columns if i['name'] not in [predictor_var, target_var]]
+def update_controls(columns, predictor_var, target_var):
+
+    column_names = [i['name'] for i in columns if i['name'] not in [predictor_var, target_var]]
     return column_names

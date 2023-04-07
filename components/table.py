@@ -135,12 +135,13 @@ def data_prep(value, clear, columns, data, selected_cells, table_store, contents
     if callback_context.triggered_id == 'clear_data':
         data = pd.DataFrame(empty_data_table)  
 
-        # adjust column names
+        # adjust column names to dummy names
         table_columns = [{**col,
                           'name': 'Variable ' + str(col_index + 1),
                           'id': 'Variable ' + str(col_index + 1),
                           } for col_index, col in enumerate(columns)]
 
+        # empty data frame as table data
         json_data = data.to_dict(orient='records') 
 
 

@@ -49,9 +49,7 @@ def update_radio_items(columns):
     State('predictors', 'value'),
     State('target', 'value'),
     Input('submit-button-state', 'n_clicks'),
-    Input('upload-data', 'contents'),
     Input('table', 'columns'),
-    Input('clear_data', 'n_clicks'),
     prevent_initial_call=True)
 def update_axis_by_submit(predictor, target, n_clicks, columns):
 
