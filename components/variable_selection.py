@@ -95,28 +95,21 @@ variable_selection = html.Div(
     Input('table', 'columns'),
     Input('predictors', 'value'),
     Input('controls', 'value'),
-    Input('table', 'data'),
-    Input('table_store', 'data'),
-    Input('decimal_separator', 'value'),
-    Input('clear_data', 'n_clicks')
-    )
-def update_target(columns, predictor_var, control_vars, data, data_store, decimal_separator, clear):
+    Input('table', 'data'))
+def update_target(columns, predictor_var, control_vars, data):
 
-    if clear:
-        column_names = list(pd.DataFrame(empty_data_table))
-    else:
-        if data:
-            df = pd.DataFrame(data)
-        elif data_store:
-            df = pd.DataFrame(data_store)
+    df = pd.DataFrame(data)
 
-        categorical = df.columns[(df.dtypes.values == np.dtype('object'))]
-        control_vars = ",".join(string for string in control_vars if len(string) > 0)
-        column_names = [i['name'] for i in columns if i['name'] not in [control_vars, predictor_var]]
+    categorical = df.columns[(df.dtypes.values == np.dtype('object'))]
+    control_vars = ",".join(string for string in control_vars if len(string) > 0)
+    column_names = [i['name'] for i in columns if i['name'] not in [control_vars, predictor_var]]
 
-        # only numeric targets for (linear) regression
-        column_names = [i for i in column_names if i not in categorical]
+    # only numeric targets for (linear) regression
+    column_names = [i for i in column_names if i not in categorical]
 
+    # if user clear data in table
+    if df.isna().all().all() and list(df.columns) == ['Variable 1', 'Variable 2', 'Variable 3', 'Variable 4', 'Variable 5']:
+        column_names = df.columns
 
     return column_names
 
