@@ -15,7 +15,7 @@ table = html.Div(
                     id='table',
                     columns=[
                         {
-                            'name': 'x', 
+                            'name': '', 
                             'id': 'x', 
                             'type': 'numeric',
                             'format': {
@@ -32,7 +32,7 @@ table = html.Div(
                             'renamable': True
                         }, 
                         {
-                            'name': 'y', 
+                            'name': '', 
                             'id': 'y', 
                             'type': 'numeric',
                             'format': {
@@ -49,7 +49,7 @@ table = html.Div(
                             'renamable': True
                         },
                         {
-                            'name': 'z', 
+                            'name': '', 
                             'id': 'z', 
                             'type': 'numeric',
                             'format': {
@@ -66,7 +66,7 @@ table = html.Div(
                             'renamable': True
                         },
                         {
-                            'name': 'a', 
+                            'name': '', 
                             'id': 'a', 
                             'type': 'numeric',
                             'format': {
@@ -83,7 +83,7 @@ table = html.Div(
                             'renamable': True
                         },
                         {
-                            'name': 'b', 
+                            'name': '', 
                             'id': 'b', 
                             'type': 'numeric',
                             'format': {
@@ -174,9 +174,15 @@ def data_prep(value, clear, columns, data, selected_cells, table_store, contents
 
 
     else:
+
+        df = pd.DataFrame(data)
+
+        print(df)
+
         table_columns = [
             {
                 **col,
+                # 'name': df.columns[col_index],
                 'format': {
                     **col.get('format', {}),
                     'locale': {'decimal': decimal}
@@ -185,16 +191,30 @@ def data_prep(value, clear, columns, data, selected_cells, table_store, contents
                     'action': 'coerce',
                     'failure': 'accept'
                 }
-            } for col in columns
+            } for col_index, col in enumerate(columns)
         ]
  
 
-        df = pd.DataFrame(data)
-
-        # create list of col names
+        # create list of col names (in case user edits column names in data table)
         col_list = [d['name'] for d in table_columns]
+        if all(element == '' for element in col_list):
+            col_list = ['x', 'y', 'z', 'a', 'b']
         # rename the columns of the dataframe using col list
         df.columns = col_list
+
+        for i, d in enumerate(table_columns):
+            d['name'] = col_list[i]
+
+
+        # Noch in dropdowns ändern!!
+
+        print(df)
+        print(df.columns)
+        print(table_columns)
+
+
+
+
 
         # try to convert string representation of numerics to numeric for edited cell
         if selected_cells != None:
@@ -203,6 +223,8 @@ def data_prep(value, clear, columns, data, selected_cells, table_store, contents
                 df.iloc[i['row']-1, i['column']] = numeric_converter(df.iloc[i['row']-1, i['column']])
         
         json_data = df.to_dict(orient='records')  # json Serialisierung, weil df nicht übertragen wird
+
+        print(json_data)
 
     return table_columns, json_data
 

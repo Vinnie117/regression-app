@@ -51,11 +51,12 @@ def update_radio_items(columns):
     State('target', 'value'),
     Input('submit-button-state', 'n_clicks'),
     Input('table', 'columns'),
+    Input('upload-data', 'contents'),
     prevent_initial_call=True)
-def update_axis_by_submit(predictor, target, n_clicks, columns):
+def update_axis_by_submit(predictor, target, n_clicks, columns, upload):
 
     # if new external data uploaded
-    if callback_context.triggered_id == 'table':
+    if callback_context.triggered_id == 'upload-data' or callback_context.triggered_id == 'table':
         column_names = [i['name'] for i in columns]
         predictor = column_names[0]
         target = column_names[1]
