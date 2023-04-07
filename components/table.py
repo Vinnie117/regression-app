@@ -176,10 +176,6 @@ def data_prep(value, clear, columns, data, selected_cells, table_store, contents
     else:
         df = pd.DataFrame(data)
 
-        # when user edits column names in table
-        if callback_context.triggered_id == 'table':
-            print("HELLO")
-
         # try to convert string representation of numerics to numeric for edited cell
         if selected_cells != None:
             for i in selected_cells:
@@ -202,6 +198,13 @@ def data_prep(value, clear, columns, data, selected_cells, table_store, contents
             for col in columns
 
         ]
+
+        # adjust column names when user edits column names in table
+        if callback_context.triggered_id == 'table':
+            print("HELLO")
+
+        print(json_data)
+        print(table_columns)
 
 
     return table_columns, json_data

@@ -8,13 +8,13 @@ from dash_app import dash_app
 dropdowns = html.Div(className="dropdowns",
     children=[
         html.Div(
-            className="single_dropdown", 
-            children=[
-                dcc.Dropdown(
-                    options = [],
-                    value='',
-                    placeholder="Y-Achse",
-                    id='yaxis-column'
+        className="single_dropdown", 
+        children=[
+            dcc.Dropdown(
+                options = [],
+                value='',
+                placeholder="X-Achse",
+                id='xaxis-column'
             )]
         ),
         html.Div(
@@ -23,10 +23,11 @@ dropdowns = html.Div(className="dropdowns",
                 dcc.Dropdown(
                     options = [],
                     value='',
-                    placeholder="X-Achse",
-                    id='xaxis-column'
+                    placeholder="Y-Achse",
+                    id='yaxis-column'
             )]
         )
+
 ])
 
 
@@ -53,8 +54,18 @@ def update_radio_items(columns):
     prevent_initial_call=True)
 def update_axis_by_submit(predictor, target, n_clicks, columns):
 
-    column_names = [i['name'] for i in columns]
-    predictor = column_names[1]
-    target = column_names[0]
+    # if new external data uploaded
+    if callback_context.triggered_id == 'table':
+        column_names = [i['name'] for i in columns]
+        predictor = column_names[0]
+        target = column_names[1]
+    # if regression, select its predictor and target
+    elif callback_context.triggered_id == 'submit-button-state':
+        pass
+    # default case
+    else:
+        predictor = 'x'
+        target = 'y'
+
 
     return predictor, target

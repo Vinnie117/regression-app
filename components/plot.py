@@ -130,7 +130,7 @@ def update_scatterplot(data, x_axis_name, y_axis_name, model, n_clicks, dict_tra
                     y=model[run]['y_range'], 
                     mode='lines',
                     marker={'color': color_map[list(model.keys()).index(run)]},  # colors will be hardcoded here
-                    name=run_name)                
+                    name=run_name)           
 
                 # build the store which collects all traces
                 if run not in dict_traces:
@@ -148,7 +148,6 @@ def update_scatterplot(data, x_axis_name, y_axis_name, model, n_clicks, dict_tra
                 if x_axis_name == model[run]['predictor_var'] and y_axis_name == model[run]['target_var']:
                     selected_experiments.append(run)
 
-            # print(selected_experiments)
 
             # fetch traces from trace store that match the experiment run
             available_traces = []
