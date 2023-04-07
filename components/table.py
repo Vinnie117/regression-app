@@ -174,15 +174,6 @@ def data_prep(value, clear, columns, data, selected_cells, table_store, contents
 
 
     else:
-        df = pd.DataFrame(data)
-
-        # try to convert string representation of numerics to numeric for edited cell
-        if selected_cells != None:
-            for i in selected_cells:
-                # print(df.iloc[i['row']-1, i['column']])
-                df.iloc[i['row']-1, i['column']] = numeric_converter(df.iloc[i['row']-1, i['column']])
-        
-        json_data = df.to_dict(orient='records')  # json Serialisierung, weil df nicht übertragen wird
         table_columns = [
             {
                 **col,
@@ -194,18 +185,24 @@ def data_prep(value, clear, columns, data, selected_cells, table_store, contents
                     'action': 'coerce',
                     'failure': 'accept'
                 }
-            }
-            for col in columns
-
+            } for col in columns
         ]
+ 
 
-        # adjust column names when user edits column names in table
-        if callback_context.triggered_id == 'table':
-            print("HELLO")
+        df = pd.DataFrame(data)
 
-        print(json_data)
-        print(table_columns)
+        # create list of col names
+        col_list = [d['name'] for d in table_columns]
+        # rename the columns of the dataframe using col list
+        df.columns = col_list
 
+        # try to convert string representation of numerics to numeric for edited cell
+        if selected_cells != None:
+            for i in selected_cells:
+                # print(df.iloc[i['row']-1, i['column']])
+                df.iloc[i['row']-1, i['column']] = numeric_converter(df.iloc[i['row']-1, i['column']])
+        
+        json_data = df.to_dict(orient='records')  # json Serialisierung, weil df nicht übertragen wird
 
     return table_columns, json_data
 

@@ -99,15 +99,11 @@ def update_scatterplot(data, x_axis_name, y_axis_name, model, n_clicks, dict_tra
                 if x_axis_name == model[run]['predictor_var'] and y_axis_name == model[run]['target_var']:
                     selected_experiments.append(run)
 
-            # print(selected_experiments)
-
             # fetch traces from trace store that match the experiment run
             available_traces = []
             for trace_key, trace_val in dict_traces.items():
                 if trace_key in selected_experiments:
                     available_traces.append(trace_val)
-
-            # print(available_traces)
 
             # return the plot
             base_trace = create_base_plot(x_axis, y_axis, 'object')
@@ -148,14 +144,11 @@ def update_scatterplot(data, x_axis_name, y_axis_name, model, n_clicks, dict_tra
                 if x_axis_name == model[run]['predictor_var'] and y_axis_name == model[run]['target_var']:
                     selected_experiments.append(run)
 
-
             # fetch traces from trace store that match the experiment run
             available_traces = []
             for trace_key, trace_val in dict_traces.items():
                 if trace_key in selected_experiments:
                     available_traces.append(trace_val)
-
-            # print(available_traces)
 
             # return the plot
             base_trace = create_base_plot(x_axis, y_axis, 'numeric')

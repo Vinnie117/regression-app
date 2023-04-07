@@ -30,7 +30,7 @@ upload = dcc.Upload(
     Output('warning_upload_msg', 'message'),
     Input('upload-data', 'contents'),
     State('upload-data', 'filename'),
-    State('upload-data', 'last_modified'),
+    Input('upload-data', 'last_modified'),
     prevent_initial_call=True
 )
 def store_external_data(contents, filename, date):
