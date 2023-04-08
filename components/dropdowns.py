@@ -55,11 +55,14 @@ def update_radio_items(columns):
     Input('decimal_separator', 'value'),
     State('xaxis-column', 'value'),
     State('yaxis-column', 'value'),
+    Input('clear_data', 'n_clicks'),
     prevent_initial_call=True)
-def update_axis_by_submit(predictor, target, n_clicks, columns, upload, decimal, x, y):
+def update_axis_by_submit(predictor, target, n_clicks, columns, upload, decimal, x, y, clear):
+
+    print(callback_context.triggered_id)
 
     # if new external data uploaded
-    if callback_context.triggered_id == 'upload-data' or callback_context.triggered_id == 'table':
+    if callback_context.triggered_id == 'upload-data'or callback_context.triggered_id == 'clear_data':
         column_names = [i['name'] for i in columns]
         predictor = column_names[0]
         target = column_names[1]
@@ -76,6 +79,6 @@ def update_axis_by_submit(predictor, target, n_clicks, columns, upload, decimal,
         return predictor, target
     # default case on page initialization
     else:
-        predictor = 'x'
-        target = 'y'
+        predictor = x
+        target = y
         return predictor, target
