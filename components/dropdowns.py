@@ -12,7 +12,7 @@ dropdowns = html.Div(className="dropdowns",
         children=[
             dcc.Dropdown(
                 options = [],
-                value='',
+                value='x',
                 placeholder="X-Achse",
                 id='xaxis-column'
             )]
@@ -22,7 +22,7 @@ dropdowns = html.Div(className="dropdowns",
             children=[
                 dcc.Dropdown(
                     options = [],
-                    value='',
+                    value='y',
                     placeholder="Y-Achse",
                     id='yaxis-column'
             )]
@@ -52,21 +52,35 @@ def update_radio_items(columns):
     Input('submit-button-state', 'n_clicks'),
     Input('table', 'columns'),
     Input('upload-data', 'contents'),
+    Input('decimal_separator', 'value'),
+    State('xaxis-column', 'value'),
+    State('yaxis-column', 'value'),
     prevent_initial_call=True)
-def update_axis_by_submit(predictor, target, n_clicks, columns, upload):
+def update_axis_by_submit(predictor, target, n_clicks, columns, upload, decimal, x, y):
+
+    print(callback_context.triggered_id)
 
     # if new external data uploaded
     if callback_context.triggered_id == 'upload-data' or callback_context.triggered_id == 'table':
         column_names = [i['name'] for i in columns]
         predictor = column_names[0]
         target = column_names[1]
+        return predictor, target
     # if regression, select its predictor and target
     elif callback_context.triggered_id == 'submit-button-state':
-        pass
-    # default case
+        predictor = predictor
+        target = target
+        return predictor, target
+    # take exisiting dropdown selection if decimal separator changed
+    elif callback_context.triggered_id == 'decimal_separator':
+        predictor = x
+        target = y
+        return predictor, target
+    # default case on page initialization
     else:
         predictor = 'x'
         target = 'y'
+        return predictor, target
 
 
-    return predictor, target
+# Einzelne return direkt in den if Fällen?
