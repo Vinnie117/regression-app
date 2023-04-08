@@ -108,7 +108,7 @@ def update_target(columns, predictor_var, control_vars, data):
     column_names = [i for i in column_names if i not in categorical]
 
     # if user clear data in table
-    if df.isna().all().all() and list(df.columns) == ['Variable 1', 'Variable 2', 'Variable 3', 'Variable 4', 'Variable 5']:
+    if df.isna().all().all(): # and list(df.columns) == ['Variable 1', 'Variable 2', 'Variable 3', 'Variable 4', 'Variable 5']:
         column_names = df.columns
 
     return column_names

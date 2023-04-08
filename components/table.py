@@ -173,7 +173,7 @@ def data_prep(value, clear, columns, data, selected_cells, table_store, contents
     else:
 
         df = pd.DataFrame(data)
-
+        
         table_columns = [
             {
                 **col,
@@ -195,7 +195,7 @@ def data_prep(value, clear, columns, data, selected_cells, table_store, contents
 
         # default column names for dashboard
         if all(element == '' for element in col_list):
-            col_list = ['x', 'y', 'z', 'a', 'b']
+            col_list = ['x', 'y', 'z', 'a', 'b']       
 
         # rename the columns of the dataframe using col list
         df.columns = col_list
@@ -203,14 +203,14 @@ def data_prep(value, clear, columns, data, selected_cells, table_store, contents
         # map correct column names to table columns
         for i, d in enumerate(table_columns):
             d['name'] = col_list[i]
-
+            d['id'] = col_list[i]
 
         # try to convert string representation of numerics to numeric for edited cell
         if selected_cells != None:
             for i in selected_cells:
                 # print(df.iloc[i['row']-1, i['column']])
                 df.iloc[i['row']-1, i['column']] = numeric_converter(df.iloc[i['row']-1, i['column']])
-        
+
         json_data = df.to_dict(orient='records')  # json Serialisierung, weil df nicht übertragen wird
 
     return table_columns, json_data
