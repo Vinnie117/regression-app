@@ -170,14 +170,9 @@ def data_prep(value, clear, columns, data, selected_cells, table_store, contents
             for col_index, col in enumerate(external_columns) if col_index <= 4  # default is 5 cols!
         ]
 
-        print(table_columns)
-
-
     else:
 
         df = pd.DataFrame(data)
-
-        print(df)
 
         table_columns = [
             {
@@ -191,29 +186,23 @@ def data_prep(value, clear, columns, data, selected_cells, table_store, contents
                     'action': 'coerce',
                     'failure': 'accept'
                 }
-            } for col_index, col in enumerate(columns)
+            } for col in columns
         ]
  
 
         # create list of col names (in case user edits column names in data table)
         col_list = [d['name'] for d in table_columns]
+
+        # default column names for dashboard
         if all(element == '' for element in col_list):
             col_list = ['x', 'y', 'z', 'a', 'b']
+
         # rename the columns of the dataframe using col list
         df.columns = col_list
 
+        # map correct column names to table columns
         for i, d in enumerate(table_columns):
             d['name'] = col_list[i]
-
-
-        # Noch in dropdowns ändern!!
-
-        print(df)
-        print(df.columns)
-        print(table_columns)
-
-
-
 
 
         # try to convert string representation of numerics to numeric for edited cell
@@ -223,8 +212,6 @@ def data_prep(value, clear, columns, data, selected_cells, table_store, contents
                 df.iloc[i['row']-1, i['column']] = numeric_converter(df.iloc[i['row']-1, i['column']])
         
         json_data = df.to_dict(orient='records')  # json Serialisierung, weil df nicht übertragen wird
-
-        print(json_data)
 
     return table_columns, json_data
 
