@@ -139,3 +139,15 @@ def update_controls(columns, predictor_var, target_var):
 
     column_names = [i['name'] for i in columns if i['name'] not in [predictor_var, target_var]]
     return column_names
+
+
+# reset selection when data is uploaded
+@dash_app.callback(
+    Output('target', 'value'),
+    Output('predictors', 'value'),
+    Input('upload-data', 'contents'),
+    prevent_initial_call=True
+)
+def clear_selection(upload):
+    if callback_context.triggered_id == 'upload-data':
+        return '', ''
