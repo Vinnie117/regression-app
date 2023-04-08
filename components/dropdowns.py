@@ -58,8 +58,6 @@ def update_radio_items(columns):
     prevent_initial_call=True)
 def update_axis_by_submit(predictor, target, n_clicks, columns, upload, decimal, x, y):
 
-    print(callback_context.triggered_id)
-
     # if new external data uploaded
     if callback_context.triggered_id == 'upload-data' or callback_context.triggered_id == 'table':
         column_names = [i['name'] for i in columns]
@@ -81,6 +79,3 @@ def update_axis_by_submit(predictor, target, n_clicks, columns, upload, decimal,
         predictor = 'x'
         target = 'y'
         return predictor, target
-
-
-# Einzelne return direkt in den if Fällen?
