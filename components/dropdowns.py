@@ -57,7 +57,7 @@ def update_radio_items(columns):
     State('yaxis-column', 'value'),
     Input('clear_data', 'n_clicks'),
     prevent_initial_call=True)
-def update_axis_by_submit(predictor, target, n_clicks, columns, upload, decimal, x, y, clear):
+def update_axis_by_submit(x_predictor, y_target, n_clicks, columns, upload, decimal, x, y, clear):
 
     print(callback_context.triggered_id)
 
@@ -69,8 +69,8 @@ def update_axis_by_submit(predictor, target, n_clicks, columns, upload, decimal,
         return predictor, target
     # if regression, select its predictor and target
     elif callback_context.triggered_id == 'submit-button-state':
-        predictor = predictor
-        target = target
+        predictor = x_predictor
+        target = y_target
         return predictor, target
     # take exisiting dropdown selection if decimal separator changed
     elif callback_context.triggered_id == 'decimal_separator':
@@ -79,6 +79,8 @@ def update_axis_by_submit(predictor, target, n_clicks, columns, upload, decimal,
         return predictor, target
     # default case on page initialization
     else:
-        predictor = x
-        target = y
+        column_names = [i['name'] for i in columns]
+        predictor = column_names[0]
+        target = column_names[1]
         return predictor, target
+
