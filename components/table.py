@@ -123,9 +123,10 @@ table = html.Div(
     State('table', 'selected_cells'),
     Input('table_store', 'data'),   
     Input('upload-data', 'contents'),
-    Input('warning_upload_msg', 'cancel_n_clicks')
+    Input('warning_upload_msg', 'cancel_n_clicks'),
+    Input('warning_msg_col_names', 'cancel_n_clicks')
 )
-def data_prep(value, col_names, clear, columns, data, selected_cells, table_store, contents, cancel):
+def data_prep(value, col_names, clear, columns, data, selected_cells, table_store, contents, cancel, cancel_col):
 
     if 'Punkt als Dezimaltrennzeichen' in value:
         decimal = '.'
@@ -208,40 +209,43 @@ def data_prep(value, col_names, clear, columns, data, selected_cells, table_stor
 
 
         if callback_context.triggered_id == 'col_names':
-            
-            # first row as column header
-            df.rename(columns=df.iloc[0], inplace = True)
-            df.drop(df.index[0], inplace = True)
-            df.reset_index(drop=True, inplace=True)
 
-            # detect duplicate columns
-            dup_cols = df.columns.duplicated()
+            if cancel_col:
+                pass
+            else:
+                # first row as column header
+                df.rename(columns=df.iloc[0], inplace = True)
+                df.drop(df.index[0], inplace = True)
+                df.reset_index(drop=True, inplace=True)
 
-            # create a dictionary to store the new column names
-            col_list = []
+                # detect duplicate columns
+                dup_cols = df.columns.duplicated()
 
-            # iterate through the column index
-            for i, col in enumerate(list(df.columns)):
+                # create a dictionary to store the new column names
+                col_list = []
 
-                # if the column name is not a duplicate, add it to col_list
-                if not dup_cols[i]:
-                    col_list.append(str(col))
+                # iterate through the column index
+                for i, col in enumerate(list(df.columns)):
 
-                # if the column name is a duplicate, create a suffix
-                else:
-                    j = 1
-                    while f'{col}_{j}' in col_list:
-                        j += 1
-                    new_col = str(col) + '__' + str(j)
-                    col_list.append(str(new_col))
+                    # if the column name is not a duplicate, add it to col_list
+                    if not dup_cols[i]:
+                        col_list.append(str(col))
 
-            df.columns = col_list
+                    # if the column name is a duplicate, create a suffix
+                    else:
+                        j = 1
+                        while f'{col}_{j}' in col_list:
+                            j += 1
+                        new_col = str(col) + '__' + str(j)
+                        col_list.append(str(new_col))
 
-            # adjust column names to previously first row
-            table_columns = [{**col,
-                          'name': str(col_list[col_index]),
-                          'id': str(col_list[col_index]),
-                          } for col_index, col in enumerate(columns)]
+                df.columns = col_list
+
+                # adjust column names to previously first row
+                table_columns = [{**col,
+                            'name': str(col_list[col_index]),
+                            'id': str(col_list[col_index]),
+                            } for col_index, col in enumerate(columns)]
 
         # try to convert string representation of numerics to numeric for edited cell
         if selected_cells != None:

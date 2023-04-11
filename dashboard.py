@@ -5,7 +5,7 @@ from components.plot import plot
 from components.dropdowns import dropdowns
 from components.model_store import model_store
 from components.results import results
-from components.validation import validation
+from components.validation import validation, validation_col_names
 from components.upload import upload, validation_upload
 from components.formatting import formatting
 from dash_app import dash_app
@@ -27,7 +27,7 @@ def serve_layout():
                 # left column
                 variable_selection, 
 
-                validation,
+                validation, validation_col_names,
                 validation_upload,
 
                 # middle column

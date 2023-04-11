@@ -1,4 +1,4 @@
-from dash import dcc
+from dash import dcc, callback_context
 from dash.dependencies import Input, Output, State
 from dash_app import dash_app
 import pandas as pd
@@ -6,6 +6,11 @@ import pandas as pd
 
 validation =dcc.ConfirmDialog(
                 id='warning_msg',
+                message='',
+                )
+
+validation_col_names =dcc.ConfirmDialog(
+                id='warning_msg_col_names',
                 message='',
                 )
 
@@ -62,3 +67,50 @@ def validate(data, target_var, predictor_var, control_vars, n_clicks):
         return True, warning + warn_2, None
 
     return False, '', None
+
+
+@dash_app.callback(
+    Output('warning_msg_col_names', 'displayed'),
+    Output('warning_msg_col_names', 'message'),
+    Output('warning_msg_col_names', 'cancel_n_clicks'),
+    State(component_id = 'table', component_property = 'data'),      
+    Input('col_names', 'n_clicks'),
+    Input('upload-data', 'contents'),
+    prevent_initial_call=True)
+def validate(data, convert, upload):
+
+    print("Hello")
+    print(data)
+
+
+    if callback_context.triggered_id == 'upload-data':
+
+        # check columns
+        pass
+
+        # col_list = pd.Index([d['name'] for d in columns])
+        # print(col_list)
+        # dup_cols = col_list.duplicated()
+
+        # print(dup_cols)
+
+    if callback_context.triggered_id == 'col_names':
+
+        future_col_names = data[0]
+        print(future_col_names)
+
+        # detect duplicate columns
+        values = list(future_col_names.values())
+        duplicates = []
+
+        for value in values:
+            if values.count(value) > 1 and str(value) not in duplicates:
+                duplicates.append(str(value))
+
+        print(duplicates)
+
+        display = True
+        duplicates_string = ', '.join(duplicates)
+        message = 'Es gibt doppelte Spaltennamen, die angepasst werden: ' + duplicates_string
+
+    return display, message, None
