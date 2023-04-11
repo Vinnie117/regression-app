@@ -75,24 +75,25 @@ def validate(data, target_var, predictor_var, control_vars, n_clicks):
     Output('warning_msg_col_names', 'cancel_n_clicks'),
     State(component_id = 'table', component_property = 'data'),      
     Input('col_names', 'n_clicks'),
-    Input('upload-data', 'contents'),
     prevent_initial_call=True)
-def validate(data, convert, upload):
+def validate(data, convert):
 
-    print("Hello")
-    print(data)
+    # print("Hello")
+    # print(data)
 
 
-    if callback_context.triggered_id == 'upload-data':
+    # if callback_context.triggered_id == 'upload-data':
 
-        # check columns
-        pass
+    #     # check columns
+    #     future_col_names = table_store.get(contents)['props']['columns']
+    #     values = [d['name'] for d in future_col_names]
 
-        # col_list = pd.Index([d['name'] for d in columns])
-        # print(col_list)
-        # dup_cols = col_list.duplicated()
+    #     print(future_col_names)
+    #     print(values)
 
-        # print(dup_cols)
+    display = False
+    message = None
+
 
     if callback_context.triggered_id == 'col_names':
 
@@ -106,8 +107,8 @@ def validate(data, convert, upload):
             if values.count(value) > 1 and str(value) not in duplicates:
                 duplicates.append(str(value))
 
-        display = True
-        duplicates_string = ', '.join(duplicates)
-        message = 'Es gibt doppelte Spaltennamen, die angepasst werden: ' + duplicates_string
+                display = True
+                duplicates_string = ', '.join(duplicates)
+                message = 'Es gibt doppelte Spaltennamen, die angepasst werden: ' + duplicates_string
 
     return display, message, None
