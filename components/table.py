@@ -4,6 +4,7 @@ from assets.data_table import data_table, empty_data_table
 from dash_app import dash_app
 from dash.dependencies import Input, Output, State
 from utils.data_prep import numeric_converter
+from utils.table_upload import make_unique_cols
 import pandas as pd
 import json
 
@@ -213,32 +214,7 @@ def data_prep(value, col_names, clear, columns, data, selected_cells, table_stor
             if cancel_col:
                 pass
             else:
-                # first row as column header
-                df.rename(columns=df.iloc[0], inplace = True)
-                df.drop(df.index[0], inplace = True)
-                df.reset_index(drop=True, inplace=True)
-
-                # detect duplicate columns
-                dup_cols = df.columns.duplicated()
-
-                # create a dictionary to store the new column names
-                col_list = []
-
-                # iterate through the column index
-                for i, col in enumerate(list(df.columns)):
-
-                    # if the column name is not a duplicate, add it to col_list
-                    if not dup_cols[i]:
-                        col_list.append(str(col))
-
-                    # if the column name is a duplicate, create a suffix
-                    else:
-                        j = 1
-                        while f'{col}_{j}' in col_list:
-                            j += 1
-                        new_col = str(col) + '__' + str(j)
-                        col_list.append(str(new_col))
-
+                col_list = make_unique_cols(df)
                 df.columns = col_list
 
                 # adjust column names to previously first row

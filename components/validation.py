@@ -97,7 +97,6 @@ def validate(data, convert, upload):
     if callback_context.triggered_id == 'col_names':
 
         future_col_names = data[0]
-        print(future_col_names)
 
         # detect duplicate columns
         values = list(future_col_names.values())
@@ -106,8 +105,6 @@ def validate(data, convert, upload):
         for value in values:
             if values.count(value) > 1 and str(value) not in duplicates:
                 duplicates.append(str(value))
-
-        print(duplicates)
 
         display = True
         duplicates_string = ', '.join(duplicates)
