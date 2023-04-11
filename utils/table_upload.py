@@ -62,21 +62,16 @@ def parse_contents(contents, filename, date):
     ]
 
 
-def make_unique_cols(df):
+def make_unique_cols(columns):
     
-    # first row as column header
-    df.rename(columns=df.iloc[0], inplace = True)
-    df.drop(df.index[0], inplace = True)
-    df.reset_index(drop=True, inplace=True)
-
     # detect duplicate columns
-    dup_cols = df.columns.duplicated()
+    dup_cols = pd.Index(columns).duplicated()
 
     # create a dictionary to store the new column names
     col_list = []
 
     # iterate through the column index
-    for i, col in enumerate(list(df.columns)):
+    for i, col in enumerate(list(columns)):
 
         # if the column name is not a duplicate, add it to col_list
         if not dup_cols[i]:

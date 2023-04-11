@@ -195,10 +195,19 @@ def data_prep(value, col_names, clear, columns, data, selected_cells, table_stor
 
         # create list of col names (in case user edits column names in data table)
         col_list = [d['name'] for d in table_columns]
-
+ 
         # default column names for dashboard
         if all(element == '' for element in col_list):
-            col_list = ['x', 'y', 'z', 'a', 'b']       
+            col_list = ['x', 'y', 'z', 'a', 'b']   
+
+        # if user renames to duplicate column name   
+        duplicates = []
+        for value in col_list:
+            if col_list.count(value) > 1 and str(value) not in duplicates:
+                duplicates.append(str(value))
+        
+        if len(duplicates) > 0:
+            col_list = make_unique_cols(col_list)
 
         # rename the columns of the dataframe using col list
         df.columns = col_list
@@ -214,7 +223,13 @@ def data_prep(value, col_names, clear, columns, data, selected_cells, table_stor
             if cancel_col:
                 pass
             else:
-                col_list = make_unique_cols(df)
+
+                # first row as column header
+                df.rename(columns=df.iloc[0], inplace = True)
+                df.drop(df.index[0], inplace = True)
+                df.reset_index(drop=True, inplace=True)
+                
+                col_list = make_unique_cols(df.columns)
                 df.columns = col_list
 
                 # adjust column names to previously first row
