@@ -75,6 +75,7 @@ def validate(data, target_var, predictor_var, control_vars, n_clicks):
     Output('warning_msg_col_names', 'cancel_n_clicks'),
     State(component_id = 'table', component_property = 'data'),      
     Input('col_names', 'n_clicks'),
+    # Input('table', 'columns'),
     prevent_initial_call=True)
 def validate(data, convert):
 
@@ -82,7 +83,11 @@ def validate(data, convert):
     # print(data)
 
 
-    # if callback_context.triggered_id == 'upload-data':
+    # if callback_context.triggered_id == 'table':
+
+    #     future_col_names = columns
+
+    #     print(future_col_names)
 
     #     # check columns
     #     future_col_names = table_store.get(contents)['props']['columns']
@@ -90,6 +95,7 @@ def validate(data, convert):
 
     #     print(future_col_names)
     #     print(values)
+
 
     display = False
     message = None

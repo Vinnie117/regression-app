@@ -7,6 +7,7 @@ from utils.data_prep import numeric_converter
 from utils.table_upload import make_unique_cols
 import pandas as pd
 import json
+from collections import OrderedDict
 
 
 table = html.Div(
@@ -237,14 +238,13 @@ def data_prep(value, col_names, clear, columns, data, selected_cells, table_stor
                             'name': str(col_list[col_index]),
                             'id': str(col_list[col_index]),
                             } for col_index, col in enumerate(columns)]
-
         # try to convert string representation of numerics to numeric for edited cell
         if selected_cells != None:
             for i in selected_cells:
                 # print(df.iloc[i['row']-1, i['column']])
                 df.iloc[i['row']-1, i['column']] = numeric_converter(df.iloc[i['row']-1, i['column']])
 
-        json_data = df.to_dict(orient='records')  # json Serialisierung, weil df nicht übertragen wird
+        json_data = df.to_dict(into=OrderedDict, orient='records')  # json Serialisierung, weil df nicht übertragen wird
 
     return table_columns, json_data
 
