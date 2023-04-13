@@ -238,6 +238,7 @@ def data_prep(value, col_names, clear, columns, data, selected_cells, table_stor
                             'name': str(col_list[col_index]),
                             'id': str(col_list[col_index]),
                             } for col_index, col in enumerate(columns)]
+                
         # try to convert string representation of numerics to numeric for edited cell
         if selected_cells != None:
             for i in selected_cells:
