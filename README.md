@@ -1,2 +1,2 @@
 # regression-app
-A web app for linear regression: an early version of wwww dot regression-online dot com
+A web app for linear regression: an early version of www . regression-online . com
